@@ -1,6 +1,6 @@
 # -*- mode: org; fill-column: 79; -*-
 #+TITLE:ECMAScript 262
-#+DATE:<2019-04-10 Wed 09:25>
+#+DATE:<2019-04-10 Wed 23:11>
 * ECMAScript Description
 
   The ECMAScript specification is a standardized specification of a scripting
@@ -343,6 +343,9 @@
        parameters
 
 ** CommonJS
+
+   The dominant incarnation of this standard is *Node.js modules* (Node.js
+   modules have a few features that go beyond CJS).
 
    - http://www.commonjs.org
    - http://wiki.commonjs.org/wiki/CommonJS [fn:4]
@@ -704,6 +707,48 @@
 
   Notice the column "Babel + core-js" as this is what can be achieved today
   with transpiling (and that's fully sufficient for practice).
+
+* ECMAScript Books
+
+  - *[[http://speakingjs.com/es5/index.html][Speaking JavaScript: An In-Depth Guide for Programmers]]* by Dr. Axel
+    Rauschmayer March 2014
+
+    This book covers JavaScript up to and including ECMAScript 5.  The book’s
+    target audience is programmers who want to learn JavaScript quickly and
+    properly, and JavaScript programmers who want to deepen their skills and/or
+    look up specific topics.
+
+  - *[[http://exploringjs.com/impatient-js/toc.html][JavaScript for impatient programmers]]* by Dr. Axel Rauschmayer 2019
+
+    This book makes JavaScript less challenging to learn for newcomers, by
+    offering a modern view that is as consistent as possible.
+
+    - Test-driven exercises and quizzes available for most chapters.
+    - Covers all essential features of JavaScript, up to and including ES2019.
+    - Optional advanced sections let you dig deeper.
+
+  - *[[http://exploringjs.com/es6/index.html][Exploring ES6]]* by Dr. Axel Rauschmayer 2018-05-11
+
+    The most comprehensive book on ECMAScript 6 (ECMAScript 2015); a book for
+    people who already know JavaScript.
+
+  - *Setting up ES6* by Dr. Axel Rauschmayer 
+
+    This book explains how to set up ES6 projects that are compiled to ES5 via
+    Babel 6.  You should already know ES6. It covers the following scenarios:
+
+    - Deploying ES6 in browsers via Babel and webpack.
+    - Deploying ES6 in Node.js, by statically or dynamically compiling it via
+      Babel.
+
+  - *[[http://exploringjs.com/es2016-es2017/index.html][Exploring ES2016 and ES2017]]* by Dr. Axel Rauschmayer 2018
+
+    Covers what’s new in ECMAScript 2016 and ECMAScript 2017.
+
+  - *[[http://exploringjs.com/es2018-es2019/toc.html][Exploring ES2018 and ES2019]]* by Dr. Axel Rauschmayer 2019
+p
+    Covers what’s new in ECMAScript 2018 and ECMAScript 2019.
+
 * Export Settings                                                  :noexport:
 #+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t H:6
 #+OPTIONS: html-scripts:t html-style:t html5-fancy:t tex:t ':t broken-links:mark

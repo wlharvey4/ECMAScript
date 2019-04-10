@@ -1,0 +1,733 @@
+# -*- mode: org; fill-column: 79; -*-
+#+TITLE:ECMAScript 262
+#+DATE:<2019-04-10 Wed 09:25>
+* ECMAScript Description
+
+  The ECMAScript specification is a standardized specification of a scripting
+  language developed by Brendan Eich of Netscape.
+
+  ECMAScript is a scripting language specification standardized by ECMA
+  International in ECMA-262 and ISO/IEC 16262.  It was created to standardize
+  JavaScript (``Spidermonkey''), so as to foster multiple independent
+  implementations.  Other implementations include
+  - JScript (Microsoft)
+  - ActionScript (Macromedia Inc.; Adobe)
+
+
+  ECMAScript is *object-based*: basic language and host facilities are provided
+  by /objects/, and an ECMAScript program is a cluster of communicating
+  objects.  An ECMAScript *object* is a collection of /properties/ each with
+  zero or more /attributes/ that determine how each property can be used.
+  *Properties* are containers that hold other objects, primitive values, or
+  functions.  A *primitive value* is a member of one of the following built-in
+  types:
+  - Undefined
+  - Null
+  - Boolean
+  - Number
+  - String
+
+
+  An *object* is a member of the remaining built-in type
+  - Object
+
+
+  And a *function* is a /callable object/.  A *method* is a function that is associated with
+  an object via a property.
+
+  ECMAScript defines a collection of *built-in objects* that round out the
+  definition of ECMAScript entities.  These built-in objects include:
+  - the global object
+  - the Object object
+  - the Function object
+  - the Array object
+  - the String object
+  - the Boolean object
+  - the Number object
+  - the Math object
+  - the Date object
+  - the RegExp object
+  - the JSON object
+  - the Error objects
+    - EvalError
+    - RangeError
+    - ReferenceError
+    - SyntaxError
+    - TypeError
+    - URIError
+
+
+  ECMAScript also defines a set of *built-in operators*.  ECMAScript operators
+  include:
+  - unary operators
+  - multiplicative operators
+  - additive operators
+  - bitwise shift operators
+  - relational operators
+  - equality operators
+  - binary bitwise operators
+  - binary logical operators
+  - assignment operators
+  - comma operator
+
+
+  *ECMAScript syntax* intentionally resembles Java syntax. ECMAScript syntax is
+  relaxed to enable it to serve as an easy-to-use scripting language.
+
+** Version Numbers
+
+   | Year | JavaScript | ECMA   | Browser            |
+   |      | <c>        | <c>    |                    |
+   |------+------------+--------+--------------------|
+   | 1996 | 1.0        |        | Netscape 2         |
+   | 1997 |            | ES1    | IE 4               |
+   | 1998 | 1.3        |        | Netscape 4         |
+   | 1999 |            | ES2    | IE 5               |
+   | 2000 |            | ES3    | IE 5.5             |
+   | 2000 | 1.5        |        | Firefox 1          |
+   | 2011 |            | ES5    | IE 9[fn:1]         |
+   | 2011 | 1.8.5      |        | Firefox 4[fn:2]    |
+   | 2012 |            |        | IE 10              |
+   | 2012 |            |        | Chrome 23          |
+   | 2012 |            |        | Safari 6           |
+   | 2013 |            |        | Firefox 21         |
+   | 2013 |            |        | Opera 15           |
+   | 2015 |            | ES2015 | All browsers[fn:3] |
+   |------+------------+--------+--------------------|
+
+** ECMAScript History
+
+   - 1993 ::
+     - NCSA’s *Mosaic* was the first widely popular web browser.
+
+   - 1994 ::
+     - a company called *Netscape* was founded to exploit the potential of the
+       nascent World Wide Web.
+     - Netscape created the proprietary web browser *Netscape Navigator*,
+     - Many of the original Mosaic authors went on to work on Navigator, but
+       the two intentionally shared no code.
+     - Netscape quickly realized that the Web needed to become more dynamic.
+
+   - 1995 ::
+     - Netscape hired *Brendan Eich* with the promise of letting him implement
+       Scheme (a Lisp dialect) in the browser.
+     - Before he could get started, Netscape collaborated with hardware and
+       software company *Sun* (since bought by Oracle) to include its more
+       static programming language, *Java*, in Navigator.
+     - As a consequence, a hotly debated question at Netscape was why the Web
+       needed two programming languages: Java and a scripting language.
+     - Netscape management decided that a scripting language had to have a
+       syntax similar to Java’s.
+     - That ruled out adopting existing languages such as Perl, Python, TCL, or
+       Scheme.
+     - To defend the idea of JavaScript against competing proposals, Netscape
+       needed a prototype. Eich wrote one in 10 days.
+     - JavaScript’s first code name was *"Mocha"*.
+     - Netscape marketing later changed it to *"LiveScript"*, for trademark
+       reasons and because the names of several products already had the prefix
+       “Live.”
+     - In late November 1995, *Navigator 2.0B3* came out and included the
+       prototype, which continued its early existence without major changes.
+     - In early December 1995, Java’s momentum had grown and the language was
+       renamed again, to its final name, *JavaScript*.
+
+   - 1996 ::
+     - *Microsoft* implemented the same language, under the different
+       name *JScript*, in Internet Explorer 3.0
+     - Partially to keep Microsoft in check, Netscape decided to standardize
+       JavaScript and asked the standards organization *Ecma International* to
+       host the standard.
+     - Work on a specification called *ECMA-262* started.
+     - Because Sun (now Oracle) had a trademark on the term JavaScript, it
+       couldn’t be the official name of the language to be standardized. Hence,
+       *ECMAScript* was chosen, derived from JavaScript and Ecma.
+     - However, that name is used only to refer to versions of the language
+       (where one refers to the specification).  Everyone still calls the
+       language *JavaScript*.
+     - *ECMA-262* is managed and evolved by Ecma’s *Technical Committee 39
+       (TC39)*.
+
+   - 1997 ::
+     - ECMAScript 1 *First Edition*
+     - *Dynamic HTML*: allows you to dynamically change the content and
+       appearance of a web page, achieved by manipulating the Document Object
+       Model (DOM) of the page, a tree-shaped data structure.  Things that can
+       be done include: changing content, changing style, and showing and
+       hiding elements.  First in Internet Explorer 4 and in Netscape
+       Navigator 4.
+
+   - 1998 ::
+     - ECMAScript 2 --- Editorial changes to align ECMA-262 with the standard
+       ISO/IEC 16262
+
+   - 1999 ::
+     - ECMAScript 3 --- ~do-while~, regular expressions, new string methods
+       (~concat~, ~match~, ~replace~, ~slice~, ~split~ with a regular
+       expression, etc.), exception handling, and more
+     - *XMLHttpRequest*: lets a client-side script send an HTTP or HTTPS
+       request to a server and get back data, usually in a text format (XML,
+       HTML, JSON).  Introduced in Internet Explorer 5.
+
+   - 2001 ::
+     - *JSON*: a JavaScript-based data exchange format.  *Douglas Crockford*
+       named and documented JSON (JavaScript Object Notation), whose main idea
+       is to use JavaScript syntax to store data in text format.  JSON uses
+       JavaScript literals for objects, arrays, strings, numbers, and booleans
+       to represent structured data.
+
+   - 2004 ::
+     - *Dojo Toolkit*: a framework for programming JavaScript in the large.
+       The Dojo Toolkit facilitates programming in the large by providing the
+       necessary infrastructure: an inheritance library, a module system, an
+       API for desktop-style graphical widgets, and more.
+       - https://dojotoolkit.org
+       - https://github.com/dojo/dojo
+
+   - 2005 ::
+     - *AJAX* (/Asynchronous JavaScript and XML/): browser-based desktop-class
+       applications.  Ajax is a collection of technologies that brings a level
+       of interactivity to web pages that rivals that of desktop applications.
+       The two cornerstones of Ajax are:
+       1. loading content asynchronously in the background (via
+          ~XMLHttpRequest~); and
+       2. dynamically updating the current page with the results (via /dynamic
+          HTML/).
+
+       [[https://www.adaptivepath.com/ideas/ajax-new-approach-web-applications/][Ajax: A New Approach to Web Applications]] February 18, 2005 | By Jesse
+       James Garrett
+
+       Ajax marked the mainstream breakthrough of JavaScript and dynamic web
+       applications.  It is interesting to note how long that took—at that
+       point, the Ajax ingredients had been available for years.  Since the
+       inception of Ajax, other data formats have become popular (JSON instead
+       of XML), other protocols are used (e.g., Web Sockets in addition to
+       HTTP), and bidirectional communication is possible. But the basic
+       techniques are still the same.
+
+       The term Ajax is used much less these days and has mostly been replaced
+       by the more comprehensive terms *HTML5* and *Web Platform* (which both
+       mean /JavaScript plus browser APIs/).
+
+     - *Apache CouchDB*: a JavaScript-centric database.  Roughly, CouchDB is a
+       JSON database: you feed it JSON objects, without the need to specify a
+       schema in advance. Additionally, you can define views and indexes via
+       JavaScript functions that perform map/reduce operations. Hence, CouchDB
+       is a very good fit for JavaScript because you can work directly with
+       native data.  Compared to a /relational database/, there is no
+       mapping-related impedance mismatch.  Compared to an /object database/,
+       you avoid many complications because only data is stored, not behavior.
+
+       CouchDB is just one of several similar *NoSQL databases*.  Most of them
+       have excellent JavaScript support.
+
+       - http://couchdb.apache.org
+       - https://github.com/apache/couchdb
+
+   - 2006 ::
+     - *jQuery*: helping with DOM manipulation.  The browser DOM is one of the
+       most painful parts of client-side web development.  jQuery made DOM
+       manipulation fun by abstracting over browser differences and by
+       providing a powerful fluent-style API for querying and modifying the
+       DOM.
+
+   - 2007 ::
+     - *WebKit*: aking the mobile web mainstream.  Based on prior work by KDE,
+       WebKit is an /HTML engine/ that was introduced by Apple in 2003.  It was
+       open-sourced in 2005.  With the introduction of the iPhone in 2007, the
+       mobile Web suddenly became mainstream and had little to no limitations
+       compared to the nonmobile Web.
+
+   - 2008 ::
+     - ECMAScript 4 (Abandoned)
+
+       ECMAScript 4 was developed as the next version of JavaScript, with a
+       prototype written in ML.  However, TC39 could not agree on its feature
+       set.  To prevent an impasse, the committee met at the end of July 2008
+       and came to an accord, summarized in four points:
+
+       1. Develop an incremental update of ECMAScript 3 (which became
+          *ECMAScript 5*).
+
+       2. Develop a major new version that does less than ECMAScript 4, but
+          much more than the incremental update of ECMAScript 3. The code name
+          for the new version is *Harmony*, due to the nature of the meeting in
+          which it was conceived.  Harmony will be split into ECMAScript 6 and
+          ECMAScript 7.
+
+       3. Features from ECMAScript 4 that would be *dropped* included
+          /packages/, /namespaces/, and /early binding/.
+
+       4. Other ideas were to be developed in consensus with all of TC39.
+
+       Thus, the ECMAScript 4 developers agreed to make Harmony less radical
+       than ECMAScript 4, and the rest of TC39 agreed to keep moving things
+       forward.
+
+   - *V8*: proving JavaScript can be fast.  When Google introduced its Chrome
+     web browser, one of its highlights was a fast JavaScript engine called V8.
+     It changed the perception of JavaScript as being slow and led to a speed
+     race with other browser vendors from which we are still profiting.  V8 is
+     open source and can be used as a standalone component whenever you need a
+     fast embedded language that is widely known.
+
+   - 2009 ::
+     - ECMAScript 5 --- Adds a strict mode, getters and setters, new array
+       methods, support for JSON, and more
+
+     - *Node.js*: implementing JavaScript on the server.  Created by Ryan Dahl,
+       Node.js lets you implement servers that perform well under load.  To do
+       so, it uses /event-driven/, /nonblocking I/O/ and /JavaScript/ (via V8).
+       JavaScript was chosen for some of the following reasons:
+       - “Because it’s bare and does not come with I/O APIs.” [Node.js can thus
+         introduce its own nonblocking APIs.]
+       - “Web developers use it already.” [JavaScript is a widely known
+         language, especially in a web context.]
+       - “DOM API is event-based.  Everyone is already used to running without
+         threads and on an event loop.” [Developers are used to an asynchronous
+         coding style.]
+
+       The appeal of Node.js for JavaScript programmers goes beyond being able
+       to program in a familiar language; you get to use the same language on
+       both client and server.  That means you can share more code (e.g., for
+       validating data) and use techniques such as isomorphic
+       JavaScript. Isomorphic JavaScript is about assembling web pages on
+       either client or server, with numerous benefits: pages can be rendered
+       on the server for faster initial display, SEO, and running on browsers
+       that either don’t support JavaScript or a version that is too old. But
+       they can also be updated on the client, resulting in a more responsive
+       user interface.
+
+     - *PhoneGap*: writing native apps in HTML5.  The initial mission of
+       PhoneGap was to make it possible to implement native mobile apps via
+       HTML5. Since then, support has expanded to nonmobile operating
+       systems. Currently supported platforms include Android, Bada,
+       BlackBerry, Firefox OS, iOS, Mac OS X, Tizen, Ubuntu, Windows (desktop),
+       and Windows Phone.
+
+     - *Chrome OS*: making the browser the operating system.  With Chrome OS,
+       the web platform is the native platform. This approach has several
+       advantages:
+       - It is much easier to create an operating system, because all of the
+         user interface technology is already there.
+       - Many developers already (mostly) know how to write apps for the
+         operating system.
+       - Managing apps is simple. That helps public installations such as
+         Internet cafes and schools.
+
+   - 2011 ::
+     - ECMAScript 5.1 --- Editorial changes to align ECMA-262 with the third
+       edition of the international standard ISO/IEC 16262:2011
+
+     - *Windows 8*: first-class HTML5 apps.  Microsoft's Windows 8 has
+       extensive integration with HTML5.  HTML5 applications are first-class
+       citizens in Windows 8, on par with those implemented via incumbent
+       technologies such as .NET and C++.
+
+   - 2015 ::
+     - ECMAScript 6
+     - renamed to *ECMAScript 2015*
+     - and *ES2015*
+     - many new features added
+
+   - 2016 ::
+     - *ECMAScript 2016* (7th Edition)
+     - exponentiation operator; ~Array.prototype.includes()~
+
+   - 2017 ::
+     - *ECMAScript 2017* (8th Edition)
+     - concurrency; atomics; ~async/await~
+
+   - 2018 ::
+     - *ECMAScript 2018* (9th Edition)
+     - asynchronous iteration and generators; new RegExp features; rest/spread
+       parameters
+
+** CommonJS
+
+   - http://www.commonjs.org
+   - http://wiki.commonjs.org/wiki/CommonJS [fn:4]
+
+   JavaScript is a powerful object oriented language with some of the fastest
+   dynamic language interpreters around.  The official JavaScript specification
+   defines APIs for some objects that are useful for building browser-based
+   applications.  *However, the spec does not define a standard library that is
+   useful for building a broader range of applications*.
+
+   The CommonJS API will fill that gap by *defining APIs that handle many
+   common application needs*, ultimately providing a standard library as rich
+   as those of Python, Ruby and Java.  The intention is that an application
+   developer will be able to write an application using the CommonJS APIs and
+   then run that application across different JavaScript interpreters and host
+   environments.
+
+   With CommonJS-compliant systems, you can use JavaScript to write:
+
+   - Server-side JavaScript applications
+   - Command line tools
+   - Desktop GUI-based applications
+   - Hybrid applications (Titanium, Adobe AIR)
+
+   [[https://arstechnica.com/information-technology/2009/12/commonjs-effort-sets-javascript-on-path-for-world-domination/][CommonJS effort sets JavaScript on path for world domination]] KRIS KOWAL -
+   12/1/2009, 9:19 PM
+
+* ECMAScript Specifications
+
+  [[http://www.ecma-international.org/publications/standards/Ecma-262.htm][Current edition]].
+
+  The first edition of ECMA-262 was adopted by the Ecma General Assembly in
+  June 1997.  [[http://www.ecma-international.org/publications/standards/Ecma-262-arch.htm][Historical standards]].
+
+** Edition 1
+
+   June 1997.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25201st%2520edition,%2520June%25201997.pdf][First edition]]
+
+   Netscape 2 was the first browser to run JavaScript.  After Netscape the
+   Mozilla foundation continued to develop JavaScript for the Firefox browser.
+
+** Edition 2
+
+   June 1998.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25202nd%2520edition,%2520August%25201998.pdf][2nd Edition]]
+
+   Editorial changes.x
+
+** Edition 3
+
+   December 1999.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25203rd%2520edition,%2520December%25201999.pdf][3rd Edition]] PDF
+
+   ECMAScript 3 is fully supported in all browsers.
+
+   - Regular expressions
+   - better string handling
+   - new control statements
+   - try/catch exception handling
+   - tighter definition of errors
+   - formatting for numeric output
+
+** Edition 4
+
+   Abandoned.
+
+** Edition 5
+
+   December 2009.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262%25205th%2520edition%2520December%25202009.pdf][5th Edition]] PDF
+
+   ECMAScript 5 is fully supported in all /modern/ browsers.
+
+   - [[http://kangax.github.io/compat-table/es5/][ES5 compatibility table]]
+   - [[https://github.com/es-shims/es5-shim][es5-shim]]
+
+   Codifies de facto interpretations of the language specification that have
+   become common among browser implementations and adds support for new
+   features that have emerged since the publication of the third edition.
+
+   - strict mode that provides enhanced error checking and program security ::
+
+        'use strict' directive defines that the JavaScript code should be
+        executed in "strict mode".
+
+        ECMAScript defines a strict variant of the language. The
+        strict variant of the language excludes some specific syntactic and
+        semantic features of the regular ECMAScript language and modifies the
+        detailed semantics of some features.  The strict variant also specifies
+        additional error conditions that must be reported by throwing error
+        exceptions in situations that are not specified as errors by the
+        non-strict form of the language.
+
+        Strict mode selection and use of the strict mode syntax and semantics
+        of ECMAScript is explicitly made at the level of individual ECMAScript
+        code units.  Because strict mode is selected at the level of a
+        syntactic code unit, strict mode only imposes restrictions that have
+        local effect within such a code unit.
+
+   - ambiguities clarified ::
+
+   - accessor properties---getters and setters ::
+
+        Getters and setters allow the programnmer to implement the getting and
+        setting of a property via methods.
+
+   - syntactic changes ::
+
+        ECMAScript 5 includes the following syntactic changes:
+
+     + Reserved words as property keys; the programmer can use reserved words
+       (such as ~new~ and ~function~) after the dot operator and as unquoted
+       property keys in object literals.
+
+     + Legal trailing commas
+
+     + Multiline string literals using a trailing backslash (=/=)
+
+   - New Functionality in the Standard Library ::
+
+     + *Metaprogramming* (reflective creation and inspection of objects)
+
+       - Getting and setting prototypes
+
+         - ~Object.create()~
+
+         - ~Object.getPrototypeOf()~
+
+       - Managing property attributes via property descriptors (program control
+         of property attributes)
+
+         - ~Object.defineProperty()~
+
+         - ~Object.defineProperties()~
+
+         - ~Object.create()~
+
+         - ~Object.getOwnPropertyDescriptor()~
+
+       - Listing properties
+
+         - ~Object.keys()~
+
+         - ~Object.getOwnPropertyNames()~
+
+       - Protecting objects
+
+         - ~Object.preventExtensions()~
+
+         - ~Object.isExtensible()~
+
+         - ~Object.seal()~
+
+         - ~Object.isSealed()~
+
+         - ~Object.freeze()~
+
+         - ~Object.isFrozen()~
+
+       - New Function method
+
+         - ~Function.prototype.bind()~
+
+     + *New Methods*
+
+       - on Strings
+
+         - ~String.prototype.trim()~
+
+         - Access characters via the bracket operator =[...]=
+
+       - on Arrays
+
+         - ~Array.isArray()~
+
+         - ~Array.prototype.every()~
+
+         - ~Array.prototype.filter()~
+
+         - ~Array.prototype.forEach()~
+
+         - ~Array.prototype.indexOf()~
+
+         - ~Array.prototype.lastIndexOf()~
+
+         - ~Array.prototype.map()~
+
+         - ~Array.prototype.reduce()~
+
+         - ~Array.prototype.some()~
+
+       - on Dates
+
+         - ~Date.now()~
+
+         - ~Date.prototype.toISOString()~
+
+     + JSON library support
+
+       - ~JSON.parse()~
+
+       - ~JSON.stringify()~
+
+       - Some built-in objects have special toJSON() methods:
+
+         - ~Boolean.prototype.toJSON()~
+
+         - ~Number.prototype.toJSON()~
+
+         - ~String.prototype.toJSON()~
+
+         - ~Date.prototype.toJSON()~
+
+** Edition 5.1
+
+   June 2011.  [[http://www.ecma-international.org/ecma-262/5.1/index.html#Title][ECMAScript 5.1]] HTML
+
+   Fully aligned with third edition of the international standard ISO/IEC
+   16262:2011.
+
+** Edition 6 --- ECMAScript 2015 (ES 6) (ES2015)
+
+   June 2015.  [[http://www.ecma-international.org/ecma-262/6.0/index.html#Title][ECMAScript 2015 (ES2015)]]
+
+   Internet Explorer does not support ECMAScript 2015.
+
+   The sixth edition was initially known as ECMAScript 6 (ES6) and later
+   renamed to ECMAScript 2015 (ES2015).
+
+   #+BEGIN_QUOTE
+   ECMAScript 5 is a nice and decent programming language, of course. But
+   because of its history, it has some nasty aspects which ECMAScript 6 finally
+   resolves.... ECMAScript 6's language design is cleaner than ECMAScript 5,
+   its syntax increases the expressiveness of your code, it decreases the
+   necessary boilerplate code (e.g. function vs. arrow syntax) and it
+   especially let you get rid of some very nasty but required hacks and
+   workarounds from the ECMAScript 5 era (e.g. ~var self = this~).
+
+   --- Dr. Ralf S. Engelschall
+   #+END_QUOTE
+
+   - ~let~ and ~const~ declarations
+   - exponentiation operator =**=
+   - default parameter values
+   - number and math enhancements,
+     - new =Number= properties
+       - =EPSILON=
+       - =MIN_SAFE_INTEGER=
+       - =MAX_SAFE_INTEGER=
+     - new =Number= methods
+       - ~Number.isInteger()~
+       - ~Number.isSafeInteger()~
+   - new library methods on =Array=
+     - ~Array.find()~
+     - ~Array.findIndex()~
+   - new global methods
+     - ~isFinite()~
+     - ~isNaN()~
+   - significant new syntax for writing complex applications, defined
+     semantically in the same terms as ECMAScript 5 strict mode:
+     + classes
+     + modules
+   - iterators
+   - for/of loops
+   - Python-style generators and generator expressions
+   - arrow functions
+     - allow a short syntax for writing function expressions
+     - do not have their own =this=
+     - are not hoisted
+     - use =const= instead of =var= because a function expression is always a
+       constant
+   - binary data
+   - typed arrays
+   - collections
+     + maps
+     + sets
+     + weak maps
+   - promises
+   - reflection
+   - proxies (metaprogramming for virtual objects and wrappers)
+   - template literals
+
+** Edition 7 --- ES2016
+
+   June 2016.  [[http://www.ecma-international.org/ecma-262/7.0/index.html#Title][ECMAScript 2016 (ES2016)]]
+
+   - exponentiation operator (~**~)
+   - ~Array.prototype.includes~
+
+** Edition 8 --- ES2017
+
+   June 2017.  [[http://www.ecma-international.org/ecma-262/8.0/index.html#Title][ECMAScript 2017 (ES2017)]]
+
+   - concurrency
+   - atomics
+   - async/await (syntactic integration with promises )
+
+** Edition 9 --- ES2018
+
+   June 2018.  [[http://www.ecma-international.org/ecma-262/9.0/index.html#Title][ECMAScript 2018 (ES2018)]]
+
+   - features for asynchronous iteration and generators
+   - new regular expression features
+   - rest/spread parameters
+
+** Edition 10 --- ES2020 (Draft)
+
+   March 2019.  [[https://tc39.github.io/ecma262/][ECMAScript 2020 (Draft)]]
+
+* ECMAScript 3 Features
+
+* ECMAScript 5 Features
+
+* ECMAScript 2015 (ES6) Features
+
+  - http://es6-features.org/
+  - https://github.com/rse/es6-features
+
+** Constants
+
+** Scoping
+
+** Arrow Functions
+
+** Extended Parameter Handling
+
+** Template Literals
+
+** Extended Literals
+
+** Enhanced Regular Expression
+
+** Enhanced Object Properties
+
+** Destructuring Assignment
+
+** Modules
+
+** Classes
+
+** Symbol Type
+
+** Iterators
+
+** Generators
+
+** Map/Set & WeakMap/WeakSet
+
+** Typed Arrays
+
+** New Built-In Methods
+
+** Promises
+
+** Meta-Programming
+
+** Internationalization & Localization
+
+* ECMAScript compatibility table
+
+  - http://kangax.github.io/compat-table/es6/
+
+  Notice the column "Babel + core-js" as this is what can be achieved today
+  with transpiling (and that's fully sufficient for practice).
+* Export Settings                                                  :noexport:
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t H:6
+#+OPTIONS: html-scripts:t html-style:t html5-fancy:t tex:t ':t broken-links:mark
+#+HTML_DOCTYPE: html5
+#+HTML_CONTAINER: div
+#+DESCRIPTION:
+#+KEYWORDS:
+#+HTML_LINK_HOME:
+#+HTML_LINK_UP:
+#+HTML_MATHJAX:
+#+HTML_HEAD:
+#+HTML_HEAD_EXTRA:
+#+SUBTITLE:
+#+INFOJS_OPT:
+#+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.1 (<a href="https://orgmode.org">Org</a> mode 9.1.14)
+#+LATEX_HEADER:
+
+* Footnotes
+
+[fn:1] Except "use strict"
+
+[fn:2] Except leading zeroes in parseInt
+
+[fn:3] Partially supported by all browsers
+
+[fn:4] This page was last modified on 9 October 2011, at 19:22.
+

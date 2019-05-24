@@ -1,6 +1,7 @@
 # -*- mode: org; fill-column: 79; -*-
-#+TITLE:ECMAScript 262
-#+DATE:<2019-04-10 Wed 23:11>
+#+Title:ECMAScript 262
+#+Date:2019-05-24 07:00
+#+macro:version 0.1.1
 * ECMAScript Description
 
   The ECMAScript specification is a standardized specification of a scripting
@@ -749,9 +750,203 @@
 p
     Covers what’s new in ECMAScript 2018 and ECMAScript 2019.
 
+* JavaScript---The Definitive Guide
+:PROPERTIES:
+:author:   David Flanagan
+:published: 2011
+:publisher: O'Reilly Media
+:END:
+- http://shop.oreilly.com/product/9780596805531.do
+- [[https://resources.oreilly.com/examples/9780596805531/][Example Code]]
+- [[https://www.oreilly.com/catalog/errata.csp?isbn=9780596805531][Errata]]
+
+Since 1996, /JavaScript: The Definitive Guide/ has been the bible for
+JavaScript programmers---a programmer's guide and comprehensive reference to the
+core language and to the client-side JavaScript APIs defined by web browsers.
+
+The 6th edition covers HTML5 and ECMAScript 5.  Many chapters have been
+completely rewritten to bring them in line with today's best web development
+practices.  New chapters in this edition document jQuery and server side
+JavaScript.  It's recommended for experienced programmers who want to learn the
+programming language of the Web, and for current JavaScript programmers who
+want to master it.
+
+This book covers the JavaScript language and the JavaScript APIs implemented by
+web browsers.  It was written for programmers who already use JavaScript but
+want to take their understanding to a new level and really master the language
+and the web platform.  The goal with this book is to document the JavaScript
+language and platform comprehensively and definitively.  It will reward careful
+study, and that the time you spend reading it will be easily recouped in the
+form of higher programming productivity.
+
+{{{heading(How This Book Is Organized)}}}
+This book is divided into four parts.
+
+- Part I covers the JavaScript language itself.
+- Part II covers client-side JavaScript: the JavaScript APIs defined by HTML5
+  and related standards and implemented by web browsers.
+- Part III is the reference section for the core language,
+- Part IV is the reference for client-side JavaScript.
+
+
+This sixth edition of the book covers both:
+
+- ECMAScript 5 (the latest version of the core language) and
+- HTML5 (the latest version of the web platform)
+
+** Introduction to JavaScript
+:PROPERTIES:
+:chapter:  One
+:END:
+JavaScript is part of the triad of technologies that all Web developers must
+learn:
+
+- HTML to specify the /content/ of web pages
+- CSS to specify the /presentation/ of web pages, and
+- JavaScript to specify the /behavior/ of web pages.
+
+
+JavaScript is:
+
+- a high-level,
+- dynamic,
+- untyped
+- interpreted
+- programming language
+
+that is well-suited to:
+
+- /object-oriented/ and
+- /functional/
+
+programming styles.  JavaScript derives:
+
+- its /syntax/ from *Java*,
+- its /first-class functions/ from *Scheme*, and
+- its /prototype-based inheritance/ from *Self*.
+
+
+JavaScript has long since outgrown its scripting-language roots to become a
+robust and efficient general-purpose language.  The latest version of the
+language defines new features for serious large-scale software development.
+
+*** Some History of JavaScript the Name
+JavaScript is completely different from the Java programming language.  “Java-
+Script” is a trademark licensed from Sun Microsystems (now Oracle) used to
+describe Netscape’s (now Mozilla’s) implementation of the language.
+
+Netscape submitted the language for standardization to ECMA---the European
+Computer Manufacturer’s Association---and because of trademark issues, the
+standardized version of the language was stuck with the awkward name
+“ECMAScript.”  Microsoft’s version of the language is formally known as
+“JScript.”  This book uses the name “ECMAScript” only to refer to the language
+standard.
+
+*** About Versions
+For the last decade[fn:5], all web browsers have implemented version 3 of the
+ECMAScript standard and there has really been no need to think about version
+numbers: the lan- guage standard was stable and browser implementations of the
+language were, for the most part, interoperable.
+
+Recently, an important new version of the language has been defined as
+ECMAScript version 5 and, at the time of this writing, browsers are beginning
+to implement it.  This book covers all the new features of ECMAScript 5 as well
+as all the long-standing features of ECMAScript 3.  You’ll sometimes see these
+language versions abbreviated as ES3 and ES5, just as you’ll sometimes see the
+name JavaScript abbreviated as JS.
+
+The only version numbers that are relevant are ECMAScript versions 3 or 5.
+Version 4 was never released.  Sometimes, however, you’ll also see a JavaScript
+version number, such as JavaScript 1.5 or JavaScript 1.8.  These are Mozilla’s
+version numbers: version 1.5 is basically ECMAScript 3, and later versions
+include nonstandard language extensions.  there are also version numbers
+attached to particular JavaScript interpreters or “engines.” Goo- gle calls its
+JavaScript interpreter V8, for example, and at the time of this writing the
+current version of the V8 engine is 3.0.
+
+*** About JavaScript's Minimal Standard Library
+To be useful, every language must have a platform or /standard library/ or API
+of functions for performing things like basic input and output.  The core
+JavaScript language defines a minimal API for working with /text/, /arrays/,
+/dates/, and /regular expressions/ but does not include any /input/ or /output/
+functionality.  Input and output (as well as more sophisticated features, such
+as /networking/, /storage/, and /graphics/) are the responsibility of the “host
+environment” within which JavaScript is embedded.  Usually that host
+environment is a web browser, but it can be something else.
+
+*** What This Book Covers
+This book covers low-level fundamentals first, and then builds on those to more
+advanced and higher-level abstractions.
+
+- [[*Core JavaScript][Part I]] of this book covers the language itself and its minimal built-in API.
+- [[*Client-Side JavaScript][Part II]] explains how JavaScript is used in web browsers and covers the
+  sprawling browser-based APIs loosely known as “client-side JavaScript.”
+- [[*Core API Reference][Part III]] is the reference section for the core API.
+- [[*Client-Side JavaScript Reference][Part IV]] is the reference section for client-side JavaScript.
+
+Chapter 1 makes a quick first pass through the core language and the
+client-side API, introducing key features that will make it easier to
+understand the in-depth treatment in the chapters that follow.
+
+*** An Overview of Core JavaScript
+
+
+** Core JavaScript
+
+*** Lexical Structure
+
+*** Types Values and Variables
+
+*** Expressions and Operators
+
+*** Statements
+
+*** Objects
+
+*** Arrays
+
+*** Functions
+
+*** Classes and Modules
+
+*** Regular Expressions
+
+*** JavaScript Subsets and Extensions
+
+*** Server-Side JavaScript
+
+** Client-Side JavaScript
+
+*** JavaScript in Web Browsers
+
+*** The Window Object
+
+*** Scripting Documents
+
+*** Scripting CSS
+
+*** Handling Events
+
+*** Scripted HTTP
+
+*** The jQuery Library
+
+*** Client-Side Storage
+
+*** Scripted Media and Graphics
+
+*** HTML5 APIs
+
+** Core API Reference
+
+** Client-Side JavaScript Reference
+
 * Export Settings                                                  :noexport:
+** Options
 #+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t H:6
 #+OPTIONS: html-scripts:t html-style:t html5-fancy:t tex:t ':t broken-links:mark
+
+** HTML Export Settings
 #+HTML_DOCTYPE: html5
 #+HTML_CONTAINER: div
 #+DESCRIPTION:
@@ -761,12 +956,18 @@ p
 #+HTML_MATHJAX:
 #+HTML_HEAD:
 #+HTML_HEAD_EXTRA:
-#+SUBTITLE:
+#+SUBTITLE:Version {{{version}}} Lasted Updated {{{date}}}
 #+INFOJS_OPT:
 #+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.1 (<a href="https://orgmode.org">Org</a> mode 9.1.14)
 #+LATEX_HEADER:
 
+** Macro Definitions
+#+macro:heading @@html:<h2>@@$1@@html:</h2>@@
+#+macro:subheading @@html:<h3>@@$1@@html:</h3>@@
+
 * Footnotes
+
+[fn:5] Roughly 2000--2010
 
 [fn:1] Except "use strict"
 
@@ -776,3 +977,7 @@ p
 
 [fn:4] This page was last modified on 9 October 2011, at 19:22.
 
+* Local Variables
+# Local Variables:
+# time-stamp-pattern:"8/^\\#\\+Date:%:y-%02m-%02d %02H:%02M$"
+# End:

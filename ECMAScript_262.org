@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-05-24 10:01
-#+macro:version 0.1.3
+#+Date:2019-05-24 11:01
+#+macro:version 0.1.4
 
 * ECMAScript Description
 
@@ -993,6 +993,15 @@ affiliated with HTML5.  Networking, storage, graphics: these are OS-type
 services being provided by the web browser, defining a new cross-platform
 application environment.
 
+*** An Extended Example --- LoanCalc
+- [[file:LoanCalc.org][LoanCalc]]
+
+This chapter ends with an extended example that puts many of these techniques
+together and shows what real-world client-side JavaScript (plus HTML and CSS)
+programs look like.
+
+[[../figs/loancalc-50.png]]
+
 ** Core JavaScript
 *** Lexical Structure
 
@@ -1061,6 +1070,7 @@ application environment.
 #+OPTIONS: html-scripts:t html-style:t html5-fancy:t tex:t ':t broken-links:mark
 
 ** HTML Export Settings
+#+EXPORT_FILE_NAME: ecmascript_262.html
 #+HTML_DOCTYPE: html5
 #+HTML_CONTAINER: div
 #+DESCRIPTION:

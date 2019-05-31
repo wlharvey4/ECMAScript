@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-05-24 11:01
-#+macro:version 0.1.4
+#+Date:2019-05-31 11:15
+#+macro:version 0.2.0
 
 * ECMAScript Description
 
@@ -790,6 +790,7 @@ This book is divided into four parts.
 - Part IV is the reference for client-side JavaScript.
 
 
+{{{subheading(The Sixth Edition)}}}
 This sixth edition of the book covers both:
 
 - ECMAScript 5 (the latest version of the core language) and
@@ -1051,6 +1052,414 @@ programs look like.
 
 ** Client-Side JavaScript Reference
 
+* Secrets of the JavaScript Ninja
+:PROPERTIES:
+:Author:   John Resig
+:Author+:  Bear Bibeault
+:Published: 2013
+:Publisher: Manning Publications Co.
+:ISBN:     978-1-933988-69-6
+:Pages:    392
+:URI:      https://www.manning.com/books/secrets-of-the-javascript-ninja
+:END:
+
+- https://livebook.manning.com/#!/book/secrets-of-the-javascript-ninja/table-of-contents/
+
+
+** Front Matter
+:PROPERTIES:
+:unnumbered: t
+:END:
+#+texinfo:@insertcopying
+*** Copying
+:PROPERTIES:
+:copying:  t
+:unnumbered: t
+:END:
+\copy2013 by Manning Publications Co. All rights reserved.
+
+#+HTML:<pre>
+#+begin_display
+Manning Publications Co.
+20 Baldwin Road
+PO Box 261
+Shelter Island, NY 11964
+#+end_display
+#+HTML:</pre>
+
+*** Preface
+
+{{{heading(In-Depth Coverage Topics)}}}
+
+A real need for in-depth coverage of the most important parts of the JavaScript
+language:
+#+cindex:functions
+- functions
+  #+cindex:closures
+- closures
+  #+cindex:protyptes
+- prototypes
+  #+cindex:cross-browser code
+- cross-browser code
+
+
+{{{heading(The Fundamentals)}}}
+
+There isn’t any point to diving into new technologies if you don’t have a
+proper understanding of the fundamental characteristics of the JavaScript
+language.  The reality is that most development needs to make sure that code
+continues to work in the majority of browsers and for the majority of potential
+users.
+
+{{{heading(jQuery)}}}
+
+#+cindex:jQuery
+Perhaps the largest change that came to jQuery as a result of writing this book
+was a complete overhaul from using browser-specific sniffing to using feature
+detection at the core of the library.  This has enabled jQuery to be used
+almost indefinitely, without assuming that browsers would always have specific
+bugs or be missing specific features.
+
+#+cindex:cross-browser capabilities
+Using the techniques outlined in this book, jQuery’s cross-browser capabilities
+provide a fairly solid guarantee that code written with jQuery will work in a
+maximum number of browser environments.  This guarantee has led to explosive
+growth in jQuery over the past four years, with it now being used in over 57%
+of the top 10,000 websites on the Internet, according to BuiltWith.com.
+
+{{{heading(New JS-Based Languages)}}}
+
+#+cindex:CoffeeScript
+#+cindex:Processing.js
+#+cindex:ECMAScript specification
+There are now a number of active programming languages that are built on top
+of, or compiled to, JavaScript, such as CoffeeScript and Processing.js.  These
+languages require complex language parsing, code evaluation, and scope
+manipulation in order to work effectively.  Although dynamic code evaluation
+has been maligned due to its complexity and potential for security issues,
+without it we wouldn’t have had the CoffeeScript programming language, which
+has gone on to influence the upcoming ECMAScript specification itself.
+
+{{{heading(The Future)}}}
+
+#+cindex:browser APIs
+The future for browser development continues to be very strong, and it’s
+largely due to the features encapsulated in JavaScript and in the browser APIs.
+Having a solid grasp of the most crucial parts of the JavaScript language,
+combined with a desire for writing code that’ll work in many browsers, will
+enable you to create code that’s elegant, fast, and ubiquitous.
+
+*** About this Book
+Web developers need to have a sound grasp of the language that brings life to
+web applications.
+
+#+cindex:Rhino
+#+cindex:V8
+#+cindex:Node.js
+JavaScript isn’t just for browsers anymore.  The language has knocked down the
+walls of the browser and is being used on the server in engines such as Rhino
+and V8, and in frameworks like Node.js.
+
+Although this book is primarily focused on JavaScript for web applications, the
+fundamentals of the language presented in [[*Part 2---Apprentice Training][Part 2]] of this book are applicable
+across the board.
+
+It’s now more important than ever that they grasp its fundamentals, so that
+they can become true ninjas of the language.
+
+{{{heading(Intended Audience)}}}
+
+This book is aimed at web developers who already have at least a basic grasp of
+JavaScript.
+- You should understand the basic structure of JavaScript statements and
+- how they work to create straightforward on-page scripts.
+- You don’t need to be an advanced user of the language—that’s what this book is for—but
+- you shouldn’t be a rank novice.
+- You should also have a working knowledge of HTML and CSS.
+- You should know the basics of putting a web page together.
+
+
+{{{heading(Recommended Prerequisite Materials)}}}
+
+#+cindex:recommended reading
+#+cindex:prerequisite reading
+#+cindex:JavaScript: The Definitive Guide
+#+cindex:Flanagan, David
+#+cindex:JavaScript: The Good Parts
+#+cindex:Crockford, Douglas
+#+cindex:Head First JavaScript
+#+cindex:Morrison, Michael
+- /JavaScript: The Definitive Guide/ by David Flanagan
+- /JavaScript: The Good Parts/ by Douglas Crockford
+- /Head First JavaScript/ by Michael Morrison.
+
+**** Roadmap
+
+This book is organized to take you from an apprentice to a ninja in four parts.
+
+1. [[*Part 1---Preparing for Training][Part 1]] introduces the topic and some tools we’ll need as we progress through
+   the rest of the book.
+
+   #+cindex:advanced web applications, problems
+   - [[*Enter the Ninja][Chapter 1]] introduces us to the challenges that we face as writers of
+     advanced web applications.  It presents some of the problems that the
+     proliferation of browsers creates, and suggests best current practices
+     that we should follow when developing our applications, including testing
+     and performance analysis.
+
+     #+cindex:testing
+     #+cindex:test tools
+     #+cindex:assert
+   - [[*Arming with Testing and Debugging][Chapter 2]] discusses testing, taking a look at the current state of testing
+     and test tools.  It also introduces a small but powerful testing concept,
+     the ~assert~, which will be used extensively throughout the remainder of
+     the book to make sure that our code does what we think it should be doing
+     (or sometimes to prove that it doesn’t!).
+
+     #+cindex:JavaScript fundamentals
+2. [[*Part 2---Apprentice Training][Part 2]] focuses on JavaScript fundamentals: aspects of the language that you
+   take for granted but aren’t really sure how they work.  This may be the most
+   important part of the book, and even if it’s all you read, you’ll come away
+   with a much sounder understanding of JavaScript, the language.
+
+   #+cindex:functions
+   #+cindex:functional language
+   - Armed with these tools, [[*Functions are Fundamental][chapter 3]] begins our foray into the fundamentals
+     of the language, starting, perhaps to your surprise, with a thorough
+     examination of the function as defined by JavaScript.  Although you might
+     have expected the object to be the target of first focus, it’s a solid
+     understanding of the function, and JavaScript as a functional language,
+     that begins our transformation from run-of-the-mill JavaScript coders to
+     JavaScript ninjas!
+
+     #+cindex:recursion
+     #+cindex:variable argument lists
+     #+cindex:overload functions
+     #+cindex:method overloading
+     #+cindex:functional programming
+   - Not being done with functions quite yet, [[*Wielding Functions][chapter 4]] takes the fundamentals
+     we learned in chapter 3 and applies them to problems we face in creating
+     our applications.  We’ll explore recursion—not only for its own sake, but
+     because we can learn a lot more about functions through scrutinizing
+     it---and we’ll learn how the functional programming aspects of JavaScript
+     can be applied to not only make our code elegant, but also more robust and
+     succinct.  We’ll learn ways to deal with variable argument lists, and ways
+     to overload functions in a language that doesn’t natively support the
+     object-oriented concept of method overloading.
+
+     #+cindex:closures
+     #+cindex:functional programming
+     #+cindex:scope
+   - One of the most important concepts you can take away from this book is the
+     subject of [[*Object-orientation with Prototypes][chapter 5]]: closures.  A key concept in functional programming,
+     closures allow us to exert fine-grained control over the scope of objects
+     that we declare and create in our programs.  The control of these scopes
+     is the key factor in writing code worthy of a ninja.  Even if you stop
+     reading after this chapter (but we hope that you don’t), you’ll be a far
+     better JavaScript developer than when you started.
+
+     #+cindex:objects
+     #+cindex:prototype property
+     #+cindex:functions and the prototype property
+   - Objects are finally addressed in [[*Object-orientation with Prototypes][chapter 6]], where we learn how patterns of
+     objects can be created through the prototype property of the function, and
+     we’ll learn how objects are tied to functions for their definitions---one
+     of the many reasons we discussed functions first.
+
+     #+cindex:regular expressions
+   - [[*Wrangling Regular Expressions][Chapter 7]] focuses on the regular expression, an often-overlooked feature
+     of the language that can do the work of scores of lines of code when used
+     correctly.  We’ll learn how to construct and use regular expressions and
+     how to solve some recurring problems elegantly, using regular expressions
+     and the methods that work with them.
+
+     #+cindex:timers
+     #+cindex:intervals
+     #+cindex:single-threaded model
+     #+cindex:HTML5
+     #+cindex:web workers
+   - Part 2 on language fundamentals closes out with [[*Taming Threads and Timers][chapter 8]], in which we
+     learn how timers and intervals work in the single-threaded nature of
+     JavaScript.  HTML5 promises to bring us relief from the confines of the
+     single thread with web workers, but most browsers aren’t quite there yet,
+     and virtually all of the existing JavaScript code depends upon a good
+     understanding of JavaScript’s single-threaded model.
+
+     #+cindex:problems, solve
+3. In [[*Part 3---Ninja Training][part 3]], we dive into using the fundamentals that we learned in part 2 to
+   solve knotty problems that the browsers throw at us.
+
+   #+cindex:runtime code evaluation
+   #+cindex:evaluate code while running
+   #+cindex:JSON evaluation
+   #+cindex:metalanguages
+   #+cindex:domain-specific languages
+   #+cindex:compression
+   #+cindex:obfuscation
+   #+cindex:aspect-oriented programming
+   - Part 3 opens with [[*Ninja Alchemy - Runtime Code Evaluation][chapter 9]], in which we open the black box of
+     JavaScript’s runtime code evaluation.  We’ll look at various ways to
+     evaluate code on the fly, including how to do so safely and in the scope
+     of our choosing.  Real-world examples, such as JSON evaluation,
+     metalanguages (a.k.a. domain-specific languages), compression and
+     obfuscation, and even aspect-oriented programming, are discussed.
+
+     #+cindex:with statement
+   - In [[*=with= Statements][chapter 10]], we examine the controversial ~with~ statement, which is
+     used to shorten references within a scope.  Whether you are a fan or
+     detractor of ~with~, it exists in a lot of code in the wild, and you
+     should understand it regardless of whether you think it’s the bomb or an
+     abomination.
+
+     #+cindex:cross-browser issues
+     #+cindex:browser differences
+     #+cindex:browser bugs,fixes
+     #+cindex:browers, missing features
+     #+cindex:feature simulation
+     #+cindex:object detection
+   - Dealing with cross-browser issues is the subject of [[*Developing Cross-Browser Strategies][chapter 11]].  We
+     examine the five key development concerns with regard to these issues:
+     browser differences, bugs and bug fixes, external code and markup, missing
+     features, and regressions.  Strategies such as feature simulation and
+     object detection are discussed at length to help us deal with these
+     cross-browser challenges.
+
+     #+cindex:element attributes, properties
+     #+cindex:attributes
+     #+cindex:properties
+     #+cindex:styles
+   - Handling element attributes, properties, and styles is the focus of
+     [[*Cutting Through Attributes-Properties-and CSS][chapter 12]].  While the differences in how the various browsers handle these
+     aspects of elements are slowly converging over time, there still exists a
+     number of knotty problems that this chapter describes how to solve.
+
+     #+cindex:event handling
+     #+cindex:custom events
+     #+cindex:event delegation
+   - Part 3 concludes in [[*Surviving Events][chapter 13]] with a thorough investigation of event
+     handling in the browsers and ways to create a unified subsystem that
+     handles events in a browser-agnostic manner.  This includes adding features
+     not provided by the browsers, such as custom events and event delegation.
+
+   #+cindex:advanced topics
+   #+cindex:jQuery library
+4. [[*Part 4---Master Training][Part 4]] wraps up the book with a look at advanced topics focusing on lessons
+   learned from the creation of advanced JavaScript libraries, such as jQuery.
+
+   #+cindex:DOM manipulation APIs
+   #+cindex:Document Object Model
+   #+cindex:manipulate DOM at runtime
+   #+cindex:injecting elements into the DOM
+   - In part 4 we pick up the pace and delve deeply into advanced topics taken
+     from the heart of JavaScript libraries such as jQuery.  [[*Manipulating the DOM][Chapter 14]]
+     discusses how DOM manipulation APIs can be constructed to manipulate the
+     Document Object Model at runtime, including the Gordian knot of injecting
+     new elements into the DOM.
+
+     #+cindex:CSS selector engines
+   - Finally, in [[*CSS Selector Engines][chapter 15]], we discuss how CSS selector engines are
+     constructed and the different ways in which they parse and evaluate
+     selectors.  Not for the faint of heart, this chapter, but it’s a worthy
+     final test of your ninja-hood.
+
+**** Code Downloads
+
+#+cindex:source code
+#+cindex:download source code
+Source code for all the working examples in this book (along with some extras
+that never made it into the text) is available for download from the book’s web
+page at:
+
+-  https://www.manning.com/SecretsoftheJavaScriptNinja
+
+
+#+cindex:Apache server
+The code examples for this book are organized by chapter, with separate folders
+for each chapter.  The layout is ready to be served by a local web server, such
+as the Apache HTTP Server.  Simply unzip the downloaded code into a folder of
+your choice and make that folder the document root of the application.  Most of
+the examples don’t require the presence of a web server at all and can be
+loaded directly into a browser for execution.
+
+*** About the Authors
+
+**** John Resig
+
+#+cindex:Resig, John
+#+cindex:Khan Academy
+- Dean of Computer Science at Khan Academy
+  - Khan Academy’s goal is to create excellent educational resources that are
+    freely available for all to learn from
+  #+cindex:jQuery library
+- creator of the jQuery JavaScript library
+  #+cindex:open source
+- also created a number of other open source utilities and projects, including
+    #+cindex:Processing.js
+  - Processing.js (a port of the Processing language to JavaScript)
+    #+cindex:QUnit
+    #+cindex:test suite, QUnit
+  - QUnit (a test suite for testing JavaScript code)
+    #+cindex:TestSwarm
+    #+cindex:testing, distributed
+  - TestSwarm (a platform for distributed JavaScript testing)
+
+**** Bear Bibeault
+
+#+cindex:Bibeault, Bear
+#+cindex:books
+Bear is the author of a number of other Manning books:
+#+cindex:jQuery in Action
+- /jQuery in Action/ (first and second editions)
+  #+cindex:Ajax in Practice
+- /Ajax in Practice/
+  #+cindex:Prototype and Scriptaculous in Action
+- /Prototype and Scriptaculous in Action/
+
+** Part 1---Preparing for Training
+
+*** Enter the Ninja
+
+*** Arming with Testing and Debugging
+
+** Part 2---Apprentice Training
+
+*** Functions are Fundamental
+
+*** Wielding Functions
+
+*** Closing in on Closures
+
+*** Object-orientation with Prototypes
+
+*** Wrangling Regular Expressions
+
+*** Taming Threads and Timers
+
+** Part 3---Ninja Training
+
+*** Ninja Alchemy - Runtime Code Evaluation
+
+*** =with= Statements
+
+*** Developing Cross-Browser Strategies
+
+*** Cutting Through Attributes-Properties-and CSS
+*** Surviving Events
+
+** Part 4---Master Training
+
+*** Manipulating the DOM
+
+*** CSS Selector Engines
+
+** End Matter
+
+** Concept Index
+:PROPERTIES:
+:index:    cp
+:unnumbered: t
+:END:
+
 * Footnotes
 
 [fn:5] Roughly 2000--2010
@@ -1065,29 +1474,44 @@ programs look like.
 
 * Export Settings                                                  :noexport:
 
-** Options
+** Macro Definitions
+#+macro:heading @@html:<h2>@@@@texinfo:@heading @@$1@@html:</h2>@@
+#+macro:subheading @@html:<h3>@@@@texinfo:@subheading @@$1@@html:</h3>@@
+
+** Export to HTML
+*** HTML Options
 #+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t H:6
 #+OPTIONS: html-scripts:t html-style:t html5-fancy:t tex:t ':t broken-links:mark
 
-** HTML Export Settings
-#+EXPORT_FILE_NAME: ecmascript_262.html
-#+HTML_DOCTYPE: html5
-#+HTML_CONTAINER: div
-#+DESCRIPTION:
-#+KEYWORDS:
-#+HTML_LINK_HOME:
-#+HTML_LINK_UP:
-#+HTML_MATHJAX:
-#+HTML_HEAD:
-#+HTML_HEAD_EXTRA:
-#+SUBTITLE:Version {{{version}}} Lasted Updated {{{date}}}
-#+INFOJS_OPT:
-#+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.1 (<a href="https://orgmode.org">Org</a> mode 9.1.14)
-#+LATEX_HEADER:
+*** HTML Export Settings
+#+export_file_name: ecmascript_262.html
+#+html_doctype: html5
+#+html_container: div
+#+description:
+#+keywords:
+#+html_link_home:
+#+html_link_up:
+#+html_mathjax:
+#+html_head:
+#+html_head_extra:
+#+subtitle:Version {{{version}}} Lasted Updated {{{date}}}
+#+infojs_opt:
+#+creator: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 26.1 (<a href="https://orgmode.org">Org</a> mode 9.1.14)
+#+latex_header:
 
-** Macro Definitions
-#+macro:heading @@html:<h2>@@$1@@html:</h2>@@
-#+macro:subheading @@html:<h3>@@$1@@html:</h3>@@
+** Export to Texinfo
+
+*** Texinfo Export Settings
+#+texinfo_filename:ecmascript_262.info
+#+texinfo_class: info
+#+texinfo_header:
+#+texinfo_post_header:
+#+subtitle:
+#+subauthor:
+#+texinfo_dir_category:JavaScript
+#+texinfo_dir_title:Secrets of the JavaScript Ninja
+#+texinfo_dir_desc:Training in the JavaScript language
+#+texinfo_printed_title:Secrets of the JavaScript Ninja
 
 * Local Variables                                                  :noexport:
 # Local Variables:

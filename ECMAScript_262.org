@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-05-31 11:15
-#+macro:version 0.2.0
+#+Date:2019-06-02 14:31
+#+macro:version 0.2.1
 
 * ECMAScript Description
 
@@ -1459,6 +1459,110 @@ Bear is the author of a number of other Manning books:
 :index:    cp
 :unnumbered: t
 :END:
+
+* Variants
+
+** TypeScript
+
+- http://www.typescriptlang.org
+- https://github.com/Microsoft/TypeScript
+
+
+- http://jonathancreamer.com/why-would-you-not-use-typescript/
+
+- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-part-1-alternatives-ec1248bb6dc
+- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-part-2-typescript-adds-overhead-20b670b9105a
+- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-50ab0d225bdd
+
+- https://medium.jonasbandi.net/hidden-features-of-create-react-app-52db3a17acc0
+
+** PureScript
+
+- http://www.purescript.org
+- https://github.com/purescript
+
+
+#+begin_quote
+"A small strongly, statically typed language which compiles to Javascript"
+#+end_quote
+
+- https://survivejs.com/blog/purescript-interview/
+
+** TypeScript vs Purescript
+
+- https://blog.logrocket.com/typescript-vs-purescript-not-all-compilers-are-created-equal-c16dadaa7d3e/
+
+- https://www.slant.co/versus/378/389/~typescript_vs_purescript
+
+** Elm
+
+- https://elm-lang.org
+- https://github.com/elm
+
+
+#+begin_quote
+"Elm is a domain-specific programming language for declaratively creating web
+browser-based graphical user interfaces.  Elm is purely functional, and is
+developed with emphasis on usability, performance, and robustness.  It
+advertises "no runtime exceptions in practice", made possible by the Elm
+compiler's static type checking."
+#+end_quote
+
+- Designed By :: Evan Czaplicki
+- First Appeared :: 2012
+- Influenced By :: Haskell, Standard ML, OCaml, F#
+
+** Reason---Facebook
+
+"Reason lets you write simple, fast and quality type safe code while leveraging
+both the JavaScript & OCaml ecosystems."
+
+- https://reasonml.github.io
+- https://github.com/facebook/reason
+
+
+#+begin_quote
+"Reason, also known as ReasonML, is a syntax extension and toolchain for OCaml
+created by Jordan Walke at Facebook.  Reason offers a syntax familiar to
+JavaScript programmers, and transpiles to OCaml.  Statically typed Reason (or
+OCaml) code may be compiled to dynamically typed JavaScript using the
+BuckleScript compiler."
+#+end_quote
+
+- Designed By :: Jordan Walke
+- First Appeared :: May 16, 2016
+- Influenced By :: OCaml
+
+** Flow
+
+"Flow is a static type checker for JavaScript."
+
+- https://flow.org
+- https://github.com/facebook/flow
+
+** Dart---Google---Ecma TC52
+
+"Dart is a client-optimized language for fast apps on any platform."
+
+- https://dart.dev
+- https://github.com/dart-lang
+- https://www.dartlang.org/guides/language/spec
+
+
+#+begin_quote
+Dart is a client-optimized programming language for fast apps on multiple
+platforms.  It is developed by Google and is used to build mobile, desktop,
+backend and web applications.
+
+Dart is an object-oriented, class defined, garbage-collected language using a
+C-style syntax that transcompiles optionally into JavaScript.  It supports
+interfaces, mixins, abstract classes, reified generics, static typing, and a
+sound type system.
+#+end_quote
+
+- Designed By :: Lars Bak and Kasper Lund
+- First Appeared :: October 10, 2011
+- Influenced By :: C#, Erlang, JavaScript, Smalltalk, Strongtalk
 
 * Footnotes
 

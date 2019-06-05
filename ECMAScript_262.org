@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-02 14:31
-#+macro:version 0.2.1
+#+Date:2019-06-05 12:39
+#+macro:version 0.2.2
 
 * ECMAScript Description
 
@@ -1051,7 +1051,6 @@ programs look like.
 ** Core API Reference
 
 ** Client-Side JavaScript Reference
-
 * Secrets of the JavaScript Ninja
 :PROPERTIES:
 :Author:   John Resig

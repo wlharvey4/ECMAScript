@@ -1,6 +1,103 @@
 # -*- mode:org; -*-
 #+Title:Loan Calculator in JavaScript
 #+subtitle:/loancalc.html/
+* A JavaScript Loan Calculator
+The example demonstrates a number of core JavaScript language features, and
+also demonstrates important client-side JavaScript techniques:
+
+- How to find elements in a document.
+
+- How to get user input from form input elements.
+
+- How to set the HTML content of document elements.
+
+- How to store data in the browser.
+
+- How to make scripted HTTP requests.
+
+- How to draw graphics with the <canvas> element.
+
+
+#+name:loancalc-html
+#+begin_src html :tangle loancalc.html :noweb tangle
+<!DOCTYPE html>
+<html>
+  <<loancalc-head>>
+
+  <<loancalc-body>>
+</html>
+#+end_src
+
+** LoanCalc Head
+#+name:loancalc-head
+#+begin_src html
+<head>
+  <title>JavaScript Loan Calculator</title>
+  <style> /* This is a CSS style sheet: it adds style to the program output */
+    .output { font-weight: bold; }	/* Calculated values in bold */
+    #payment { text-decoration: underline; } /* For element with id="payment" */
+    #graph { border: solid black 1px; }	/* Chart has a simple border */
+    th, td { vertical-align: top; }	/* Don't center table cells */
+  </style>
+</head>
+#+end_src
+
+** LoanCalc Body
+:PROPERTIES:
+:header-args: :noweb-ref loancalc-body
+:END:
+
+*** Start of body
+#+begin_src html
+<body>
+  <!-- This is an HTML table with <input> elements that allow the user
+      to enter data and <span> elements in which the program can
+      display its results.  These elements have ids like "interest"
+      and "years". These ids are used in the JavaScript code that
+      follows the table. Note that some of the input elements define
+      "onchange" or "onclick" event handlers. These specify strings of
+      JavaScript code to be executed when the user enters data or
+      clicks.
+  -->
+
+#+end_src
+
+*** Table in body
+
+#+begin_src html
+  <table>
+    <tr><th>Enter Loan Data:</th> <td></td>
+    <th>Loan Balance, Cumulative Equity, and Interest Payments</th></tr> <tr><td>Amount of the loan ($):</td>
+    <td><input id="amount" onchange="calculate();"></td> <td rowspan=8>
+    <canvas id="graph" width="400" height="250"></canvas></td></tr> <tr><td>Annual interest (%):</td>
+    <td><input id="apr" onchange="calculate();"></td></tr> <tr><td>Repayment period (years):</td>
+    <td><input id="years" onchange="calculate();"></td> <tr><td>Zipcode (to find lenders):</td>
+    <td><input id="zipcode" onchange="calculate();"></td> <tr><th>Approximate Payments:</th>
+    <td><button onclick="calculate();">Calculate</button></td></tr> <tr><td>Monthly payment:</td>
+    <td>$<span class="output" id="payment"></span></td></tr> <tr><td>Total payment:</td>
+    <td>$<span class="output" id="total"></span></td></tr>
+    <tr><td>Total interest:</td>
+    <td>$<span class="output" id="totalinterest"></span></td></tr>
+    <tr><th>Sponsors:</th><td colspan=2>
+    Apply for your loan with one of these fine lenders:
+    <div id="lenders"></div></td></tr>
+  </table>
+
+#+end_src
+
+*** JavaScript in Body
+
+#+begin_src html
+  <!-- The rest of this example is JavaScript code in the <script> tag below -->
+  <!-- Normally, this script would go in the document <head> above but it -->
+  <!-- is easier to understand here, after you've seen its HTML context. -->
+
+#+end_src
+
+*** End of Body
+#+begin_src html
+</body>
+#+end_src
 
 * Export Settings                                                  :noexport:
 ** Options

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-05 12:39
-#+macro:version 0.2.2
+#+Date:2019-06-06 22:40
+#+macro:version 0.2.3
 
 * ECMAScript Description
 
@@ -698,6 +698,152 @@
 ** New Built-In Methods
 
 ** Promises
+#+cindex:promises
+First class representation of a value that may be made asynchronously and be
+available in the future.
+
+Promises can be vaguely defined as “a proxy for a value that will eventually
+become available.”
+
+*** Traditional Callback Method
+
+#+cindex:callback
+Traditionally JavaScript relied on /callbacks/ instead of /promises and
+chaining/.  If the ~fetch~ function asked for a /callback/, you’d have to add
+one that would then get executed whenever the fetch operation ended.
+
+#+cindex:asynchronous code flow
+#+cindex:best practice
+Typical asynchronous code flow conventions in Node.js established a best
+practice of reserving the first parameter in the callback for errors---that may
+or may not occur---during the ~fetch~‐ing process.  The rest of the parameters
+could be used to read the results of the asynchronous operation.
+
+#+cindex:callback-based API
+#+cindex:traditional asynchronous code
+The following shows how ~fetch()~ would look if it had a callback-based API:
+
+#+begin_src js
+fetch('/items', (err, res) => {
+    if (err) {
+        // handle err
+    } else {
+        // handle response
+    }
+});
+#+end_src
+
+The callback would not be invoked until the =/items= resource had been
+retrieved, or an error arose from the fetch operation.  Execution would remain
+asynchronous and nonblocking.
+
+*Note* that in this model you could only specify /a single callback/.  That
+callback would be responsible for /all/ functionality derived from the
+response, and it would be up to the consumer to come up with a mechanism to
+compose different aspects of handling the response into that single callback.
+
+*** An Event-Driven Model
+#+cindex:event-driven model
+#+cindex:events
+Besides traditional callbacks, another API design choice might have been to use
+an event-driven model.  If this model were implemented by ~fetch~, ~fetch~
+would be able to register callbacks for different kinds of events, binding as
+many event handlers as needed for any events.  Typically there would be an
+=error= event that's raised when things go awry, and other events are raised
+when notable things happen.
+
+Here is some code that would be used if ~fetch~ were based upon events:
+
+#+begin_src js
+fetch('/items')
+    .on('error', err => {
+        // handle error
+    })
+    .on('data', res => {
+        // handle response
+    })
+#+end_src
+
+*Note* that binding several listeners for each type of event would eliminate
+the concern we had earlier about having to centralize response handling in a
+single callback.
+
+Events, however, make it hard to chain callbacks and have them fire when
+another asynchronous task is fulfilled, and that’s where promises come in.
+Moreover, events are better suited to handle streams of values, making them
+somewhat inappropriate in this particular use case.
+
+*** Fetch Example
+
+#+cindex:@code{fetch()}
+: fetch('/items')
+makes a "fire and forget" =GET= request against =/items=, meaning you ignore
+the response and whether the request succeeded.
+
+#+cindex:Promise
+#+cindex:@code{then()} method
+#+cindex:@code{response} parameter
+The ~fetch()~ method returns a =Promise=.  You can chain the ~then()~ method on
+that =Promise=, and the callback will be executed once the =/items= resource
+finishes loading, receiving a ~response~ parameter.
+
+: fetch('/items').then(response => {
+:     // do something with the response
+: })
+
+Here is how ~fetch()~ might be implemented in a browser:
+
+#+begin_src js
+const p = fetch('/items');
+
+p.then(res => {
+    // handle response
+});
+
+p.catch(err => {
+    // handle error
+});
+#+end_src
+
+#+cindex:reaction
+#+cindex:fulfillment
+#+cindex:fulfillment value
+#+cindex:@code{then()} method
+#+cindex:@code{catch()} method
+#+cindex:rejection
+/Reactions/ passed to ~then()~ can be used to handle the /fulfillment/ of a
+promise, which is accompanied by a /fulfillment value/; and /reactions/ passed
+to ~catch()~ are executed with a /rejection reason/ that can be used when
+handling rejections.
+
+#+cindex:register reaction
+You can also /register/ a /reaction/ to rejections in the /second/ argument
+passed to ~then()~.
+
+#+begin_src js
+const p = fetch('/items');
+p.then(
+    res => {
+    // handle response
+},
+    err => {
+    // handle error
+});
+#+end_src
+
+Another alternative is to omit the /fulfillment reaction/ in ~then(fulfillment,
+rejection)~ (use =null= instead).  Using ~then(null, rejection)~ is equivalent
+to ~catch(rejection)~.
+
+#+begin_src js
+const p = fetch('/items');
+p.then(res => {
+    // handle response
+});
+p.then(null, err => {
+    // handle error
+});
+#+end_src
 
 ** Meta-Programming
 

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-06 22:40
-#+macro:version 0.2.3
+#+Date:2019-06-07 00:00
+#+macro:version 0.2.4
 
 * ECMAScript Description
 
@@ -773,7 +773,7 @@ another asynchronous task is fulfilled, and that’s where promises come in.
 Moreover, events are better suited to handle streams of values, making them
 somewhat inappropriate in this particular use case.
 
-*** Fetch Example
+*** Asynchronous Fetch Example
 
 #+cindex:@code{fetch()}
 : fetch('/items')
@@ -845,6 +845,122 @@ p.then(null, err => {
 });
 #+end_src
 
+*** Chaining of Promises
+#+cindex:chaining of promises
+The ~then()~ and ~catch()~ methods return a new =Promise= every time, creating
+a tree-like data structure.  That’s important because chaining can have wildly
+different results depending on where you append a ~then()~ or a ~catch()~ call.
+
+Assume you have a ~p1~ promise, and ~p1.then()~ returns a ~p2~ promise.  The
+~p1~ and ~p2~ promises are nodes connected by the ~p1.then()~ reaction
+handler.
+
+Reactions create new promises that are attached to the tree as children of the
+promise they are reacting to.
+
+~p1.then(r1).then(r2)~ creates two new promises ~p2~ and ~p3~.  Reaction ~r2~
+is going to fire if ~p2~ fulfills, while reaction ~r1~ will fire when ~p1~ is
+fulfilled.
+
+Figuring out the tree-like nature of promises is the key to unlocking a deep
+understanding of how promises behave.  See the tool [[https://bevacqua.github.io/promisees/][Promisees]] to play around
+with promise chains while visualizing the tree structure they leave behind.
+Promisees lets you write a piece of code and visualize how the underlying graph
+evolves as promises are settled in fulfillment or rejection.
+
+*** Creating Promises
+
+**** Using the Promise Constructor
+
+#+cindex:promise creation
+#+cindex:Promise constructor
+#+cindex:resolver
+#+cindex:@code{resolve()} method
+#+cindex:@code{reject()} method
+#+cindex:settle
+#+cindex:pending state
+#+cindex:reactions
+A promise is created by passing the ~Promise~ constructor a /resolver/ that
+decides how and when the promise is settled, by calling either a ~resolve~
+method that will /settle the promise in fulfillment/ or a ~reject~ method that
+will /settle the promise as a rejection/.  Until the promise is settled by
+calling either function, it’ll be in a /pending state/ and any /reactions/
+attached to it won’t be executed.
+
+The following snippet of code creates a promise from scratch where we’ll wait
+for a second before randomly settling the promise with a fulfillment or
+rejection result.
+
+#+begin_src js
+new Promise (function (resolve, reject) {
+    setTimeout (function () {
+        if (Math.random() > 0.5) {
+            resolve('random success')
+        } else {
+            reject(new Error ('random failure'))
+        }
+    }, 1000)
+})
+#+end_src
+
+**** Using the ~resolve()~ and ~reject()~ Methods
+
+Promises can also be created using ~Promise.resolve~ and ~Promise.reject~.
+These methods create promises that will immediately settle with a /fulfillment
+value/ and a /rejection reason/, respectively.
+
+#+begin_src js
+Promise.resolve({ result: 123 }).then(data => console.log(data.result))
+// 123
+#+end_src
+
+When a promise is fulfilled, reactions registered with its ~then()~ method are
+executed.  When a promise is rejected, reactions registered with its ~catch()~
+method are executed.  Those reactions can, in turn, result in three different
+situations depending on whether they
+- return a value,
+- a ~Promise~,
+- a =thenable=, or
+- throw an error.
+
+
+=Thenables= are objects considered promise-like that can be cast into a
+~Promise~ using ~Promise.resolve()~.
+
+A reaction may return a /value/, which would cause the promise returned by
+~then()~ to become fulfilled with that value.  Promises can be chained to
+transform the fulfillment value of the previous promise over and over:
+
+#+begin_src js
+Promise
+  .resolve(2)
+  .then(x => x * 7)
+  .then(x => x - 3)
+  .then(x => console.log(x))
+// 7
+#+end_src
+
+A reaction may return a promise.
+
+#+begin_src js
+Promise
+  .resolve(2)
+  .then(x => new Promise(function (resolve) {
+      setTimeout(() => resolve(x * 1000), x * 1000)
+  }))
+  .then(x => console.log(x))
+// 2000
+#+end_src
+
+A reaction may throw an error, which would cause the promise returned by
+~then()~ to become rejected and thus follow the ~catch()~ branch, using said
+error as the rejection reason.
+
+#+begin_src js
+const p = fetch('/items')
+  .then(res => { throw new Error('unexpectedly') })
+  .catch(err =>  console.error(err))
+#+end_src
 ** Meta-Programming
 
 ** Internationalization & Localization

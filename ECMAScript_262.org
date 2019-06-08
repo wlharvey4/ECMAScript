@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-07 00:00
-#+macro:version 0.2.4
+#+Date:2019-06-07 21:58
+#+macro:version 0.2.5
 
 * ECMAScript Description
 
@@ -914,6 +914,7 @@ Promise.resolve({ result: 123 }).then(data => console.log(data.result))
 // 123
 #+end_src
 
+**** Looking at Reactions
 When a promise is fulfilled, reactions registered with its ~then()~ method are
 executed.  When a promise is rejected, reactions registered with its ~catch()~
 method are executed.  Those reactions can, in turn, result in three different
@@ -961,6 +962,165 @@ const p = fetch('/items')
   .then(res => { throw new Error('unexpectedly') })
   .catch(err =>  console.error(err))
 #+end_src
+*** Promise Continuation and Chaining
+
+#+cindex:@code{catch()} method
+When an error happens in a promise resolver, you can catch that error using the
+~catch()~ method:
+
+#+begin_src js
+new Promise((resolve, reject) => reject(new Error('oops')))
+    .catch(err => console.error(err));
+#+end_src
+
+#+cindex:exception in resolver
+A promise will settle as a rejection when the resolver calls ~reject()~ or if
+an exception is thrown inside the resolver.
+
+#+begin_src js
+new Promise((resolve, reject) => {
+    throw new Error('oops');
+}).catch(err => console.error(err));
+#+end_src
+
+Errors that occur while executing a fulfillment or rejection reaction result in
+a promise being rejected.
+
+#+begin_src js
+Promise
+    .resolve(2)
+    .then(x => { throw new Error('failed') })
+    .catch(err => console.error(err));
+#+end_src
+
+Decompose the series of chained method calls into variables.
+
+#+begin_src js :results output
+const p1 = Promise.resolve(2);
+const p2 = p1.then(x => { throw new Error('failed') });
+const p3 = p2.catch(err => console.log(err));
+#+end_src
+
+#+RESULTS:
+: Error: failed
+
+If you attached the ~catch()~ reaction to ~p1~, you wouldn't be able to catch
+the error originated in the ~then()~ reaction.
+
+As long as an error remains uncaught in a promise chain, a rejection handler
+will be able to capture it.  In the following example we’ve introduced an
+intermediary ~then()~ call in between ~p2~, where the error originated, and
+~p4~, where we attach the rejection reaction.  When ~p2~ settles with a
+rejection, ~p3~ becomes settled with a rejection, as it depends on ~p2~
+directly.  When ~p3~ settles with a rejection, the rejection handler in ~p4~
+fires.
+
+#+begin_src js :results output
+const p1 = Promise.resolve(2)
+const p2 = p1.then(x => { throw new Error('failed') })
+const p3 = p2.then(x => x * 2)
+const p4 = p3.catch(err => console.log(err))
+#+end_src
+
+#+RESULTS:
+: Error: failed
+
+The following example shows how you could print a statement to the browser con‐
+sole by creating a ~p4~ fulfillment handler that depends on ~p3~ to settle
+successfully with fulfillment.
+
+#+begin_src js :results output
+const p1 = Promise.resolve(2)
+const p2 = p1.then(x => { throw new Error('failed') })
+const p3 = p2.catch(err => console.log(err))
+const p4 = p3.then(() => console.log('crisis averted'))
+#+end_src
+
+#+RESULTS:
+: Error: failed
+: crisis averted
+
+Similarly, if an error occurred in the ~p3~ rejection handler, we could capture
+that one as well using ~catch()~.  The next piece of code shows how an
+exception being thrown in ~p3~ could be captured using ~p3.catch()~ just like
+with any other errors arising in previous examples.
+
+#+begin_src js :results output
+const p1 = Promise.resolve(2)
+const p2 = p1.then(x => { throw new Error('failed') })
+const p3 = p2.catch(err => { throw new Error('oops') })
+const p4 = p3.catch(err => console.log(err))
+#+end_src
+
+#+RESULTS:
+: Error: oops
+
+The following example prints ~err.message~ once instead of twice.  That’s
+because no errors happened in the first ~catch()~, so the rejection branch for
+that promise wasn’t executed.
+
+#+begin_src js
+fetch('/items')
+    .then(res => res.a.prop.that.does.not.exist)
+    .catch(err => console.error(err.message))
+    .catch(err => console.error(err.message))
+// <- 'Cannot read property "prop" of undefined'
+#+end_src
+
+In contrast, the next snippet will print ~err.message~ twice.  It works by
+saving a reference to the promise returned by ~then()~, and then tacking two
+~catch()~ reactions onto it.  The second ~catch()~ in the previous example was
+capturing errors produced in the promise returned from the first ~catch()~, while
+in this case both rejection handlers branch off of ~p~.
+
+#+begin_src js
+const p = fetch('/items')
+  .then(res => res.a.prop.that.does.not.exist)
+p.catch(err => console.error(err.message))
+p.catch(err => console.error(err.message))
+// <- 'Cannot read property "prop" of undefined'
+// <- 'Cannot read property "prop" of undefined'
+#+end_src
+
+We should observe, then, that promises can be chained arbitrarily.  As we just
+saw, you can save a reference to any point in the promise chain and then append
+more promises on top of it.  This is one of the fundamental points to
+understanding promises.
+
+#+begin_src js
+const p1 = fetch('/items')
+const p2 = p1.then(res => res.a.prop.that.does.not.exist)
+const p3 = p2.catch(err => {})
+const p4 = p3.catch(err => console.error(err.message))
+#+end_src
+
+Here is an enumeration of what is going on as that piece of code is executed:
+
+1. ~fetch()~ returns a brand new ~p1~ promise.
+
+2. ~p1.then()~ returns a brand new ~p2~ promise, which will react if ~p1~ is
+   fulfilled.
+
+3. ~p2.catch()~ returns a brand new ~p3~ promise, which will react if ~p2~ is
+   rejected.
+
+4. ~p3.catch()~ returns a brand new ~p4~ promise, which will react if ~p3~ is
+   rejected.
+
+5. When ~p1~ is fulfilled, the ~p1.then()~ reaction is executed.
+
+6. Afterwards, ~p2~ is rejected because of an error in the ~p1.then()~
+   reaction.
+
+7. Since ~p2~ was rejected, ~p2.catch()~ reactions are executed, and the
+   ~p2.then()~ branch is ignored.
+
+8. The ~p3~ promise from ~p2.catch()~ is fulfilled, because it doesn’t produce
+   an error or result in a rejected promise.
+
+9. Because ~p3~ was fulfilled, the ~p3.catch()~ is never followed.  The
+   ~p3.then()~ branch would’ve been used instead.
+*** Creating a Promise
 ** Meta-Programming
 
 ** Internationalization & Localization

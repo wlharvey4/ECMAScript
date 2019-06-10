@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-07 21:58
-#+macro:version 0.2.5
+#+Date:2019-06-10 11:47
+#+macro:version 0.2.6
 
 * ECMAScript Description
 
@@ -146,8 +146,9 @@
      - However, that name is used only to refer to versions of the language
        (where one refers to the specification).  Everyone still calls the
        language *JavaScript*.
+       #+cindex:TC39
      - *ECMA-262* is managed and evolved by Ecma’s *Technical Committee 39
-       (TC39)*.
+       (TC39)*.  [[https://tc39.es][TC39]]
 
    - 1997 ::
      - ECMAScript 1 *First Edition*
@@ -654,6 +655,36 @@
 
    March 2019.  [[https://tc39.github.io/ecma262/][ECMAScript 2020 (Draft)]]
 
+** TC39 JavaScript Specification Group
+- https://tc39.es
+
+#+cindex:specification, TC39 group
+#+cindex:Ecma International
+Ecma International's TC39 is a group of JavaScript developers, implementers,
+academics, and more, collaborating with the community to maintain and evolve
+the definition of JavaScript.
+
+We develop the JavaScript (formally, ECMAScript) specification [[https://github.com/tc39/ecma262/][on GitHub]] and
+meet every two months to discuss proposals. To learn more about the process,
+please take a look at the [[https://tc39.github.io/process-document/][four stages]] for [[Y][new language feature proposals]].  See
+our [[https://github.com/tc39/agendas/][meeting agendas]] and [[https://github.com/tc39/tc39-notes/][minutes]] to learn more.
+
+{{{heading(Contributing to TC39)}}}
+
+TC39 welcomes contributions.  You can help by giving feedback on proposals,
+improving documentation, writing tests or implementations, or suggesting
+language feature ideas.  See our [[https://github.com/tc39/ecma262/blob/master/CONTRIBUTING.md][contributor guide]] for details.
+
+*** Stage 3 Proposals
+- [[https://github.com/tc39/proposal-global][globalThis]]
+- [[https://github.com/tc39/proposal-dynamic-import][import()]]
+- [[https://github.com/tc39/proposal-bigint][BigInt]]
+- [[https://github.com/tc39/proposal-private-methods][Private instance methods and accessors]]
+- [[https://github.com/tc39/proposal-class-fields][Class Public Instance Fields & Private Instance Fields]]
+- [[https://github.com/tc39/proposal-static-class-features][Static class fields and private static methods]]
+- [[https://github.com/tc39/proposal-promise-allSettled][Promise.allSettled]]
+- [[https://github.com/tc39/proposal-hashbang][Hashbang Grammar]]
+
 * ECMAScript 3 Features
 
 * ECMAScript 5 Features
@@ -1121,6 +1152,46 @@ Here is an enumeration of what is going on as that piece of code is executed:
 9. Because ~p3~ was fulfilled, the ~p3.catch()~ is never followed.  The
    ~p3.then()~ branch would’ve been used instead.
 *** Creating a Promise
+#+cindex:promise creation
+A promise can be created by:
+- using a function that returns a promise, such as ~fetch()~
+- calling ~Promise.resolve()~ or ~Promise.reject()~
+- using the Promise constructor function
+
+
+#+cindex:Promise constructor function
+#+cindex:promise resolver function
+#+cindex:promise settlement
+#+cindex:settle
+#+cindex:@code{resolve} function
+#+cindex:@code{reject} function
+Promises can be created from scratch by using ~new Promise(resolver)~.  The
+~resolver~ parameter is a function that will be used to settle the promise.
+The ~resolver~ takes two arguments: a ~resolve~ function and a ~reject~
+function.
+
+The pair of promises shown in the next snippet are settled in fulfillment and
+rejection, respectively.
+
+#+cindex:fulfillment value
+- settling the first promise with a fulfillment value of 'result',
+- rejecting the second promise with an Error object, specifying 'reason' as its
+  message.
+
+#+begin_src js
+new Promise(resolve => resolve('result'))
+new Promise((resolve, reject) => reject(new Error('reason')))
+#+end_src
+
+#+cindex:fulfill a promise
+#+cindex:fulfillment value
+#+cindex:result fulfillment value
+Usually promises will fulfill with a /result/ such as the response from an Ajax
+call, as we’ve seen with ~fetch~.  You’ll definitely want to state the reason
+for your rejections---typically wrapping them in an ~Error~ object so that you
+can report back a stack trace.  Note that only the first call made to one of
+these functions (~resolve()~ or ~reject()~) will have an impact---once a
+promise is settled its outcome can’t change.
 ** Meta-Programming
 
 ** Internationalization & Localization

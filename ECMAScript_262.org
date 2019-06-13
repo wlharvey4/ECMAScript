@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-10 11:47
-#+macro:version 0.2.6
+#+Date:2019-06-13 11:50
+#+macro:version 0.2.7
 
 * ECMAScript Description
 
@@ -1241,9 +1241,22 @@ promise is settled its outcome can’t change.
     Covers what’s new in ECMAScript 2016 and ECMAScript 2017.
 
   - *[[http://exploringjs.com/es2018-es2019/toc.html][Exploring ES2018 and ES2019]]* by Dr. Axel Rauschmayer 2019
-p
+
     Covers what’s new in ECMAScript 2018 and ECMAScript 2019.
 
+  - *[[https://github.com/getify/You-Dont-Know-JS][You Don't Know JavaScript]]* by Kyle Simpson 2018
+
+    - [[https://github.com/getify/You-Dont-Know-JS/blob/master/up%2520&%2520going/README.md#you-dont-know-js-up--going][Up and Going]]
+
+    - [[https://github.com/getify/You-Dont-Know-JS/blob/master/scope%2520&%2520closures/README.md#you-dont-know-js-scope--closures][Scope and Closures]]
+
+    - [[https://github.com/getify/You-Dont-Know-JS/blob/master/this%2520&%2520object%2520prototypes/README.md#you-dont-know-js-this--object-prototypes][this and Object Prototypes]]
+
+    - [[https://github.com/getify/You-Dont-Know-JS/blob/master/types%2520&%2520grammar/README.md#you-dont-know-js-types--grammar][Types and Grammar]]
+
+    - [[https://github.com/getify/You-Dont-Know-JS/blob/master/async%2520&%2520performance/README.md#you-dont-know-js-async--performance][Async and Performance]]
+
+    - [[https://github.com/getify/You-Dont-Know-JS/blob/master/es6%2520&%2520beyond/README.md#you-dont-know-js-es6--beyond][ES6 and Beyond]]
 * JavaScript---The Definitive Guide
 :PROPERTIES:
 :author:   David Flanagan

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-14 15:46
-#+macro:version 0.2.11
+#+Date:2019-06-14 16:06
+#+macro:version 0.2.12
 
 * ECMAScript Description
 
@@ -1898,9 +1898,125 @@ explain their syntax.
 
 **** Summary of JavaScript Statements
 
-
 *** Objects
+#+cindex:Chapter 6 Objects
+#+cindex:objects, intro
+JavaScript’s fundamental datatype is the /object/.
 
+#+cindex:composite value, object
+- An object is a /composite value/: it aggregates multiple values (primitive
+  values or other objects) and allows you to store and retrieve those values by
+  name.
+
+  #+cindex:unordered collection of properties, object
+- An object is an /unordered collection of properties/, each of which has a
+  name and a value.  Property names are strings, so we can say that objects map
+  strings to values.
+
+  #+cindex:protoype object
+  #+cindex:protoypal inheritance
+- An object is more than a simple string- to-value map, however.  In addition
+  to maintaining its own set of properties, a JavaScript object also inherits
+  the properties of another object, known as its “prototype.”  The methods of
+  an object are typically inherited properties, and this “prototypal inheri-
+  tance” is a key feature of JavaScript.
+
+  #+cindex:dynamic, objects
+  #+cindex:objects, dynamic
+  #+cindex:static objects, structs
+- JavaScript objects are /dynamic/---properties can usually be added and
+  deleted---but they can be used to simulate the static objects and “structs”
+  of statically typed languages.  They can also be used (by ignoring the value
+  part of the string-to-value mapping) to represent sets of strings.
+
+  #+cindex:object value
+- Any value in JavaScript that is not a string, a number, true, false, =null=,
+  or =undefined= is an object.  And even though strings, numbers, and booleans
+  are not objects, they behave like immutable objects
+
+- The most common things to do with objects are /create/ them and to /set/,
+  /query/, /delete/, /test/, and /enumerate/ their properties.
+
+  #+cindex:property as string
+  #+cindex:value of object
+  #+cindex:getter function
+  #+cindex:setter function
+- A /property/ has a name and a value.
+
+  - A /property name/ may be any string, including the empty string, but no
+    object may have two properties with the same name.
+
+  - The /value/ may be any JavaScript value, or (in ECMAScript 5) it may be a
+    getter or a setter function (or both).
+
+{{{heading(Property Attributes)}}}
+
+  #+cindex:property attributes
+- In addition to its name and value, each property has associated values that
+  we’ll call /property attributes/:
+
+    #+cindex:writable attribute
+  - The /writable attribute/ specifies whether the value of the property can be
+    set.
+
+    #+cindex:enumerable attribute
+  - The /enumerable attribute/ specifies whether the property name is returned
+    by a for/in loop.
+
+    #+cindex:configurable attribute
+  - The /configurable attribute/ specifies whether the property can be deleted
+    and whether its attributes can be altered.
+
+  #+cindex:ECMAScript 5 feature
+  #+cindex:configure attributes
+- Prior to ECMAScript 5, all properties in objects created by your code are
+  writable, enumerable, and configurable.  In ECMAScript 5, you can configure
+  the attributes of your properties.
+
+{{{heading(Object Attributes)}}}
+
+  #+cindex:object properties
+- In addition to its properties, every object has three associated /object
+  attributes/:
+
+  #+cindex:prototype reference
+  - An object’s /prototype/ is a reference to another object from which
+    properties are inherited.
+
+    #+cindex:object class
+  - An object’s /class/ is a string that categorizes the type of an object.
+
+    #+cindex:extensible flag
+    #+cindex:ECMAScript 5 feature
+  - An object’s /extensible flag/ specifies (in ECMAScript 5) whether new
+    properties may be added to the object.
+
+
+Finally, here are some terms we’ll use to distinguish among three broad
+categories of JavaScript objects and two types of properties:
+
+ #+cindex:native object 
+- A /native object/ is an object or class of objects defined by the ECMAScript
+  specifi- cation. Arrays, functions, dates, and regular expressions (for
+  example) are native objects.
+
+  #+cindex:host object
+- A /host object/ is an object defined by the host environment (such as a web
+  browser) within which the JavaScript interpreter is embedded. The HTMLElement
+  objects that represent the structure of a web page in client-side JavaScript
+  are host objects. Host objects may also be native objects, as when the host
+  environment defines methods that are normal JavaScript Function objects.
+
+  #+cindex:user-defined object
+- A /user-defined/ object is any object created by the execution of JavaScript
+  code.
+
+  #+cindex:own property
+- An /own property/ is a property defined directly on an object.
+
+  #+cindex:inherited property
+- An /inherited property/ is a property defined by an object’s prototype
+  object.
 *** Arrays
 
 *** Functions

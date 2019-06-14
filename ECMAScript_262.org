@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-13 11:50
-#+macro:version 0.2.7
+#+Date:2019-06-14 14:33
+#+macro:version 0.2.8
 
 * ECMAScript Description
 
@@ -1351,11 +1351,17 @@ standardized version of the language was stuck with the awkward name
 standard.
 
 *** About Versions
+#+cindex:version 3
+#+cindex:ECMAScript 3
+#+cindex:ES3
 For the last decade[fn:5], all web browsers have implemented version 3 of the
 ECMAScript standard and there has really been no need to think about version
-numbers: the lan- guage standard was stable and browser implementations of the
+numbers: the language standard was stable and browser implementations of the
 language were, for the most part, interoperable.
 
+#+cindex:version 5
+#+cindex:ECMAScript 5
+#+cindex:ES5
 Recently, an important new version of the language has been defined as
 ECMAScript version 5 and, at the time of this writing, browsers are beginning
 to implement it.  This book covers all the new features of ECMAScript 5 as well
@@ -1363,16 +1369,23 @@ as all the long-standing features of ECMAScript 3.  You’ll sometimes see these
 language versions abbreviated as ES3 and ES5, just as you’ll sometimes see the
 name JavaScript abbreviated as JS.
 
+#+cindex:version 4
+#+cindex:ECMAScript 4
+#+cindex:versino 1.5
+#+cindex:V8
 The only version numbers that are relevant are ECMAScript versions 3 or 5.
 Version 4 was never released.  Sometimes, however, you’ll also see a JavaScript
 version number, such as JavaScript 1.5 or JavaScript 1.8.  These are Mozilla’s
 version numbers: version 1.5 is basically ECMAScript 3, and later versions
 include nonstandard language extensions.  there are also version numbers
-attached to particular JavaScript interpreters or “engines.” Goo- gle calls its
+attached to particular JavaScript interpreters or “engines.” Google calls its
 JavaScript interpreter V8, for example, and at the time of this writing the
 current version of the V8 engine is 3.0.
 
 *** About JavaScript's Minimal Standard Library
+#+cindex:standard library
+#+cindex:input output functionality
+#+cindex:host environment
 To be useful, every language must have a platform or /standard library/ or API
 of functions for performing things like basic input and output.  The core
 JavaScript language defines a minimal API for working with /text/, /arrays/,
@@ -1383,6 +1396,8 @@ environment” within which JavaScript is embedded.  Usually that host
 environment is a web browser, but it can be something else.
 
 *** What This Book Covers
+#+cindex:coverage, book
+#+cindex:book coverage
 This book covers low-level fundamentals first, and then builds on those to more
 advanced and higher-level abstractions.
 
@@ -1392,17 +1407,21 @@ advanced and higher-level abstractions.
 - [[*Core API Reference][Part III]] is the reference section for the core API.
 - [[*Client-Side JavaScript Reference][Part IV]] is the reference section for client-side JavaScript.
 
+#+cindex:Chapter 1
 Chapter 1 makes a quick first pass through the core language and the
 client-side API, introducing key features that will make it easier to
 understand the in-depth treatment in the chapters that follow.
 
 *** An Overview of Core JavaScript
+#+cindex:Chapter 2 Lexical Structure
 [[*Lexical Structure][Chapter 2, Lexical Structure]], explains things like JavaScript comments,
 semicolons, and the Unicode character set.
 
+#+cindex:Chapter 3 Types Values Variables
 [[*Types Values and Variables][Chapter 3, Types, Values, and Variables]], explains JavaScript variables and the
 values you can assign to those variables.
 
+#+cindex:Chapter 4 Expressions Operators
 [[*Expressions and Operators][Chapter 4, Expressions and Operators]] discusses expressions and operators.
 
 - Expression :: a phrase of JavaScript that can be evaluated to produce a
@@ -1413,6 +1432,7 @@ values you can assign to those variables.
   - Operators: produce values
 
 
+#+cindex:Chapter 5 Statements
 [[*Statements][Chapter 5, Statements]]
 
 - Statement :: Statements, on the other hand, don’t have a value (or don’t have
@@ -1425,45 +1445,59 @@ values you can assign to those variables.
   - Control structures (conditionals and loops)
 
 
+#+cindex:Chapter 6 Objects
 [[*Objects][Chapter 6, Objects]]
 
+#+cindex:Chapter 7 Arrays
 [[*Arrays][Chapter 7, Arrays]]
 
+#+cindex:Chapter 8 Functions
 [[*Functions][Chapter 8, Functions]]
 
 - Methods :: When we combine functions with objects, we get methods
 
+
+#+cindex:Chapter 9 Classes Modules
 [[*Classes and Modules][Chapter 9, Classes and Modules]] covers object-oriented programming in JavaScript
 in detail, with lots of examples
 
+#+cindex:Chapter 10 Pattern Matching Regular Expressions
 [[*JavaScript Subsets and Extensions][Chapter 10, Pattern Matching with Regular Expressions]] explains the regular
 expression grammar and demonstrates how to use these “regexps” for textual
 pattern matching.
 
+#+cindex:Chapter 11 Subsets Extensions
 [[*JavaScript Subsets and Extensions][Chapter 11, JavaScript Subsets and Extensions]] covers subsets and extensions of
 core JavaScript
 
+#+cindex:Chapter 12 Server-Side
 [[*Server-Side JavaScript][Chapter 12, Server-Side JavaScript]] introduces two ways to use JavaScript
 outside of web browsers.
 
+#+cindex:Part Two Client-Side
 [[*Client-Side JavaScript][Part Two, Client-Side JavaScript]] is a quick sketch of basic client-side
 programming techniques, followed by an in-depth example.
 
+#+cindex:Chapter 13 JS in Web Browsers
 [[*JavaScript in Web Browsers][Chapter 13, JavaScript in Web Browsers]] explains in detail how to put JavaScript
 to work in web browsers.
 
+#+cindex:Chapter 14 Window Object
 [[*The Window Object][Chapter 14, The Window Object]] explains techniques for scripting the web browser
 and covers some important global functions of client-side JavaScript.
 
+#+cindex:Chapter 15 Scripting Documents
 [[*Scripting Documents][Chapter 15, Scripting Documents]] shows you how to select particular HTML
 elements from within a document, how to set HTML attributes of those elements,
 how to alter the content of those elements, and how to add new elements to the
 document; i.e., it shows how JavaScript can script the HTML elements that
 define web content.
 
+#+cindex:Chapter 16 Scripting CSS
 [[*Scripting CSS][Chapter 16, Scripting CSS]] shows how you can use JavaScript with the CSS styles
 that define the presentation of that content.
 
+#+cindex:Chapter 17 Events
 [[*Handling Events][Chapter 17, Handling Events]] explains how you can define and register event
 handlers and how the browser invokes them when events occur.
 
@@ -1475,6 +1509,7 @@ client-side JavaScript programmers choose to use a client-side library or
 framework to simplify their basic programming tasks.  The most popular such
 library is *jQuery*.
 
+#+cindex:Chapter 19 jQuery Library
 [[*The jQuery Library][Chapter 19, The jQuery Library]], discusses jQuery, which defines a clever and
 easy-to-use API for scripting document content, presentation, and behavior.
 
@@ -1485,16 +1520,20 @@ content, presentation, and behavior.  Instead, they’re about using web browser
 as application platforms, and they describe the APIs that modern browsers
 provide to support sophisticated client-side web apps.
 
+#+cindex:Chapter 18 Scripted HTTP
 [[*Scripted HTTP][Chapter 18, Scripted HTTP]] explains how to make scripted HTTP requests with
 JavaScript—a kind of networking API.
 
+#+cindex:Chapter 20 Storage Client-Side
 [[*Client-Side Storage][Chapter 20, Client-Side Storage]] describes mechanisms for storing data---and
 even entire applications---on the client side for use in future browsing
 sessions.
 
+#+cindex:Chapter 21 Scripted Media Graphics
 [[*Scripted Media and Graphics][Chapter 21, Scripted Media and Graphics]] covers a client-side API for drawing
 arbitrary graphics in an HTML =<canvas>= tag.
 
+#+cindex:Chapter 22 HTML5 APIs
 [[*HTML5 APIs][Chapter 22, HTML5 APIs]] covers an assortment of new web app APIs specified by or
 affiliated with HTML5.  Networking, storage, graphics: these are OS-type
 services being provided by the web browser, defining a new cross-platform
@@ -2069,6 +2108,12 @@ sound type system.
 - First Appeared :: October 10, 2011
 - Influenced By :: C#, Erlang, JavaScript, Smalltalk, Strongtalk
 
+* Concept Index
+:PROPERTIES:
+:index:    cp
+:unnumbered: t
+:END:
+
 * Footnotes
 
 [fn:5] Roughly 2000--2010
@@ -2082,7 +2127,6 @@ sound type system.
 [fn:4] This page was last modified on 9 October 2011, at 19:22.
 
 * Export Settings                                                  :noexport:
-
 ** Macro Definitions
 #+macro:heading @@html:<h2>@@@@texinfo:@heading @@$1@@html:</h2>@@
 #+macro:subheading @@html:<h3>@@@@texinfo:@subheading @@$1@@html:</h3>@@
@@ -2109,7 +2153,6 @@ sound type system.
 #+latex_header:
 
 ** Export to Texinfo
-
 *** Texinfo Export Settings
 #+texinfo_filename:ecmascript_262.info
 #+texinfo_class: info

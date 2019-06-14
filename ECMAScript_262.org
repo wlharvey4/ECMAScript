@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-14 15:24
-#+macro:version 0.2.9
+#+Date:2019-06-14 15:35
+#+macro:version 0.2.10
 
 * ECMAScript Description
 
@@ -1787,6 +1787,53 @@ to code that appears inside that function.
 **** Variable Scope
 
 *** Expressions and Operators
+#+cindex:Chapter 4 Expressions and Operators
+#+cindex:expression
+#+cindex:evaluate
+An /expression/ is a phrase of JavaScript that a JavaScript interpreter can
+/evaluate/ to produce a /value/.  A constant embedded literally in your program
+is a very simple kind of expression.  A variable name is also a simple
+expression that evaluates to whatever value has been assigned to that variable.
+Complex expressions are built from simpler expressions.
+
+#+cindex:operator, complex expression
+#+cindex:operator, returns a value
+#+cindex:operator, evaulates to a value
+The most common way to build a complex expression out of simpler expressions is
+with an /operator/.  An operator comb`ines the values of its /operands/
+(usually two of them) in some way and evaluates to a new value.  For
+simplicity, we sometimes say that an operator /returns/ a value rather than
+“evaluates to” a value.
+
+This chapter documents all of JavaScript’s operators, and it also explains
+expressions (such as array indexing and function invocation) that do not use
+operators.
+
+**** Primary Expressions
+
+**** Object and Array Initializers
+
+**** Function Definition Expressions
+
+**** Property Access Expressions
+
+**** Invocation Expressions
+
+**** Object Creation Expressions
+
+**** Operator Overview
+
+**** Arithmetic Expressions
+
+**** Relational Expressions
+
+**** Logical Expressions
+
+**** Assignment Expressions
+
+**** Evaluation Expressions
+
+**** Miscellaneous Operators
 
 *** Statements
 

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-14 14:33
-#+macro:version 0.2.8
+#+Date:2019-06-14 15:24
+#+macro:version 0.2.9
 
 * ECMAScript Description
 
@@ -1549,9 +1549,242 @@ programs look like.
 [[../figs/loancalc-50.png]]
 
 ** Core JavaScript
+#+cindex:reference, language
+#+cindex:language reference
+This part of the book, Chapters 2 though 12, documents the core JavaScript
+language and is meant to be a JavaScript language reference.
 *** Lexical Structure
+#+cindex:Chapter 2 Lexical Structure
+#+cindex:lexical structure, def
+The /lexical structure/ of a programming language is the set of elementary
+rules that specifies how you write programs in that language.  It is the
+lowest-level syntax of a language; it specifies such things as what variable
+names look like, the delimiter characters for comments, and how one program
+statement is separated from the next.
+
+This short chapter documents the lexical structure of JavaScript.
+
+**** Character Set
+#+cindex:character set
+
+**** Comments
+#+cindex:comments
+
+**** Literals
+#+cindex:literals
+
+**** Identifiers and Reserved Words
+#+cindex:identifiers
+#+cindex:reserved words
+
+**** Optional Semicolons
+#+cindex:semicolons 
 
 *** Types Values and Variables
+#+cindex:Chapter 3 Types Values Variables
+#+cindex:types, def
+#+cindex:values, def
+Computer programs work by manipulating values.  The kinds of values that can be
+represented and manipulated in a programming language are known as /types/, and
+one of the most fundamental characteristics of a programming language is the
+set of types it supports.
+
+#+cindex:variable, def
+When a program needs to retain a value for future use, it assigns the value to
+(or “stores” the value in) a variable.  A /variable/ defines a symbolic name
+for a value and allows the value to be referred to by name.
+
+The way that variables work is another fundamental characteristic of any
+programming language.  This chapter explains types, values, and variables in
+JavaScript.
+
+{{{heading(JavaScript Types Categories)}}}
+
+#+cindex:primitive types
+#+cindex:object types
+#+cindex:types, categories
+JavaScript types can be divided into two categories:
+
+#+cindex:numbers, primitive
+#+cindex:strings, primitive
+#+cindex:booleans, primitive
+#+cindex:null, primitive
+#+cindex:undefined, primitive
+- primitive types :: JavaScript’s primitive types include /numbers/, strings of
+     text (known as /strings/), and Boolean truth values (known as /booleans/).
+     The special JavaScript values /null/ and /undefined/ are primitive values,
+     but they are not numbers, strings, or booleans.  Each value is typically
+     considered to be the sole member of its own special type.
+
+#+cindex:object types
+#+cindex:type object
+#+cindex:properties, def
+- object types :: Any JavaScript value that is not a number, a string, a
+                  boolean, or null or undefined is an /object/.  An /object/
+                  (that is, a member of the type =object=) is a collection of
+                  /properties/ where each property has a name and a value (either
+                  a primitive value, such as a number or string, or an object).
+
+
+{{{heading(About Object Types)}}}
+
+#+cindex:object, ordinary
+- An ordinary JavaScript object is an unordered collection of named values.
+
+  #+cindex:object array
+  #+cindex:array object
+  #+cindex:ordered collection of values, array
+- The language also defines a special kind of object, known as an /array/, that
+  represents an ordered collection of numbered values.  The JavaScript language
+  includes special syntax for working with arrays, and arrays have some special
+  behavior that distinguishes them from ordinary objects.
+
+  #+cindex:object function
+  #+cindex:function object
+- JavaScript defines another special kind of object, known as a /function/.  A
+  function is an object that has executable code associated with it.  A
+  function may be invoked to run that executable code and return a computed
+  value.  Like arrays, functions behave differently from other kinds of
+  objects, and JavaScript defines a special language syntax for working with
+  them.  The most important thing about functions in JavaScript is that /they
+  are true values/ and that JavaScript programs can treat them like regular
+  objects.
+
+  #+cindex:object constructor
+  #+cindex:constructor object
+  #+cindex:constructor function
+  #+cindex:class of objects
+  #+cindex:object class, constructor function
+- Functions that are written to be used (with the ~new~ operator) to initialize
+  a newly created object are known as /constructors/.  Each constructor defines a
+  class of objects—--the set of objects initialized by that constructor.
+
+  #+cindex:object class
+  #+cindex:class object
+  #+cindex:subtype of object, class
+- /Classes/ can be thought of as subtypes of the object type.  In addition to
+  the Array and Function classes, core JavaScript defines three other useful
+  classes.  You can define your own classes of objects by defining appropriate
+  constructor functions.
+
+    #+cindex:Date class
+  - The /Date class/ defines objects that represent dates.
+
+    #+cindex:RegExp class
+    #+cindex:regular expressions, RegExp class
+  - The /RegExp class/ defines objects that represent regular expressions.
+
+    #+cindex:Error class
+  - The /Error class/ defines objects that represent syntax and runtime errors
+    that can occur in a JavaScript program.
+
+
+{{{heading(Garbage Collection of Objects)}}}
+
+#+cindex:garbage collection
+The JavaScript interpreter performs automatic garbage collection for memory
+management.  This means that a program can create objects as needed, and the
+programmer never needs to worry about destruction or deallocation of those
+objects.  When an object is no longer reachable—--when a program no longer has
+any way to refer to it---the interpreter knows it can never be used again and
+automatically reclaims the memory it was occupying.
+
+{{{heading(JavaScript is Object-Oriented)}}}
+
+#+cindex:object-oriented language
+JavaScript is an /object-oriented/ language.  Loosely, this means that rather
+than having globally defined functions to operate on values of various types,
+the types themselves define methods for working with values.
+
+Technically, it is only JavaScript objects that have methods.  But numbers,
+strings, and boolean values behave as if they had methods.  
+
+In JavaScript, =null= and =undefined are the only values that methods cannot be
+invoked on.
+
+{{{heading(Mutability)}}}
+
+#+cindex:mutable types
+#+cindex:immutable types
+#+cindex:mutability types
+JavaScript’s types can be categorized as /mutable/ and /immutable/ types.  A
+value of a mutable type can change.  Objects and arrays are mutable.  Numbers,
+booleans, =null=, and =undefined= are immutable---it doesn’t even make sense to
+talk about changing the value of a number, for example.  Strings can be thought
+of as arrays of characters, and you might expect them to be mutable.  In
+JavaScript, however, strings are immutable: you can access the text at any
+index of a string, but JavaScript provides no way to alter the text of an
+existing string.
+
+{{{heading(Dynamic Type Conversion)}}}
+
+#+cindex:type conversion
+#+cindex:conversion of types
+JavaScript converts values liberally from one type to another.  If a program
+expects a string, for example, and you give it a number, it will automatically
+convert the number to a string for you.  If you use a nonboolean value where a
+boolean is expected, JavaScript will convert accordingly.
+
+JavaScript’s liberal value conversion rules affect its definition of equality,
+and the == equality operator performs type conversions.
+
+{{{heading(Variables)}}}
+
+{{{subheading(Untyped)}}}
+
+#+cindex:untyped variables
+#+cindex:variabes, untyped
+JavaScript variables are /untyped/: you can assign a value of any type to a
+variable, and you can later assign a value of a different type to the same
+variable.
+
+{{{subheading(Declarations)}}}
+
+#+cindex:variable declarations
+#+cindex:declare
+#+cindex:@code{var} keyword
+#+cindex:keyword @code{var}
+Variables are /declared/ with the ~var~ keyword.
+
+{{{subheading(Lexical Scope)}}}
+
+#+cindex:lexical scope
+#+cindex:scope, lexical
+JavaScript uses /lexical scoping/.
+
+{{{subheading(Global Variables)}}}
+
+#+cindex:global variable
+#+cindex:variable, global
+Variables declared outside of a function are /global variables/ and are visible
+everywhere in a JavaScript program.
+
+{{{subheading(Function Scope)}}}
+
+#+cindex:function scope
+#+cindex:scope, function
+Variables declared inside a function have /function scope/ and are visible only
+to code that appears inside that function.
+
+**** Numbers
+
+**** Text
+
+**** Boolean Values
+
+**** Null and Undefined
+
+**** The Global Object
+
+**** Wrapper Objects
+
+**** Immutable Primitive Values and Mutable Object References
+
+**** Type Conversions
+
+**** Variable Declaration
+
+**** Variable Scope
 
 *** Expressions and Operators
 

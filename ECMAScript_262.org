@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-14 15:35
-#+macro:version 0.2.10
+#+Date:2019-06-14 15:46
+#+macro:version 0.2.11
 
 * ECMAScript Description
 
@@ -1836,6 +1836,68 @@ operators.
 **** Miscellaneous Operators
 
 *** Statements
+#+cindex:Chapter 5 Statements
+#+cindex:statements
+/Statements/ are JavaScript sentences or commands.  Just as English sentences
+are terminated and separated from each other with periods, JavaScript
+statements are terminated with semicolons.  Expressions are /evaluated/ to
+produce a value, but statements are /executed/ to make something happen.
+
+{{{heading(Side Effects)}}}
+
+#+cindex:side effect
+#+cindex:expression statement
+#+cindex:declaration statement
+#+cindex:statements, types
+One way to “make something happen” is to evaluate an expression that has side
+effects.  Expressions with side effects, such as /assignments/ and /function
+invocations/, can stand alone as statements, and when used this way they are
+known as /expression statements/.  A similar category of statements are the
+/declaration statements/ that /declare/ new variables and /define/ new
+functions.
+
+{{{heading(Control Structures)}}}
+
+#+cindex:control structures
+JavaScript programs are nothing more than a sequence of statements to execute.
+By default, the JavaScript interpreter executes these statements one after
+another in the order they are written.  Another way to “make something happen”
+is to alter this default order of execution, and JavaScript has a number of
+statements or /control structures/ that do just this:
+
+#+cindex:conditionals
+- /Conditionals/ are statements like ~if~ and ~switch~; that make the JavaScript
+  interpreter execute or skip other statements depending on the value of an
+  expression.
+
+  #+cindex:loops
+- /Loops/ are statements like ~while~ and ~for~ that execute other statements
+  repetitively.
+
+  #+cindex:jumps
+- /Jumps/ are statements like ~break~, ~return~, and ~throw~ that cause the
+  interpreter to jump to another part of the program.
+
+
+The sections that follow describe the various statements in JavaScript and
+explain their syntax.
+
+**** Expression Statements
+
+**** Compound and Empty Statements
+
+**** Declaration Statements
+
+**** Conditionals
+
+**** Loops
+
+**** Jumps
+
+**** Miscellaneous Statements
+
+**** Summary of JavaScript Statements
+
 
 *** Objects
 

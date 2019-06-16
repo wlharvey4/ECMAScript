@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-14 16:06
-#+macro:version 0.2.12
+#+Date:2019-06-17 09:21
+#+macro:version 0.2.13
 
 * ECMAScript Description
 
@@ -2067,7 +2067,6 @@ categories of JavaScript objects and two types of properties:
 
 - https://livebook.manning.com/#!/book/secrets-of-the-javascript-ninja/table-of-contents/
 
-
 ** Front Matter
 :PROPERTIES:
 :unnumbered: t
@@ -2196,7 +2195,6 @@ JavaScript.
 - /Head First JavaScript/ by Michael Morrison.
 
 **** Roadmap
-
 This book is organized to take you from an apprentice to a ninja in four parts.
 
 1. [[*Part 1---Preparing for Training][Part 1]] introduces the topic and some tools we’ll need as we progress through
@@ -2418,11 +2416,96 @@ Bear is the author of a number of other Manning books:
 - /Prototype and Scriptaculous in Action/
 
 ** Part 1---Preparing for Training
-
 *** Enter the Ninja
+Chapter topics:
+
+- A look at the purpose and structure of this book
+
+- Which libraries we’ll look at
+
+- What is “advanced” JavaScript programming?
+
+- Cross-browser authoring
+
+- Test suite examples
+
+
+There’s nothing simple about creating effective and cross-browser JavaScript
+code.  In addition to the normal challenges of writing clean code, we have the
+added complexity of dealing with obtuse browser differences and complexities.
+To deal with these challenges, JavaScript developers frequently capture sets of
+common and reusable functionality in the form of JavaScript libraries.
+
+- they need to be easy to use,
+
+- incur the least amount of overhead, and
+
+- be able to work across all browsers that we wish to target.
+
+
+Understanding how the very best JavaScript libraries are constructed can
+provide us with great insight into how our own code can be constructed to
+achieve these same goals.
+
+/This book sets out to uncover the techniques and secrets used by these
+world-class code bases and to gather them into a single resource./ In this book
+we’ll be examining the techniques that were (and continue to be) used to create
+the popular JavaScript libraries.
+
+*** The JavaScript libraries we’ll be tapping
+The techniques and practices used to create modern JavaScript libraries will be
+the focus of our attention in this book.  The primary library that we’ll be
+considering is *jQuery*, which has risen in prominence to be the most
+ubiquitous JavaScript library in modern use.
+
+[[http://jquery.com][jQuery]] was created by John Resig and released in January of 2006.  jQuery
+popularized the use of CSS selectors to match DOM content.  Among its many
+capabilities, it provides
+
+- DOM manipulation,
+- Ajax,
+- event handling, and
+- animation functionality.
+
+
+In addition to examining example code from jQuery, we’ll also look at
+techniques utilized by the following libraries:
+
+- [[http://prototypejs.org/][Prototype]] :: The godfather of the modern JavaScript libraries, created by Sam
+     Stephenson and released in 2005. This library embodies DOM, Ajax, and
+     event functionality, in addition to object-oriented, aspect-oriented, and
+     functional programming techniques.
+
+- [[http://developer.yahoo.com/yui][Yahoo! UI]] :: The result of internal JavaScript framework development at
+     Yahoo! and released to the public in February of 2006. Yahoo! UI (YUI)
+     includes DOM, Ajax, event, and animation capabilities in addition to a
+     number of preconstructed widgets (calendar, grid, accordion, and others).
+
+- [[http://code.google.com/p/base2][base2]] :: Created by Dean Edwards and released in March 2007. This library
+     supports DOM and event functionality. Its claim to fame is that it
+     attempts to implement the various W3C specifications in a universal,
+     cross-browser manner.
+
+
+These techniques aren’t only useful for constructing large libraries; they can
+be applied to all JavaScript coding, regardless of size.
+
+The makeup of a JavaScript library can be broken down into three aspects:
+
+- Advanced use of the JavaScript language
+
+- Meticulous construction of cross-browser code
+
+- The use of current best practices that tie everything together
+
+
+We’ll be carefully analyzing these three aspects in each of the libraries to
+gather a complete knowledge base we can use to create our own effective
+JavaScript code.
+
+*** Understanding the JavaScript language
 
 *** Arming with Testing and Debugging
-
 ** Part 2---Apprentice Training
 
 *** Functions are Fundamental
@@ -2463,12 +2546,10 @@ Bear is the author of a number of other Manning books:
 :END:
 
 * Variants
-
 ** TypeScript
 
 - http://www.typescriptlang.org
 - https://github.com/Microsoft/TypeScript
-
 
 - http://jonathancreamer.com/why-would-you-not-use-typescript/
 

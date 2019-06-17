@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-16 23:57
-#+macro:version 0.2.14
+#+Date:2019-06-17 00:50
+#+macro:version 0.2.15
 
 * ECMAScript Description
 
@@ -2444,11 +2444,15 @@ Chapter topics:
 - Test suite examples
 
 
+#+cindex:cross-browser JavaScript code
+#+cindex:libraries, JavaScript
 There’s nothing simple about creating effective and cross-browser JavaScript
 code.  In addition to the normal challenges of writing clean code, we have the
 added complexity of dealing with obtuse browser differences and complexities.
-To deal with these challenges, JavaScript developers frequently capture sets of
-common and reusable functionality in the form of JavaScript libraries.
+To deal with these challenges, JavaScript developers frequently /capture sets
+of common and reusable functionality/ in the form of JavaScript libraries.
+
+- JavaScript Libraries---sets of common and reusable functionality
 
 - they need to be easy to use,
 
@@ -2461,10 +2465,11 @@ Understanding how the very best JavaScript libraries are constructed can
 provide us with great insight into how our own code can be constructed to
 achieve these same goals.
 
+#+cindex:techniques, examine
 /This book sets out to uncover the techniques and secrets used by these
-world-class code bases and to gather them into a single resource./ In this book
-we’ll be examining the techniques that were (and continue to be) used to create
-the popular JavaScript libraries.
+world-class code bases and to gather them into a single resource/.  In this
+book we’ll be examining the techniques that were (and continue to be) used to
+create the popular JavaScript libraries.
 
 **** The JavaScript libraries we’ll be tapping
 The techniques and practices used to create modern JavaScript libraries will be
@@ -2472,6 +2477,7 @@ the focus of our attention in this book.  The primary library that we’ll be
 considering is *jQuery*, which has risen in prominence to be the most
 ubiquitous JavaScript library in modern use.
 
+#+cindex:jQuery
 [[http://jquery.com][jQuery]] was created by John Resig and released in January of 2006.  jQuery
 popularized the use of CSS selectors to match DOM content.  Among its many
 capabilities, it provides
@@ -2485,18 +2491,22 @@ capabilities, it provides
 In addition to examining example code from jQuery, we’ll also look at
 techniques utilized by the following libraries:
 
+#+cindex:Prototype
 - [[http://prototypejs.org/][Prototype]] :: The godfather of the modern JavaScript libraries, created by Sam
-     Stephenson and released in 2005. This library embodies DOM, Ajax, and
+     Stephenson and released in 2005.  This library embodies DOM, Ajax, and
      event functionality, in addition to object-oriented, aspect-oriented, and
      functional programming techniques.
 
+  #+cindex:Yahoo! UI
 - [[http://developer.yahoo.com/yui][Yahoo! UI]] :: The result of internal JavaScript framework development at
-     Yahoo! and released to the public in February of 2006. Yahoo! UI (YUI)
+     Yahoo! and released to the public in February of 2006.  Yahoo! UI (YUI)
      includes DOM, Ajax, event, and animation capabilities in addition to a
      number of preconstructed widgets (calendar, grid, accordion, and others).
 
-- [[http://code.google.com/p/base2][base2]] :: Created by Dean Edwards and released in March 2007. This library
-     supports DOM and event functionality. Its claim to fame is that it
+  #+cindex:base2
+  #+cindex:Edwards, Dean
+- [[http://code.google.com/p/base2][base2]] :: Created by Dean Edwards and released in March 2007.  This library
+     supports DOM and event functionality.  Its claim to fame is that it
      attempts to implement the various W3C specifications in a universal,
      cross-browser manner.
 
@@ -2504,6 +2514,7 @@ techniques utilized by the following libraries:
 These techniques aren’t only useful for constructing large libraries; they can
 be applied to all JavaScript coding, regardless of size.
 
+#+cindex:JavaScript library, makeup
 The makeup of a JavaScript library can be broken down into three aspects:
 
 - Advanced use of the JavaScript language
@@ -2518,6 +2529,91 @@ gather a complete knowledge base we can use to create our own effective
 JavaScript code.
 
 **** Understanding the JavaScript language
+
+{{{heading(Objects---Functions---Closures)}}}
+
+JavaScript consists of a close relationship between:
+- objects,
+- functions, and
+- closures
+
+#+caption:JavaScript consists of a close relationship between objects, functions, and closures.
+#+name:fig-JS-objects-functions-closures
+[[https://dpzbhybb2pdcj.cloudfront.net/resig/Figures/01fig01.jpg]]
+
+Understanding the strong relationship between these three concepts can vastly
+improve our JavaScript programming ability, giving us a strong foundation for
+any type of application development.
+
+{{{heading(Timers---Regular Expressions)}}}
+
+#+cindex:timers
+#+cindex:regular expressions
+In addition to these fundamental concepts, there are two features in JavaScript
+that are woefully underused:
+
+- timers; and
+
+- regular expressions.
+
+
+These two concepts have applications in virtually any JavaScript code base, but
+they aren’t always used to their full potential due to their misunderstood
+nature.  A firm grasp of how /timers/ operate within the browser, all too
+frequently a mystery, gives us the ability to tackle complex coding tasks such
+as long-running computations and smooth animations.  And a sound understanding
+of how /regular expressions/ work allows us to simplify what would otherwise be
+quite complicated pieces of code.
+
+{{{heading(The ~with~ Statement---The ~eval()~ Method)}}}
+
+#+cindex:@code{with} statement
+#+cindex:@code{eval()} method
+As another high point of our advanced tour of the JavaScript language, we’ll
+take a look at the ~with~ statement in chapter 10, and the divisive ~eval()~
+method in chapter 9---two important, but controversial, language features that
+have been trivialized, misused, and even condemned outright by many JavaScript
+programmers.
+
+**** Cross-Browser Considerations
+When developing browser-based JavaScript applications (which is the focus of
+this book), sooner rather than later, we’re going to run face first into The
+Browsers and their maddening issues and inconsistencies.
+
+The quality of browsers has improved greatly as of late, but they all still
+have some bugs, missing APIs, and browser-specific quirks that we’ll need top
+deal with.  Developing a comprehensive strategy for tackling these browser
+issues, and becoming intimately familiar with their differences and quirks, is
+just as important, if not more so, than proficiency in JavaScript itself.
+
+When writing browser applications or JavaScript libraries to be used in them,
+picking and choosing which browsers to support is an important consideration.
+We’d probably like to support them all, but limitations on development and
+testing resources dictate otherwise.  So how do we decide which to support, and
+to what level?
+
+...
+
+**** Current best practices
+#+cindex:best practices
+To enter the big leagues, you also need to exhibit the traits that scores of
+previous developers have proved are beneficial to the development of quality
+code.  These traits, which we’ll examine in depth in chapter 2, are known as
+/best practices/ and, in addition to mastery of the language, include such
+elements as:
+
+#+cindex:testing
+- Testing
+
+  #+cindex:performance analysis
+- Performance analysis
+
+  #+cindex:debugging skills
+- Debugging skills
+
+***** Current best practice---testing
+
+***** Current best practice---performance analysis
 
 *** Arming with Testing and Debugging
 :PROPERTIES:

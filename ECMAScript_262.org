@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-16 13:04
-#+macro:version 0.2.13
+#+Date:2019-06-16 23:57
+#+macro:version 0.2.14
 
 * ECMAScript Description
 
@@ -2170,11 +2170,13 @@ they can become true ninjas of the language.
 
 {{{heading(Intended Audience)}}}
 
+#+cindex:
 This book is aimed at web developers who already have at least a basic grasp of
 JavaScript.
 - You should understand the basic structure of JavaScript statements and
 - how they work to create straightforward on-page scripts.
-- You don’t need to be an advanced user of the language—that’s what this book is for—but
+- You don’t need to be an advanced user of the language---that’s what this book
+  is for---but
 - you shouldn’t be a rank novice.
 - You should also have a working knowledge of HTML and CSS.
 - You should know the basics of putting a web page together.
@@ -2193,6 +2195,8 @@ JavaScript.
 - /JavaScript: The Definitive Guide/ by David Flanagan
 - /JavaScript: The Good Parts/ by Douglas Crockford
 - /Head First JavaScript/ by Michael Morrison.
+- /Head First JavaScript Programming/ by Elizabeth Robson and Eric Freeman
+  (This book replaces /Head First JavaScript/)
 
 **** Roadmap
 This book is organized to take you from an apprentice to a ninja in four parts.
@@ -2363,15 +2367,11 @@ This book is organized to take you from an apprentice to a ninja in four parts.
      final test of your ninja-hood.
 
 **** Code Downloads
-
 #+cindex:source code
 #+cindex:download source code
 Source code for all the working examples in this book (along with some extras
-that never made it into the text) is available for download from the book’s web
-page at:
-
--  https://www.manning.com/SecretsoftheJavaScriptNinja
-
+that never made it into the text) is available for [[https://www.manning.com/SecretsoftheJavaScriptNinja][download from the book’s web
+page]].
 
 #+cindex:Apache server
 The code examples for this book are organized by chapter, with separate folders
@@ -2416,7 +2416,21 @@ Bear is the author of a number of other Manning books:
 - /Prototype and Scriptaculous in Action/
 
 ** Part 1---Preparing for Training
+This part of the book will set the stage for your JavaScript ninja training.
+
+In [[*Enter the Ninja][chapter 1]], you’ll learn what we’re trying to accomplish with this book, and
+we’ll lay the framework for the environment in which JavaScript authors
+operate.
+
+[[*Arming with Testing and Debugging][Chapter 2]] will teach you why testing is so important and give you a brief
+survey of some of the testing tools available. Then we’ll develop some
+surprisingly simple testing tools that you’ll use throughout the rest of your
+training.
+
 *** Enter the Ninja
+:PROPERTIES:
+:chapter:  1
+:END:
 Chapter topics:
 
 - A look at the purpose and structure of this book
@@ -2452,7 +2466,7 @@ world-class code bases and to gather them into a single resource./ In this book
 we’ll be examining the techniques that were (and continue to be) used to create
 the popular JavaScript libraries.
 
-*** The JavaScript libraries we’ll be tapping
+**** The JavaScript libraries we’ll be tapping
 The techniques and practices used to create modern JavaScript libraries will be
 the focus of our attention in this book.  The primary library that we’ll be
 considering is *jQuery*, which has risen in prominence to be the most
@@ -2503,9 +2517,12 @@ We’ll be carefully analyzing these three aspects in each of the libraries to
 gather a complete knowledge base we can use to create our own effective
 JavaScript code.
 
-*** Understanding the JavaScript language
+**** Understanding the JavaScript language
 
 *** Arming with Testing and Debugging
+:PROPERTIES:
+:chapter:  2
+:END:
 ** Part 2---Apprentice Training
 
 *** Functions are Fundamental
@@ -2544,7 +2561,6 @@ JavaScript code.
 :index:    cp
 :unnumbered: t
 :END:
-
 * Variants
 
 ** TypeScript

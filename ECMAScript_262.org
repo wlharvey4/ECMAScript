@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-17 09:30
-#+macro:version 0.2.16
+#+Date:2019-06-17 09:37
+#+macro:version 0.2.17
 
 * ECMAScript Description
 
@@ -2618,8 +2618,49 @@ elements as:
 - Debugging skills
 
 ***** Current best practice---testing
+#+cindex:@code{assert(_} function
+#+cindex:testing tool
+We’ll be applying a number of testing techniques that serve to ensure that our
+example code operates as intended, as well as to serve as examples of how to
+test general code.  The primary tool that we’ll be using for testing is an
+~assert()~ function, whose purpose is to assert that a premise is either =true=
+or =false=.
+
+The general form of this function is:
+: assert(condition, message);
+where the first parameter is a condition that should be true, and the second is
+a message that will be displayed if it’s not.
+
+Note that the ~assert()~ function isn’t an innate feature of the language (some
+languages, such as Java, provide such capabilities), so we’ll be implementing
+it ourselves.  We’ll be discussing its implementation and use in chapter 2.
 
 ***** Current best practice---performance analysis
+#+cindex:performance analysis
+We’ll be using code such as the following later in this book for collecting
+performance information:
+
+#+begin_src js
+start = new Date().getTime();
+for (var n = 0; n < maxCount; n++) {
+  /* perform the operation to be measured *//
+}
+elapsed = new Date().getTime() - start;
+assert(true,"Measured time: " + elapsed);
+#+end_src
+
+#+cindex:timestamps, performance analysis
+Here, we bracket the execution of the code to be measured with the collection
+of timestamps: one before we execute the code and one after.  Their difference
+tells us how long the code took to perform, which we can compare against
+alternatives to the code that we measure using the same technique.
+
+Note how we perform the code multiple times; in this example, we perform it the
+number of times represented by maxCount.  Because a single operation of the
+code happens much too quickly to measure reliably, we need to perform the code
+many times to get a measurable value.  Frequently, this count can be in the
+tens of thousands, or even millions, depending upon the nature of the code
+being measured.  A little trial and-error lets us choose a reasonable value.
 
 *** Arming with Testing and Debugging
 :PROPERTIES:

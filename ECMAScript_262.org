@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-17 09:21
-#+macro:version 0.2.13
+#+Date:2019-06-17 09:30
+#+macro:version 0.2.16
 
 * ECMAScript Description
 
@@ -2170,11 +2170,13 @@ they can become true ninjas of the language.
 
 {{{heading(Intended Audience)}}}
 
+#+cindex:
 This book is aimed at web developers who already have at least a basic grasp of
 JavaScript.
 - You should understand the basic structure of JavaScript statements and
 - how they work to create straightforward on-page scripts.
-- You don’t need to be an advanced user of the language—that’s what this book is for—but
+- You don’t need to be an advanced user of the language---that’s what this book
+  is for---but
 - you shouldn’t be a rank novice.
 - You should also have a working knowledge of HTML and CSS.
 - You should know the basics of putting a web page together.
@@ -2193,6 +2195,8 @@ JavaScript.
 - /JavaScript: The Definitive Guide/ by David Flanagan
 - /JavaScript: The Good Parts/ by Douglas Crockford
 - /Head First JavaScript/ by Michael Morrison.
+- /Head First JavaScript Programming/ by Elizabeth Robson and Eric Freeman
+  (This book replaces /Head First JavaScript/)
 
 **** Roadmap
 This book is organized to take you from an apprentice to a ninja in four parts.
@@ -2363,15 +2367,11 @@ This book is organized to take you from an apprentice to a ninja in four parts.
      final test of your ninja-hood.
 
 **** Code Downloads
-
 #+cindex:source code
 #+cindex:download source code
 Source code for all the working examples in this book (along with some extras
-that never made it into the text) is available for download from the book’s web
-page at:
-
--  https://www.manning.com/SecretsoftheJavaScriptNinja
-
+that never made it into the text) is available for [[https://www.manning.com/SecretsoftheJavaScriptNinja][download from the book’s web
+page]].
 
 #+cindex:Apache server
 The code examples for this book are organized by chapter, with separate folders
@@ -2416,7 +2416,22 @@ Bear is the author of a number of other Manning books:
 - /Prototype and Scriptaculous in Action/
 
 ** Part 1---Preparing for Training
+This part of the book will set the stage for your JavaScript ninja training.
+
+In [[*Enter the Ninja][chapter 1]], you’ll learn what we’re trying to accomplish with this book, and
+we’ll lay the framework for the environment in which JavaScript authors
+operate.
+
+[[*Arming with Testing and Debugging][Chapter 2]] will teach you why testing is so important and give you a brief
+survey of some of the testing tools available. Then we’ll develop some
+surprisingly simple testing tools that you’ll use throughout the rest of your
+training.
+
 *** Enter the Ninja
+:PROPERTIES:
+:chapter:  1
+:END:
+
 Chapter topics:
 
 - A look at the purpose and structure of this book
@@ -2430,11 +2445,15 @@ Chapter topics:
 - Test suite examples
 
 
+#+cindex:cross-browser JavaScript code
+#+cindex:libraries, JavaScript
 There’s nothing simple about creating effective and cross-browser JavaScript
 code.  In addition to the normal challenges of writing clean code, we have the
 added complexity of dealing with obtuse browser differences and complexities.
-To deal with these challenges, JavaScript developers frequently capture sets of
-common and reusable functionality in the form of JavaScript libraries.
+To deal with these challenges, JavaScript developers frequently /capture sets
+of common and reusable functionality/ in the form of JavaScript libraries.
+
+- JavaScript Libraries---sets of common and reusable functionality
 
 - they need to be easy to use,
 
@@ -2452,12 +2471,19 @@ world-class code bases and to gather them into a single resource./ In this book
 we’ll be examining the techniques that were (and continue to be) used to create
 the popular JavaScript libraries.
 
-*** The JavaScript libraries we’ll be tapping
+#+cindex:techniques, examine
+/This book sets out to uncover the techniques and secrets used by these
+world-class code bases and to gather them into a single resource/.  In this
+book we’ll be examining the techniques that were (and continue to be) used to
+create the popular JavaScript libraries.
+
+**** The JavaScript libraries we’ll be tapping
 The techniques and practices used to create modern JavaScript libraries will be
 the focus of our attention in this book.  The primary library that we’ll be
 considering is *jQuery*, which has risen in prominence to be the most
 ubiquitous JavaScript library in modern use.
 
+#+cindex:jQuery
 [[http://jquery.com][jQuery]] was created by John Resig and released in January of 2006.  jQuery
 popularized the use of CSS selectors to match DOM content.  Among its many
 capabilities, it provides
@@ -2471,18 +2497,22 @@ capabilities, it provides
 In addition to examining example code from jQuery, we’ll also look at
 techniques utilized by the following libraries:
 
+#+cindex:Prototype
 - [[http://prototypejs.org/][Prototype]] :: The godfather of the modern JavaScript libraries, created by Sam
-     Stephenson and released in 2005. This library embodies DOM, Ajax, and
+     Stephenson and released in 2005.  This library embodies DOM, Ajax, and
      event functionality, in addition to object-oriented, aspect-oriented, and
      functional programming techniques.
 
+  #+cindex:Yahoo! UI
 - [[http://developer.yahoo.com/yui][Yahoo! UI]] :: The result of internal JavaScript framework development at
-     Yahoo! and released to the public in February of 2006. Yahoo! UI (YUI)
+     Yahoo! and released to the public in February of 2006.  Yahoo! UI (YUI)
      includes DOM, Ajax, event, and animation capabilities in addition to a
      number of preconstructed widgets (calendar, grid, accordion, and others).
 
-- [[http://code.google.com/p/base2][base2]] :: Created by Dean Edwards and released in March 2007. This library
-     supports DOM and event functionality. Its claim to fame is that it
+  #+cindex:base2
+  #+cindex:Edwards, Dean
+- [[http://code.google.com/p/base2][base2]] :: Created by Dean Edwards and released in March 2007.  This library
+     supports DOM and event functionality.  Its claim to fame is that it
      attempts to implement the various W3C specifications in a universal,
      cross-browser manner.
 
@@ -2490,6 +2520,7 @@ techniques utilized by the following libraries:
 These techniques aren’t only useful for constructing large libraries; they can
 be applied to all JavaScript coding, regardless of size.
 
+#+cindex:JavaScript library, makeup
 The makeup of a JavaScript library can be broken down into three aspects:
 
 - Advanced use of the JavaScript language
@@ -2503,9 +2534,98 @@ We’ll be carefully analyzing these three aspects in each of the libraries to
 gather a complete knowledge base we can use to create our own effective
 JavaScript code.
 
-*** Understanding the JavaScript language
+**** Understanding the JavaScript language
+
+{{{heading(Objects---Functions---Closures)}}}
+
+JavaScript consists of a close relationship between:
+- objects,
+- functions, and
+- closures
+
+#+caption:JavaScript consists of a close relationship between objects, functions, and closures.
+#+name:fig-JS-objects-functions-closures
+[[https://dpzbhybb2pdcj.cloudfront.net/resig/Figures/01fig01.jpg]]
+
+Understanding the strong relationship between these three concepts can vastly
+improve our JavaScript programming ability, giving us a strong foundation for
+any type of application development.
+
+{{{heading(Timers---Regular Expressions)}}}
+
+#+cindex:timers
+#+cindex:regular expressions
+In addition to these fundamental concepts, there are two features in JavaScript
+that are woefully underused:
+
+- timers; and
+
+- regular expressions.
+
+
+These two concepts have applications in virtually any JavaScript code base, but
+they aren’t always used to their full potential due to their misunderstood
+nature.  A firm grasp of how /timers/ operate within the browser, all too
+frequently a mystery, gives us the ability to tackle complex coding tasks such
+as long-running computations and smooth animations.  And a sound understanding
+of how /regular expressions/ work allows us to simplify what would otherwise be
+quite complicated pieces of code.
+
+{{{heading(The ~with~ Statement---The ~eval()~ Method)}}}
+
+#+cindex:@code{with} statement
+#+cindex:@code{eval()} method
+As another high point of our advanced tour of the JavaScript language, we’ll
+take a look at the ~with~ statement in chapter 10, and the divisive ~eval()~
+method in chapter 9---two important, but controversial, language features that
+have been trivialized, misused, and even condemned outright by many JavaScript
+programmers.
+
+**** Cross-Browser Considerations
+When developing browser-based JavaScript applications (which is the focus of
+this book), sooner rather than later, we’re going to run face first into The
+Browsers and their maddening issues and inconsistencies.
+
+The quality of browsers has improved greatly as of late, but they all still
+have some bugs, missing APIs, and browser-specific quirks that we’ll need top
+deal with.  Developing a comprehensive strategy for tackling these browser
+issues, and becoming intimately familiar with their differences and quirks, is
+just as important, if not more so, than proficiency in JavaScript itself.
+
+When writing browser applications or JavaScript libraries to be used in them,
+picking and choosing which browsers to support is an important consideration.
+We’d probably like to support them all, but limitations on development and
+testing resources dictate otherwise.  So how do we decide which to support, and
+to what level?
+
+...
+
+**** Current best practices
+#+cindex:best practices
+To enter the big leagues, you also need to exhibit the traits that scores of
+previous developers have proved are beneficial to the development of quality
+code.  These traits, which we’ll examine in depth in chapter 2, are known as
+/best practices/ and, in addition to mastery of the language, include such
+elements as:
+
+#+cindex:testing
+- Testing
+
+  #+cindex:performance analysis
+- Performance analysis
+
+  #+cindex:debugging skills
+- Debugging skills
+
+***** Current best practice---testing
+
+***** Current best practice---performance analysis
 
 *** Arming with Testing and Debugging
+:PROPERTIES:
+:chapter:  2
+:END:
+
 ** Part 2---Apprentice Training
 
 *** Functions are Fundamental
@@ -2544,7 +2664,6 @@ JavaScript code.
 :index:    cp
 :unnumbered: t
 :END:
-
 * Variants
 ** TypeScript
 

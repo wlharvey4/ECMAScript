@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-18 23:16
-#+macro:version 0.3.1
+#+Date:2019-06-18 23:57
+#+macro:version 0.3.2
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2796,6 +2796,105 @@ being measured.  A little trial and-error lets us choose a reasonable value.
 :PROPERTIES:
 :chapter:  2
 :END:
+
+Coverage:
+- Tools for debugging JavaScript code
+- Techniques for generating tests
+- Building a test suite
+- How to test asynchronous operations
+
+
+#+cindex:test suites
+Constructing effective test suites for your code is always important, so we’re
+going to discuss it now, before we go into any discussions on coding.  As
+important as a solid testing strategy is for all code, it can be crucial for
+situations where /external factors/ have the potential to affect the operation
+of your code, which is exactly the case we’re faced with in cross-browser
+JavaScript development.  We also have the problem of determining if our code
+works in all the browsers that we choose to support.  It’s vital that the
+importance of testing be emphasized and testing strategies defined, because
+we’ll be using these strategies throughout the rest of the book.
+
+In this chapter, we’re going to look at:
+
+#+cindex:debugging JavaScript
+- some tools and techniques for debugging JavaScript code,
+- for generating tests based upon those results, and
+- for constructing a test suite to reliably run those tests.
+
+**** Debugging code
+#+cindex:debuggin
+Similar tools have been developed for all major browsers:
+
+#+cindex:Firebug
+- [[http://getfirebug.org/][Firebug]]
+  #+cindex:IE Developer
+- IE Developer Tools—Included in Internet Explorer 8 and later.
+  #+cindex:Opera Dragonfly
+- Opera Dragonfly
+  #+cindex:WebKit Developer Tools
+- WebKit Developer Tools---Introduced in Safari 3, dramatically improved as of
+  Safari 4, and now available in Chrome.
+
+
+There are two important approaches to debugging JavaScript:
+#+cindex:logging
+- logging and
+  #+cindex:breakpoints
+- breakpoints.
+
+***** Logging
+#+cindex:logging
+#+cindex:@code{console.log()}
+Logging statements (such as using the ~console.log()~ method in Firebug,
+Safari, Chrome, IE, and recent versions of Opera) are part of the code (even if
+perhaps temporarily) and are useful in a cross-browser sense.  We can write
+logging calls in our code, and we can benefit from seeing the messages in the
+consoles of all modern browsers.
+
+All our logging statements can be written to the console and be browsed
+immediately or at a later time without impeding the normal flow of the program.
+For example, if we wanted to know what the value of a variable named ~x~ was at
+a certain point in the code, we might write this:
+
+#+begin_src js
+var x = 213;
+console.log(x);
+#+end_src
+
+***** Breakpoints
+#+cindex:breakpoints
+Breakpoints are a somewhat more complex concept than logging, but they possess
+a notable advantage over logging: they halt the execution of a script at a
+specific line of code, pausing the browser.  This allows us to leisurely
+investigate the state of all sorts of things at the point of the break.  This
+includes all accessible variables, the context, and the scope chain.
+
+#+name:setting-breakpoints
+#+begin_src html :tangle public/breakpoint.html :mkdirp yes
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Listing 2.2</title>
+    <script type="text/javascript" src="log.js"></script>
+    <script type="text/javascript">var x = 213;
+      log(x); <!-- Set a breakpoint here -->
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
+#+end_src
+
+If we were to set a breakpoint using Firebug on the annotated line B in listing
+2.2 (by clicking on the line number margin in the Script display) and refresh
+the page to cause the code to execute, the debugger would stop execution at
+that line and show us the display in figure 2.2.
+
+Note how the rightmost pane allows us to see the state within which our code is
+running, including the value of x. The debugger breaks on a line before the
+breakpointed line is actually executed; in this example, the call to the log()
+method has yet to be executed.
 
 ** Part 2---Apprentice Training
 

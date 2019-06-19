@@ -1,80 +1,108 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-17 09:38
-#+macro:version 0.3.0
+#+Date:2019-06-18 23:16
+#+macro:version 0.3.1
 
 * ECMAScript Description
+#+cindex:Eich, Brendan
+#+cindex:specification, ECMAScript
+#+cindex:ECMAScript specification
+The ECMAScript specification is a standardized specification of a scripting
+language developed by Brendan Eich of Netscape.
 
-  The ECMAScript specification is a standardized specification of a scripting
-  language developed by Brendan Eich of Netscape.
-
-  ECMAScript is a scripting language specification standardized by ECMA
-  International in ECMA-262 and ISO/IEC 16262.  It was created to standardize
-  JavaScript (``Spidermonkey''), so as to foster multiple independent
-  implementations.  Other implementations include
-  - JScript (Microsoft)
-  - ActionScript (Macromedia Inc.; Adobe)
-
-
-  ECMAScript is *object-based*: basic language and host facilities are provided
-  by /objects/, and an ECMAScript program is a cluster of communicating
-  objects.  An ECMAScript *object* is a collection of /properties/ each with
-  zero or more /attributes/ that determine how each property can be used.
-  *Properties* are containers that hold other objects, primitive values, or
-  functions.  A *primitive value* is a member of one of the following built-in
-  types:
-  - Undefined
-  - Null
-  - Boolean
-  - Number
-  - String
+#+cindex:ECMA-262
+#+cindex:ISO/IEC 16262
+#+cindex:Spikdermonkey
+ECMAScript is a scripting language specification standardized by ECMA
+International in ECMA-262 and ISO/IEC 16262.  It was created to standardize
+JavaScript (``Spidermonkey''), so as to foster multiple independent
+implementations.  Other implementations include
+  #+cindex:JScript
+- JScript (Microsoft)
+  #+cindex:ActionScript
+- ActionScript (Macromedia Inc.; Adobe)
 
 
-  An *object* is a member of the remaining built-in type
-  - Object
+{{{heading(Built-In Types)}}}
+
+#+cindex:object-based language
+#+cindex:object definition
+#+cindex:properties
+#+cindex:attributes
+#+cindex:primitive values
+#+cindex:built-in types
+ECMAScript is *object-based*: basic language and host facilities are provided
+by /objects/, and an ECMAScript program is a cluster of communicating objects.
+An ECMAScript *object* is a collection of /properties/ each with zero or more
+/attributes/ that determine how each property can be used.  *Properties* are
+containers that hold other /objects/, /primitive values/, or /functions/.  A
+*primitive value* is a member of one of the following built-in types:
+- Undefined
+- Null
+- Boolean
+- Number
+- String
 
 
-  And a *function* is a /callable object/.  A *method* is a function that is associated with
-  an object via a property.
-
-  ECMAScript defines a collection of *built-in objects* that round out the
-  definition of ECMAScript entities.  These built-in objects include:
-  - the global object
-  - the Object object
-  - the Function object
-  - the Array object
-  - the String object
-  - the Boolean object
-  - the Number object
-  - the Math object
-  - the Date object
-  - the RegExp object
-  - the JSON object
-  - the Error objects
-    - EvalError
-    - RangeError
-    - ReferenceError
-    - SyntaxError
-    - TypeError
-    - URIError
+#+cindex:Object type
+An *object* is a member of the remaining built-in type
+- Object
 
 
-  ECMAScript also defines a set of *built-in operators*.  ECMAScript operators
-  include:
-  - unary operators
-  - multiplicative operators
-  - additive operators
-  - bitwise shift operators
-  - relational operators
-  - equality operators
-  - binary bitwise operators
-  - binary logical operators
-  - assignment operators
-  - comma operator
+#+cindex:function
+#+cindex:callable object, function
+#+cindex:object, callable, function
+#+cindex:method
+And a *function* is a /callable object/.  A *method* is a function that is
+associated with an object via a property.
+
+{{{heading(Built-in Objects)}}}
+
+#+cindex:built-in objects
+ECMAScript defines a collection of *built-in objects* that round out the
+definition of ECMAScript entities.  These built-in objects include:
+- the global object
+- the Object object
+- the Function object
+- the Array object
+- the String object
+- the Boolean object
+- the Number object
+- the Math object
+- the Date object
+- the RegExp object
+- the JSON object
+- the Error objects
+  - EvalError
+  - RangeError
+  - ReferenceError
+  - SyntaxError
+  - TypeError
+  - URIError
 
 
-  *ECMAScript syntax* intentionally resembles Java syntax. ECMAScript syntax is
-  relaxed to enable it to serve as an easy-to-use scripting language.
+{{{heading(Built-In Operators)}}}
+
+#+cindex:built-in operators
+ECMAScript also defines a set of *built-in operators*.  ECMAScript operators
+include:
+- unary operators
+- multiplicative operators
+- additive operators
+- bitwise shift operators
+- relational operators
+- equality operators
+- binary bitwise operators
+- binary logical operators
+- assignment operators
+- comma operator
+
+
+{{{heading(ECMAScript Syntax)}}}
+
+#+cindex:syntax
+*ECMAScript syntax* intentionally resembles Java syntax.  ECMAScript syntax is
+relaxed to enable it to serve as an easy-to-use scripting language.
 
 ** Version Numbers
 
@@ -1202,6 +1230,108 @@ promise is settled its outcome can’t change.
 
   Notice the column "Babel + core-js" as this is what can be achieved today
   with transpiling (and that's fully sufficient for practice).
+
+* ECMAScript Variants
+** TypeScript
+
+- http://www.typescriptlang.org
+- https://github.com/Microsoft/TypeScript
+
+- http://jonathancreamer.com/why-would-you-not-use-typescript/
+
+- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-part-1-alternatives-ec1248bb6dc
+- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-part-2-typescript-adds-overhead-20b670b9105a
+- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-50ab0d225bdd
+
+- https://medium.jonasbandi.net/hidden-features-of-create-react-app-52db3a17acc0
+
+** PureScript
+
+- http://www.purescript.org
+- https://github.com/purescript
+
+
+#+begin_quote
+"A small strongly, statically typed language which compiles to Javascript"
+#+end_quote
+
+- https://survivejs.com/blog/purescript-interview/
+
+** TypeScript vs Purescript
+
+- https://blog.logrocket.com/typescript-vs-purescript-not-all-compilers-are-created-equal-c16dadaa7d3e/
+
+- https://www.slant.co/versus/378/389/~typescript_vs_purescript
+
+** Elm
+
+- https://elm-lang.org
+- https://github.com/elm
+
+
+#+begin_quote
+"Elm is a domain-specific programming language for declaratively creating web
+browser-based graphical user interfaces.  Elm is purely functional, and is
+developed with emphasis on usability, performance, and robustness.  It
+advertises "no runtime exceptions in practice", made possible by the Elm
+compiler's static type checking."
+#+end_quote
+
+- Designed By :: Evan Czaplicki
+- First Appeared :: 2012
+- Influenced By :: Haskell, Standard ML, OCaml, F#
+
+** Reason---Facebook
+
+"Reason lets you write simple, fast and quality type safe code while leveraging
+both the JavaScript & OCaml ecosystems."
+
+- https://reasonml.github.io
+- https://github.com/facebook/reason
+
+
+#+begin_quote
+"Reason, also known as ReasonML, is a syntax extension and toolchain for OCaml
+created by Jordan Walke at Facebook.  Reason offers a syntax familiar to
+JavaScript programmers, and transpiles to OCaml.  Statically typed Reason (or
+OCaml) code may be compiled to dynamically typed JavaScript using the
+BuckleScript compiler."
+#+end_quote
+
+- Designed By :: Jordan Walke
+- First Appeared :: May 16, 2016
+- Influenced By :: OCaml
+
+** Flow
+
+"Flow is a static type checker for JavaScript."
+
+- https://flow.org
+- https://github.com/facebook/flow
+
+** Dart---Google---Ecma TC52
+
+"Dart is a client-optimized language for fast apps on any platform."
+
+- https://dart.dev
+- https://github.com/dart-lang
+- https://www.dartlang.org/guides/language/spec
+
+
+#+begin_quote
+Dart is a client-optimized programming language for fast apps on multiple
+platforms.  It is developed by Google and is used to build mobile, desktop,
+backend and web applications.
+
+Dart is an object-oriented, class defined, garbage-collected language using a
+C-style syntax that transcompiles optionally into JavaScript.  It supports
+interfaces, mixins, abstract classes, reified generics, static typing, and a
+sound type system.
+#+end_quote
+
+- Designed By :: Lars Bak and Kasper Lund
+- First Appeared :: October 10, 2011
+- Influenced By :: C#, Erlang, JavaScript, Smalltalk, Strongtalk
 
 * ECMAScript Books
 
@@ -2705,107 +2835,90 @@ being measured.  A little trial and-error lets us choose a reasonable value.
 :index:    cp
 :unnumbered: t
 :END:
-* Variants
-** TypeScript
+* Speaking JavaScript---An In-Depth Guide for Programmers
+- http://speakingjs.com/
 
-- http://www.typescriptlang.org
-- https://github.com/Microsoft/TypeScript
+- By Dr. Axel Rauschmayer
 
-- http://jonathancreamer.com/why-would-you-not-use-typescript/
+- This book covers JavaScript up to and including ECMAScript 5.
+** About Speaking JavaScript
+This book has been written for programmers, by a programmer.  In order to
+understand it, you should already know object-oriented programming, for
+example, via a mainstream programming language such as Java, PHP, C++, Python,
+Ruby, Objective-C, Swift, C#, or Perl.
 
-- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-part-1-alternatives-ec1248bb6dc
-- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-part-2-typescript-adds-overhead-20b670b9105a
-- https://medium.jonasbandi.net/here-is-why-you-might-not-want-to-use-typescript-50ab0d225bdd
+Thus, the book’s target audience is programmers who want to learn JavaScript
+quickly and properly, and JavaScript programmers who want to deepen their
+skills and/or look up specific topics.
 
-- https://medium.jonasbandi.net/hidden-features-of-create-react-app-52db3a17acc0
+Speaking JavaScript has four parts:
 
-** PureScript
+1. JavaScript Quick Start: Learn a safe subset of JavaScript in less than 30
+   pages.
+2. Background: When, why, and how was JavaScript created? How is it related to
+   other programming languages? What were the important steps that got us to
+   where we are today?
+3. JavaScript in Depth: This part is more of a reference: look for a topic that
+   you are interested in, jump in, and explore. I still tried to make it fun to
+   read.
+4. Tips, Tools, and Libraries: This part gives tips for using JavaScript: best
+   practices, advanced techniques, and learning resources. It also describes a
+   few important tools and libraries.
 
-- http://www.purescript.org
-- https://github.com/purescript
+* Exploring ES6
+- https://exploringjs.com/es6.html
+- by Dr. Axel Rauschmayer
+* Setting Up ES6
+- https://exploringjs.com/setting-up-es6.html
 
+- By Dr. Axel Rauschmayer
+** About Setting Up ES6
+ES6 (whose official name is ECMAScript 2015) is the latest version of
+JavaScript.  This book explains how to set up ES6 projects that are compiled to
+ES5 via Babel 6.  It covers the following scenarios:
 
-#+begin_quote
-"A small strongly, statically typed language which compiles to Javascript"
-#+end_quote
+- Deploying ES6 in browsers via Babel and webpack
+- Deploying ES6 in Node.js, by statically or dynamically compiling it via
+  Babel.
 
-- https://survivejs.com/blog/purescript-interview/
+* Exploring ES2016 and ES2017
+- https://exploringjs.com/es2016-es2017.html
 
-** TypeScript vs Purescript
+- By Dr. Axel Rauschmayer
 
-- https://blog.logrocket.com/typescript-vs-purescript-not-all-compilers-are-created-equal-c16dadaa7d3e/
+* Exploring ES2018 and ES2019
+- https://exploringjs.com/es2018-es2019/index.html
 
-- https://www.slant.co/versus/378/389/~typescript_vs_purescript
+- By Dr. Axel Rauschmayer
 
-** Elm
+* JavaScript for Impatient Programmers
+- https://exploringjs.com/impatient-js/index.html
 
-- https://elm-lang.org
-- https://github.com/elm
+- By Dr. Axel Rauschmayer
 
+** About JavaScript for Impatient Programmers
+This book makes JavaScript less challenging to learn for newcomers, by offering
+a modern view that is as consistent as possible.
 
-#+begin_quote
-"Elm is a domain-specific programming language for declaratively creating web
-browser-based graphical user interfaces.  Elm is purely functional, and is
-developed with emphasis on usability, performance, and robustness.  It
-advertises "no runtime exceptions in practice", made possible by the Elm
-compiler's static type checking."
-#+end_quote
+{{{heading(Highlights)}}}
 
-- Designed By :: Evan Czaplicki
-- First Appeared :: 2012
-- Influenced By :: Haskell, Standard ML, OCaml, F#
+- Get started quickly, by initially focusing on modern features.
+- Test-driven exercises and quizzes available for most chapters.
+- Covers all essential features of JavaScript, up to and including ES2019.
+- Optional advanced sections let you dig deeper.
 
-** Reason---Facebook
+* Exploring ReasonML and Functional Programming
+- http://reasonmlhub.com/exploring-reasonml/
 
-"Reason lets you write simple, fast and quality type safe code while leveraging
-both the JavaScript & OCaml ecosystems."
+- By Dr. Axel Rauschmayer
 
-- https://reasonml.github.io
-- https://github.com/facebook/reason
-
-
-#+begin_quote
-"Reason, also known as ReasonML, is a syntax extension and toolchain for OCaml
-created by Jordan Walke at Facebook.  Reason offers a syntax familiar to
-JavaScript programmers, and transpiles to OCaml.  Statically typed Reason (or
-OCaml) code may be compiled to dynamically typed JavaScript using the
-BuckleScript compiler."
-#+end_quote
-
-- Designed By :: Jordan Walke
-- First Appeared :: May 16, 2016
-- Influenced By :: OCaml
-
-** Flow
-
-"Flow is a static type checker for JavaScript."
-
-- https://flow.org
-- https://github.com/facebook/flow
-
-** Dart---Google---Ecma TC52
-
-"Dart is a client-optimized language for fast apps on any platform."
-
-- https://dart.dev
-- https://github.com/dart-lang
-- https://www.dartlang.org/guides/language/spec
-
-
-#+begin_quote
-Dart is a client-optimized programming language for fast apps on multiple
-platforms.  It is developed by Google and is used to build mobile, desktop,
-backend and web applications.
-
-Dart is an object-oriented, class defined, garbage-collected language using a
-C-style syntax that transcompiles optionally into JavaScript.  It supports
-interfaces, mixins, abstract classes, reified generics, static typing, and a
-sound type system.
-#+end_quote
-
-- Designed By :: Lars Bak and Kasper Lund
-- First Appeared :: October 10, 2011
-- Influenced By :: C#, Erlang, JavaScript, Smalltalk, Strongtalk
+** About Exploring Reason ML
+- ReasonML: This book teaches the programming language ReasonML by Facebook.
+- Functional programming: It is also an introduction to functional
+  programming. Especially people familiar with C-style languages (Java,
+  JavaScript, C#, etc.) will profit from ReasonML’s familiar syntax.
+- Required knowledge: You should know how to program, e.g. in a mainstream
+  language such as Java, JavaScript, C#, Python, C/C++, PHP, Ruby, Go, etc.
 
 * Concept Index
 :PROPERTIES:

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-18 23:57
-#+macro:version 0.3.2
+#+Date:2019-06-19 18:13
+#+macro:version 0.3.3
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2886,15 +2886,61 @@ includes all accessible variables, the context, and the scope chain.
 </html>
 #+end_src
 
+#+cindex:breakpoint, set
 If we were to set a breakpoint using Firebug on the annotated line B in listing
 2.2 (by clicking on the line number margin in the Script display) and refresh
 the page to cause the code to execute, the debugger would stop execution at
 that line and show us the display in figure 2.2.
 
 Note how the rightmost pane allows us to see the state within which our code is
-running, including the value of x. The debugger breaks on a line before the
-breakpointed line is actually executed; in this example, the call to the log()
-method has yet to be executed.
+running, including the value of ~x~.  The debugger breaks on a line before the
+breakpointed line is actually executed; in this example, the call to the
+~log()~ method has yet to be executed.
+
+#+cindex:step into
+If we were trying to debug a problem with our new method, we might want to step
+into that method to see what’s going on inside it.  Clicking on the “step into”
+button (the left-most gold arrow button) causes the debugger to execute up to
+the first line of our method, and we’d see the display shown in figure 2.3.
+Note how the displayed state has changed.
+
+Debugging code not only serves its primary and obvious purpose (detecting and
+fixing bugs), but it also can help us achieve the current best-practice goal of
+generating effective test cases.
+
+*** Test generation
+Good tests exhibit three important characteristics:
+
+- Repeatability ::
+
+                   Our test results should be highly reproducible.  Tests run
+                   repeatedly should always produce the exact same results.  If
+                   test results are nondeterministic, how would we know which
+                   results are valid and which are invalid?  Additionally,
+                   reproducibility ensures that our tests aren’t dependent upon
+                   external factors issues like network or CPU loads.
+
+- Simplicity ::
+
+                Our tests should focus on testing one thing.  We should strive
+                to remove as much HTML markup, CSS, or JavaScript as we can
+                without disrupting the intent of the test case.  The more we
+                remove, the greater the likelihood that the test case will only
+                be influenced by the specific code that we’re testing.
+
+- Independence ::
+
+                  Our tests should execute in isolation.  We must avoid making
+                  the results from one test dependent upon another.  Breaking
+                  tests down into the smallest possible units will help us
+                  determine the exact source of a bug when an error occurs.
+
+
+There are a number of approaches that can be used for constructing tests, with
+the two primary approaches being:
+
+- deconstructive tests
+- constructive tests
 
 ** Part 2---Apprentice Training
 

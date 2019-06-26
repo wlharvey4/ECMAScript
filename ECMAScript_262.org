@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-19 18:13
-#+macro:version 0.3.3
+#+Date:2019-06-25 21:33
+#+macro:version 0.3.4
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -294,7 +294,7 @@ relaxed to enable it to serve as an easy-to-use scripting language.
        than ECMAScript 4, and the rest of TC39 agreed to keep moving things
        forward.
 
-   - *V8*: proving JavaScript can be fast.  When Google introduced its Chrome
+   - V8 :: proving JavaScript can be fast.  When Google introduced its Chrome
      web browser, one of its highlights was a fast JavaScript engine called V8.
      It changed the perception of JavaScript as being slow and led to a speed
      race with other browser vendors from which we are still profiting.  V8 is
@@ -1676,16 +1676,18 @@ This chapter ends with an extended example that puts many of these techniques
 together and shows what real-world client-side JavaScript (plus HTML and CSS)
 programs look like.
 
-[[../figs/loancalc-50.png]]
+[[file:figs/loancalc-50.png]]
 
 ** Core JavaScript
 #+cindex:reference, language
 #+cindex:language reference
 This part of the book, Chapters 2 though 12, documents the core JavaScript
 language and is meant to be a JavaScript language reference.
+
 *** Lexical Structure
 #+cindex:Chapter 2 Lexical Structure
 #+cindex:lexical structure, def
+#+cindex:syntax
 The /lexical structure/ of a programming language is the set of elementary
 rules that specifies how you write programs in that language.  It is the
 lowest-level syntax of a language; it specifies such things as what variable
@@ -1696,6 +1698,37 @@ This short chapter documents the lexical structure of JavaScript.
 
 **** Character Set
 #+cindex:character set
+#+cindex:Unicode
+JavaScript programs are written using the Unicode character set.  ECMAScript 3
+requires JavaScript implementations to support Unicode version 2.1 or later.
+ECMAScript 5 requires implementations to support Unicode 3 or later.
+
+See [[characters-codepoints-strings][Characters---Codepoints---and Strings]] for more about Unicode and
+JavaScript.
+
+***** Case Sensitivity
+#+cindex:identifiers
+#+cindex:case sensitive
+JavaScript is a case-sensitive language.  This means that language keywords,
+variables, function names, and other {{{dfn(identifiers)}}} must always be
+typed with a consistent capitalization of letters.
+
+#+cindex:HTML
+#+cindex:XHTML
+Note, however, that HTML is not case-sensitive (although XHTML is).  Because of
+its close association with client-side JavaScript, this difference can be
+confusing.  Many client-side JavaScript objects and properties have the same
+names as the HTML tags and attributes they represent.  While these tags and
+attribute names can be typed in any case in HTML, in JavaScript they typically
+must be all lowercase.
+
+For example, the HTML ~onclick~ event handler attribute is sometimes specified
+as ~onClick~ in HTML, but it must be specified as ~onclick~ in JavaScript code
+(or in XHTML documents).
+
+***** Whitespace---Line Breaks---and Format Control Characters
+JavaScript ignores spaces that appear between tokens in programs.  For the most
+part, JavaScript also ignores line breaks (but see ... for an exception).
 
 **** Comments
 #+cindex:comments
@@ -1707,8 +1740,119 @@ This short chapter documents the lexical structure of JavaScript.
 #+cindex:identifiers
 #+cindex:reserved words
 
-**** Optional Semicolons
-#+cindex:semicolons 
+**** Optional Semicolons---Required Semicolons
+#+cindex:semicolons
+JavaScript uses the semicolon (=;=) to separate statements from each other.  In
+JavaScript, you can usually omit the semicolon between two statements if those
+statements are written on separate lines.  (You can also omit a semicolon at
+the end of a program or if the next token in the program is a closing curly
+brace =}=.)
+
+Many JavaScript programmers (and the code in this book) use semicolons to
+explicitly mark the ends of statements, even where they are not required.
+
+Another style is to omit semicolons whenever possible, using them only in the
+few situations that require them.
+
+Whichever style you choose, there are a few details you should understand about
+optional semicolons in JavaScript.
+
+#+cindex:line break, as semicolon
+Note that JavaScript does not treat every line break as a semicolon: it usually
+treats line breaks as semicolons only if it can’t parse the code without the
+semicolons.  More formally (and with two exceptions described below),
+JavaScript treats a line break as a semicolon if the next nonspace character
+cannot be interpreted as a continuation of the current statement.
+
+These statement termination rules lead to some surprising cases.  This code
+looks like two separate statements separated with a newline:
+
+#+begin_src js -n
+var y = x + f
+(a+b).toString()
+#+end_src
+
+But the parentheses on the second line of code can be interpreted as a function
+invocation of ~f~ from the first line, and JavaScript interprets the code like
+this:
+
+: var y = x + f(a+b).toString();
+
+#+cindex:explicit semicolon required
+#+cindex:semicolon, required explicit
+More likely than not, this is not the interpretation intended by the author of
+the code.  In order to work as two separate statements, an explicit semicolon
+is required in this case.
+
+In general, if a statement begins with:
+
+: ( [ / + -
+
+{{{noindent}}}there is a chance that it could be interpreted as a continuation
+of the statement before.  Statements beginning with =/ + -= are quite rare in
+practice, but statements beginning with =( [= are not uncommon at all, at least
+in some styles of JavaScript programming.
+
+Some programmers like to put a defensive semicolon at the beginning of any such
+statement so that it will continue to work correctly even if the statement
+before it is modified and a previously terminating semicolon removed:
+
+#+begin_src js -n
+var x = 0 			  // semicolon omitted here
+;[x,x+1,x+2].forEach(console.log) // defensive ; keeps this statement separate
+#+end_src
+
+{{{heading(Exceptions to General Rule of Line Breaks)}}}
+
+There are two exceptions to the general rule that JavaScript interprets line
+breaks as semicolons when it cannot parse the second line as a continuation of
+the statement on the first line.
+
+1. The first exception involves the ~return~, ~break~, and ~continue~
+   statements.  These statements often stand alone, but they are sometimes
+   followed by an identifier or expression.  If a line break appears after any
+   of these words (before any other tokens), JavaScript will *always* interpret
+   that line break as a semicolon.
+
+   #+begin_src js -n
+   return
+   true;
+   #+end_src
+
+   {{{noindent}}}JavaScript assumes you meant:
+
+   : return; true;
+
+   {{{noindent}}}However, you probably meant:
+
+   : return true;
+
+   What this means is that you must not insert a line break between ~return~,
+   ~break~ or ~continue~ and the expression that follows the keyword.  If you
+   do insert a line break, your code is likely to fail in a nonobvious way that
+   is difficult to debug.
+
+2. The second exception involves the ~++~ and ~−−~ operators.  These operators
+   can be prefix operators that appear before an expression or postfix
+   operators that appear after an expression.  /If you want to use either of
+   these operators as postfix operators, they must appear on the same line as
+   the expression they apply to/.  Otherwise, the line break will be treated as
+   a semicolon, and the ~++~ or ~--~ will be parsed as a prefix operator
+   applied to the code that follows.
+
+   #+begin_src js -n
+   x
+   ++
+   y
+   #+end_src
+
+   {{{noindent}}}is parsed as:
+
+   : x; ++y;
+
+   {{{noindent}}}not as:
+
+   : x++; y;
 
 *** Types Values and Variables
 #+cindex:Chapter 3 Types Values Variables
@@ -1827,7 +1971,7 @@ than having globally defined functions to operate on values of various types,
 the types themselves define methods for working with values.
 
 Technically, it is only JavaScript objects that have methods.  But numbers,
-strings, and boolean values behave as if they had methods.  
+strings, and boolean values behave as if they had methods.
 
 In JavaScript, =null= and =undefined are the only values that methods cannot be
 invoked on.
@@ -1899,6 +2043,52 @@ to code that appears inside that function.
 **** Numbers
 
 **** Text
+#+cindex:string, dfn
+#+cindex:Unicode
+#+cindex:length, string, dfn
+#+cindex:empty string, dfn
+A {{{dfn(string)}}} is an immutable ordered sequence of 16-bit values, each of
+which typically represents a Unicode character---strings are JavaScript's type
+for representing text.  The {{{dfn(length)}}} of a string is the number of
+16-bit values it contains.  JavaScript's strings (and its arrays) use
+zero-based indexing.  The {{{dfn(empty string)}}} is the string of length 0.
+
+#+texinfo:@cartouche
+{{{heading(Characters---Codepoints---and JavaScript Strings)}}}
+<<characters-codepoints-strings>>
+
+#+cindex:codepoints
+#+cindex:characters
+#+cindex:UTF-16 encoding
+#+cindex:encoding, UTF-16
+#+cindex:Unicode
+#+cindex:character set, Unicode
+JavaScrupt uses the UTF-16 encoding of the Unicode character set, and
+JavaScript strings are sequences of unsigned 16-bit values.  The most commonly
+used Unicode characters (those from the ``basic multilinqual plane'') have
+codepoints that fit in 16 bits and can be represented by a single element of a
+string.
+
+#+cindex:surrogate pair, dfn
+Unicode characters whose codepoints do not fit in 16 bits are encoded following
+the rules of UTF-16 as a sequence (known as a {{{dfn(surrogate pair)}}}) of two
+16-bit values.  This means that a JavaScript string of length 2 (two 16-bti
+values) might represent only a single Unicode character.
+
+#+begin_example
+var p = "π"; // π is 1 character with 16-bit codepoint 0x03c0
+var e = "e"; // e is 1 character with 17-bit codepoint 0x1d452
+p.length     // => 1: p consists of 1 16-bit element
+e.length     // => 2: UTF-16 encoding of e is 2 16-bit values:
+	     //    "\ud835\udc52"
+#+end_example
+
+#+cindex:string manipulation methods and Unicode
+The various string-manipulation methods defined by JavaScript operate on 16-bit
+values, not on characters.  They do not treat surrogate pairs specially,
+perform no normalization of the string, and do not even ensure that a string is
+well-formed UTF-16.
+#+texinfo:@end cartouche
 
 **** Boolean Values
 
@@ -2300,7 +2490,7 @@ they can become true ninjas of the language.
 
 {{{heading(Intended Audience)}}}
 
-#+cindex:
+#+cindex:audience
 This book is aimed at web developers who already have at least a basic grasp of
 JavaScript.
 - You should understand the basic structure of JavaScript statements and
@@ -3083,14 +3273,16 @@ a modern view that is as consistent as possible.
 
 [fn:4] This page was last modified on 9 October 2011, at 19:22.
 
-* Export Settings                                                  :noexport:
-** Macro Definitions
+* Macro Definitions
 #+macro:heading @@html:<h2>@@@@texinfo:@heading @@$1@@html:</h2>@@
 #+macro:subheading @@html:<h3>@@@@texinfo:@subheading @@$1@@html:</h3>@@
+#+macro:dfn @@texinfo:@dfn{@@$1@@texinfo:}@@
+#+macro:noindent @@texinfo:@noindent @@
 
 ** Export to HTML
 *** HTML Options
-#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t H:6
+#+OPTIONS: H:4
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto html-preamble:t
 #+OPTIONS: html-scripts:t html-style:t html5-fancy:t tex:t ':t broken-links:mark
 
 *** HTML Export Settings
@@ -3122,6 +3314,7 @@ a modern view that is as consistent as possible.
 #+texinfo_dir_desc:Training in the JavaScript language
 #+texinfo_printed_title:Secrets of the JavaScript Ninja
 
+* Export Settings                                                  :noexport:
 * Local Variables                                                  :noexport:
 # Local Variables:
 # fill-column: 79

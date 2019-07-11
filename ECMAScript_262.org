@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-28 22:33
-#+macro:version 0.4.0
+#+Date:2019-07-11 12:37
+#+macro:version 0.4.1
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1899,7 +1899,88 @@ as ~onClick~ in HTML, but it must be specified as ~onclick~ in JavaScript code
 
 ***** Whitespace---Line Breaks---and Format Control Characters
 JavaScript ignores spaces that appear between tokens in programs.  For the most
-part, JavaScript also ignores line breaks (but see ... for an exception).
+part, JavaScript also ignores line breaks (but see [[*Optional Semicolons---Required Semicolons][Optional Semicolons]] for an
+exception).
+
+{{{heading(Whitespace)}}}
+
+#+cindex:whitespace characters
+In addition to the regular space character (\u0020), JavaScript also recognizes
+the following characters as whitespace:
+
+#+cindex:space
+- space :: \u0020
+  #+cindex:tab
+- tab :: \u0009
+  #+cindex:vertical tab
+- vertical tab :: \u000B
+  #+cindex:form feed
+- form feed :: \u000C
+  #+cindex:nonbreaking space
+- nonbreaking space :: \u00A0
+  #+cindex:byte order mark
+- byte order mark :: \uFEFF
+  #+cindex:Unicode category Z
+- Unicode category :: Zs
+
+
+{{{heading(Line Delimiters)}}}
+
+#+cindex:line delimiters
+JavaScript recognizes the following characters as line terminators:
+
+  #+cindex:line feed
+- line feed :: \u000A
+  #+cindex:carriage return
+- carriage return :: \u000D
+  #+cindex:line separator
+- line separator :: \u2028
+  #+cindex:paragraph separator
+- paragraph separator :: \u2029
+  #+cindex:carriage return---line feed
+- carriage return --- line feed :: treated as a single line terminator
+
+
+{{{heading(Unicode format control characters)}}}
+
+#+cindex:Unicode format control characters
+#+cindex:format control characters
+Unicode format control characters (category Cf), such as =RIGHT-TO-LEFT MARK=
+(\u200F) and =LEFT-TO-RIGHT MARK= (\u200E), control the visual presentation of
+the text they occur in.  They are important for the proper display of some
+non-English languages and are allowed in JavaScript comments, string literals,
+and regular expression literals, but not in the identifiers (e.g., variable
+names) of a JavaScript program.
+
+{{{heading(Zero Width Joiners)}}}
+
+As a special case, =ZERO WIDTH JOINER= (\u200D) and =ZERO WIDTH NON-JOINER=
+(\u200C) are allowed in identifiers, but not as the first character.  As noted
+above, the byte order mark format control character (\uFEFF) is treated as a
+space character.
+
+***** Unicode Escape Sequences
+#+cindex:Unicode characters
+#+cindex:Unicode codepoint
+Some computer hardware and software can not display or input the full set of
+Unicode characters. To support programmers using this older technology,
+JavaScript defines special sequences of six ASCII characters to represent any
+16-bit Unicode codepoint.
+
+#+cindex:Unicode escape sequences
+These Unicode escapes begin with the characters =\u= and are followed by
+exactly four hexadecimal digits (using uppercase or lowercase letters =A–F=).
+
+Unicode escapes may appear in
+- JavaScript string literals,
+- regular expression literals, and in
+- identifiers (but not in language keywords)
+
+
+The Unicode escape for the character =é=, for example, is \u00E9, and the
+following two JavaScript strings are identical:
+
+: "café" === "caf\u00e9" // => true
 
 **** Comments
 #+cindex:comments

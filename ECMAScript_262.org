@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-06-25 21:33
-#+macro:version 0.3.4
+#+Date:2019-07-25 12:59
+#+macro:version 0.3.5
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -408,21 +408,36 @@ relaxed to enable it to serve as an easy-to-use scripting language.
 
   [[http://www.ecma-international.org/publications/standards/Ecma-262.htm][Current edition]].
 
+- [[https://github.com/tc39/ecma262][tc39/ecma262 on GitHub]]
+
+  This repository contains the source for the current draft of ECMA-262, the
+  ECMAScript® Language Specification.
+
+  This source is processed to obtain a human-readable version, which you can
+  view [[https://tc39.es/ecma262/][here]].
+
+  #+cindex:first edition 1997
+  #+cindex:ECMA-262 specification, first edition
   The first edition of ECMA-262 was adopted by the Ecma General Assembly in
   June 1997.  [[http://www.ecma-international.org/publications/standards/Ecma-262-arch.htm][Historical standards]].
 
 ** Edition 1
 
-   June 1997.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25201st%2520edition,%2520June%25201997.pdf][First edition]]
+#+cindex:first edition Standard
+June 1997.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25201st%2520edition,%2520June%25201997.pdf][First edition]]
 
-   Netscape 2 was the first browser to run JavaScript.  After Netscape the
-   Mozilla foundation continued to develop JavaScript for the Firefox browser.
+``ECMAScript: A general purpose, cross-platform programming language''
+
+Netscape 2 was the first browser to run JavaScript.  After Netscape the Mozilla
+foundation continued to develop JavaScript for the Firefox browser.
 
 ** Edition 2
 
-   June 1998.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25202nd%2520edition,%2520August%25201998.pdf][2nd Edition]]
+#+cindex:second edition
+#+cindex:2nd edition
+June 1998.  [[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25202nd%2520edition,%2520August%25201998.pdf][2nd Edition]]
 
-   Editorial changes.x
+Editorial changes ``to keep it fully aligned with ISO/IEC 16262.''
 
 ** Edition 3
 
@@ -436,6 +451,59 @@ relaxed to enable it to serve as an easy-to-use scripting language.
    - try/catch exception handling
    - tighter definition of errors
    - formatting for numeric output
+
+
+*** Brief History
+- https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%203rd%20edition,%20December%201999.pdf
+
+
+#+cindex:Netscape JavaScript
+#+cindex:Microsoft JScript
+This ECMA Standard is based on several originating technologies, the most well
+known being JavaScript (Netscape) and JScript (Microsoft).
+
+#+cindex:Eich, Brendan
+#+cindex:Netscape Navigator 2.0 browser
+#+cindex:Internet Explorer 3.0
+The language was invented by Brendan Eich at Netscape and first appeared in
+that company’s Navigator 2.0 browser.  It has appeared in all subsequent
+browsers from Netscape and in all browsers from Microsoft starting with
+Internet Explorer 3.0.
+
+#+cindex:ECMA General Assembly
+#+cindex:first edition 1997
+#+cindex:ECMA Standard, first edition
+The development of this Standard started in November 1996.  The first edition of
+this ECMA Standard was adopted by the ECMA General Assembly of June 1997.
+
+#+cindex:ISO/IEC JTC 1
+#+cindex:ISO/IEC 16262 international standard
+That ECMA Standard was submitted to ISO/IEC JTC 1 for adoption under the
+fast-track procedure, and approved as international standard ISO/IEC 16262, in
+April 1998.
+
+#+cindex:second edition ECMA-262, 1998
+The ECMA General Assembly of June 1998 approved the second edition of ECMA-262
+to keep it fully aligned with ISO/IEC 16262.  Changes between the first and the
+second edition are editorial in nature.
+
+#+cindex:third edition ECMA-262, 1999
+The current document defines the third edition of the Standard and includes:
+- powerful regular expressions,
+- better string handling,
+- new control statements,
+- try/catch exception handling,
+- tighter definition of errors,
+- formatting for numeric output and
+- minor changes in anticipation of forthcoming internationalisation facilities
+  and future language growth.
+
+
+Work on the language is not complete. The technical committee is working on
+significant enhancements, including mechanisms for scripts to be created and
+used across the Internet, and tighter coordination with other standards bodies
+such as groups within the World Wide Web Consortium and the Wireless
+Application Protocol Forum.
 
 ** Edition 4
 
@@ -714,6 +782,218 @@ language feature ideas.  See our [[https://github.com/tc39/ecma262/blob/master/C
 - [[https://github.com/tc39/proposal-hashbang][Hashbang Grammar]]
 
 * ECMAScript 3 Features
+
+** Lexical Conventions
+
+*** Tokens
+
+*** Identifiers
+
+*** Punctuators
+
+*** Literals
+
+*** Semicolon Insertion
+
+** Types
+
+** Type Conversion
+
+** Execution Contexts
+
+** Expressions
+
+** Statements
+
+#+begin_example
+Statement :
+   Block
+   VariableStatement
+   EmptyStatement
+   ExpressionStatement
+   IfStatement
+   IterationStatement
+   ContinueStatement
+   BreakStatement
+   ReturnStatement
+   WithStatement
+#+end_example
+
+*** Block
+
+*** Variable
+
+*** Empty
+
+*** Expression
+
+*** =if=
+
+*** Iteration
+
+#+cindex:iteration statement
+#+cindex:@code{while} statement
+#+cindex:@code{for} statement
+#+begin_example
+IterationStatement :
+     while ( Expression ) Statement
+     for ( Expressionopt ; Expressionopt ; Expressionopt ) Statement
+     for ( var VariableDeclarationList ; Expressionopt ; Expressionopt ) Statement
+     for ( LeftHandSideExpression in Expression ) Statement
+     for ( var Identifier Initializeropt in Expression ) Statement
+#+end_example
+
+**** =while=
+
+**** =for=
+
+**** =for..in=
+
+*** =continue=
+
+*** =break=
+
+*** =return=
+
+*** =with=
+#+cindex:@code{with} statement
+#+cindex:deprecated, @code{with} statement
+#+begin_example
+WithStatement :
+     with ( Expression ) Statement
+#+end_example
+
+{{{heading(~with~ is Deprecated)}}}
+
+#+cindex:strict mode, @code{with} statement
+Using ~with~ is not recommended, and is forbidden in ECMAScript 5 strict mode.
+
+The recommended alternative is to assign the object whose properties you want
+to access to a temporary variable.
+
+{{{heading(About the ~with~ Statement)}}}
+
+#+cindex:scope chain, extends
+The ~with~ statement extends the scope chain for a statement.
+
+- expression :: Adds the given expression to the scope chain used when
+                evaluating the statement. The parentheses around the expression
+                are required.
+
+- statement :: Any statement. To execute multiple statements, use a =block=
+               statement =({ ... })= to group those statements.
+
+
+{{{heading(Description of the ~with~ Statement)}}}
+
+{{{subheading(Scope Chain of the Execution Context)}}}
+
+#+cindex:scope chain
+#+cindex:execution context
+JavaScript looks up an unqualified name by searching a /scope chain/ associated
+with the execution context of the script or function containing that
+unqualified name.
+
+The ~with~ statement adds the given object to the head of this scope chain
+during the evaluation of its statement body.
+
+#+cindex:@code{ReferenceError}
+If an unqualified name used in the body matches a property in the scope chain,
+then the name is bound to the property and the object containing the
+property.  Otherwise a ~ReferenceError~ is thrown.
+
+{{{heading(A ~with~ Statement Example)}}}
+
+The following ~with~ statement specifies that the Math object is the default
+object. The statements following the with statement refer to the PI property
+and the cos and sin methods, without specifying an object. JavaScript assumes
+the Math object for these references.
+
+#+caption:An Example of the ~with~ Statement
+#+name:with-statement-example
+#+begin_src js -n
+var a, x, y;
+var r = 10;
+
+with (Math) {
+  a = PI * r * r;
+  x = r * cos(PI);
+  y = r * sin(PI / 2);
+}
+#+end_src
+
+#+cindex:scope chain
+#+cindex:computed object
+#+cindex:execution context
+The ~with~ statement adds a /computed object/ to the front of the scope chain
+of the current execution context, then executes a statement with this augmented
+scope chain, then restores the scope chain.
+
+{{{heading(Semantics)}}}
+
+1. Evaluate =Expression=
+
+2. Call ~GetValue(Result(1))~
+
+3. Call ~ToObject(Result(2))~
+
+4. Add ~Result(3)~ to the front of the scope chain
+
+   #+cindex:scope chain, augmented
+5. Evaluate ~Statement~ using the augmented scope chain from step 4
+
+6.  Let ~C~ be ~Result(5~).  If an exception was thrown in step 5, let ~C~ be
+   (throw, ~V~, empty), where ~V~ is the exception.  (Execution now proceeds as
+   if no exception were thrown.)
+
+7. Remove ~Result(3)~ from the front of the scope chain
+
+8. Return ~C~
+
+
+{{{heading(Performance Issues)}}}
+
+- pro :: The ~with~ statement can help reduce file size by reducing the need to
+         repeat a lengthy object reference without performance penalty.  The
+         scope chain change required by ~with~ is not computationally
+         expensive.  Use of ~with~ will relieve the interpreter of parsing
+         repeated object references.  *In many cases this benefit can be
+         achieved by using a temporary variable to store a reference to the
+         desired object*.
+
+- con :: The ~with~ statement forces the specified object to be searched first
+         for all name lookups.  Therefore all identifiers that aren't members
+         of the specified object will be found more slowly in a ~with~ block.
+         Where performance is important, ~with~ should only be used to
+         encompass code blocks that access members of the specified object.
+
+- con :: The ~with~ statement makes it hard for a human reader or JavaScript
+         compiler to decide whether an unqualified name will be found along the
+         scope chain, and if so, in which object.  So given this example:
+
+         #+begin_src js -n
+           function f(x, o) {
+             with (o) {
+               console.log(x);
+             }
+           }
+         #+end_src
+
+         #+cindex:activation object
+         Only when ~f~ is called is ~x~ either found or not, and if found,
+         either in ~o~ or (if no such property exists) in ~f~'s activation
+         object, where ~x~ names the first formal argument.  If you forget to
+         define ~x~ in the object you pass as the second argument, or if there's
+         some similar bug or confusion, you won't get an error --- just
+         unexpected results.
+
+** Function Definition
+
+** Program
+
+** Native Objects
+
+** Errors
 
 * ECMAScript 5 Features
 
@@ -1223,6 +1503,15 @@ promise is settled its outcome can’t change.
 ** Meta-Programming
 
 ** Internationalization & Localization
+
+* ECMAScript 2019
+- [[https://www.ecma-international.org/ecma-262/10.0/index.html#Title][ECMAScript® 2019 Language Specification]]
+
+
+ECMA-262, 10th Edition, June 2019
+
+* ECMAScript 2020
+- https://tc39.es/ecma262/
 
 * ECMAScript compatibility table
 
@@ -2752,7 +3041,7 @@ training.
 :chapter:  1
 :END:
 
-Chapter topics:
+{{{heading(Chapter topics:)}}}
 
 - A look at the purpose and structure of this book
 
@@ -2765,13 +3054,35 @@ Chapter topics:
 - Test suite examples
 
 
+{{{heading(The Purpose of this Book)}}}
+
+``This book sets out to uncover the techniques and secrets used by
+... world-class code bases and to gather them into a single resource.  In this
+book we’ll be examining the techniques that were (and continue to be) used to
+create the popular JavaScript libraries.  The techniques and practices used to
+create modern JavaScript libraries will be the focus of our attention in this
+book.  Understanding how the very best JavaScript libraries are constructed can
+provide us with great insight into how our own code can be constructed to
+achieve these same goals.''
+
+{{{heading(Creating Cross-Browser JavaScript Code)}}}
+
 #+cindex:cross-browser JavaScript code
 #+cindex:libraries, JavaScript
 There’s nothing simple about creating effective and cross-browser JavaScript
-code.  In addition to the normal challenges of writing clean code, we have the
+code.
+
+{{{subheading(Obtuse browser differences)}}}
+
+In addition to the normal challenges of writing clean code, we have the
 added complexity of dealing with obtuse browser differences and complexities.
+
+{{{subheading(JavaScript Libraries)}}}
+
 To deal with these challenges, JavaScript developers frequently /capture sets
 of common and reusable functionality/ in the form of JavaScript libraries.
+
+- common and reusable functionality
 
 - JavaScript Libraries---sets of common and reusable functionality
 
@@ -2786,11 +3097,6 @@ Understanding how the very best JavaScript libraries are constructed can
 provide us with great insight into how our own code can be constructed to
 achieve these same goals.
 
-/This book sets out to uncover the techniques and secrets used by these
-world-class code bases and to gather them into a single resource./ In this book
-we’ll be examining the techniques that were (and continue to be) used to create
-the popular JavaScript libraries.
-
 #+cindex:techniques, examine
 /This book sets out to uncover the techniques and secrets used by these
 world-class code bases and to gather them into a single resource/.  In this
@@ -2799,20 +3105,27 @@ create the popular JavaScript libraries.
 
 **** The JavaScript libraries we’ll be tapping
 The techniques and practices used to create modern JavaScript libraries will be
-the focus of our attention in this book.  The primary library that we’ll be
-considering is *jQuery*, which has risen in prominence to be the most
-ubiquitous JavaScript library in modern use.
+the focus of our attention in this book.
+
+{{{heading(jQuery---The Primary Library)}}}
 
 #+cindex:jQuery
-[[http://jquery.com][jQuery]] was created by John Resig and released in January of 2006.  jQuery
-popularized the use of CSS selectors to match DOM content.  Among its many
+The primary library that we’ll be considering is *jQuery*, which has risen in
+prominence to be the most ubiquitous JavaScript library in modern use.
+
+[[http://jquery.com][jQuery]] was created by John Resig and released in January of 2006.  /jQuery
+popularized the use of CSS selectors to match DOM content/.  Among its many
 capabilities, it provides
+
+{{{subheading(jQuery Capabilities:)}}}
 
 - DOM manipulation,
 - Ajax,
 - event handling, and
 - animation functionality.
 
+
+{{{heading(Prototype---Yahoo UI---base2)}}}
 
 In addition to examining example code from jQuery, we’ll also look at
 techniques utilized by the following libraries:
@@ -2839,6 +3152,8 @@ techniques utilized by the following libraries:
 
 These techniques aren’t only useful for constructing large libraries; they can
 be applied to all JavaScript coding, regardless of size.
+
+{{{heading(How JavaScript Libraries are Analyzed)}}}
 
 #+cindex:JavaScript library, makeup
 The makeup of a JavaScript library can be broken down into three aspects:
@@ -3098,7 +3413,7 @@ Debugging code not only serves its primary and obvious purpose (detecting and
 fixing bugs), but it also can help us achieve the current best-practice goal of
 generating effective test cases.
 
-*** Test generation
+**** Test generation
 Good tests exhibit three important characteristics:
 
 - Repeatability ::
@@ -3131,6 +3446,17 @@ the two primary approaches being:
 
 - deconstructive tests
 - constructive tests
+
+**** Testing Frameworks
+{{{heading(QUnit)}}}
+
+{{{heading(YUI Test)}}}
+
+{{{heading(JsUnit)}}}
+
+{{{heading(Newer Unit-Testing Frameworks)}}}
+
+**** The Funamentals of a Test Suite
 
 ** Part 2---Apprentice Training
 

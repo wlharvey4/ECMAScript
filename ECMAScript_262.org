@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-07-25 12:59
-#+macro:version 0.3.5
+#+Date:2019-07-25 13:02
+#+macro:version 0.4.2
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -106,24 +106,29 @@ relaxed to enable it to serve as an easy-to-use scripting language.
 
 ** Version Numbers
 
-   | Year | JavaScript | ECMA   | Browser            |
-   |      | <c>        | <c>    |                    |
-   |------+------------+--------+--------------------|
-   | 1996 | 1.0        |        | Netscape 2         |
-   | 1997 |            | ES1    | IE 4               |
-   | 1998 | 1.3        |        | Netscape 4         |
-   | 1999 |            | ES2    | IE 5               |
-   | 2000 |            | ES3    | IE 5.5             |
-   | 2000 | 1.5        |        | Firefox 1          |
-   | 2011 |            | ES5    | IE 9[fn:1]         |
-   | 2011 | 1.8.5      |        | Firefox 4[fn:2]    |
-   | 2012 |            |        | IE 10              |
-   | 2012 |            |        | Chrome 23          |
-   | 2012 |            |        | Safari 6           |
-   | 2013 |            |        | Firefox 21         |
-   | 2013 |            |        | Opera 15           |
-   | 2015 |            | ES2015 | All browsers[fn:3] |
-   |------+------------+--------+--------------------|
+   | Year | JavaScript |      ECMA      | Browser            |
+   |      |    <c>     |      <c>       |                    |
+   |------+------------+----------------+--------------------|
+   | 1996 |    1.0     |                | Netscape 2         |
+   | 1997 |            |      ES1       | IE 4               |
+   | 1998 |    1.3     |                | Netscape 4         |
+   | 1999 |            |      ES2       | IE 5               |
+   | 2000 |            |      ES3       | IE 5.5             |
+   | 2000 |    1.5     |                | Firefox 1          |
+   | 2009 |            |      ES5       |                    |
+   | 2011 |            |      ES5.1     | IE 9[fn:1]         |
+   | 2011 |   1.8.5    |                | Firefox 4[fn:2]    |
+   | 2012 |            |                | IE 10              |
+   | 2012 |            |                | Chrome 23          |
+   | 2012 |            |                | Safari 6           |
+   | 2013 |            |                | Firefox 21         |
+   | 2013 |            |                | Opera 15           |
+   | 2015 |            |     ES2015     | All browsers[fn:3] |
+   |      |            | (formerly ES6) |                    |
+   | 2016 |            |     ES2016     |                    |
+   | 2017 |            |     ES2017     |                    |
+   | 2018 |            |     ES2018     |                    |
+   |------+------------+----------------+--------------------|
 
 ** ECMAScript History
 
@@ -403,7 +408,6 @@ relaxed to enable it to serve as an easy-to-use scripting language.
 
    [[https://arstechnica.com/information-technology/2009/12/commonjs-effort-sets-javascript-on-path-for-world-domination/][CommonJS effort sets JavaScript on path for world domination]] KRIS KOWAL -
    12/1/2009, 9:19 PM
-
 * ECMAScript Specifications
 
   [[http://www.ecma-international.org/publications/standards/Ecma-262.htm][Current edition]].
@@ -1676,6 +1680,173 @@ sound type system.
     - [[https://github.com/getify/You-Dont-Know-JS/blob/master/async%2520&%2520performance/README.md#you-dont-know-js-async--performance][Async and Performance]]
 
     - [[https://github.com/getify/You-Dont-Know-JS/blob/master/es6%2520&%2520beyond/README.md#you-dont-know-js-es6--beyond][ES6 and Beyond]]
+
+* Modules Systems---CJS and AMD
+#+cindex:module systems
+
+JavaScript was originally designed to be read from top to bottom in a
+simplistic manner by a web browser, and files were loaded using =<script>=
+tags.  As larger and larger applications have been written in JavaScript, two
+module systems (AMD and CommonJS) have been developed.  Two patterns exist
+because the browser and server offer different challenges in terms of
+module-loading latency (network requests vs. file system).
+
+** CommonJS (CJS)
+#+cindex:CommonJS module system
+#+cindex:CJS
+#+cindex:Dongaoor, Kevin
+#+cindex:ecosystem for JavaScript modules on the server
+Kevin Dongaoor created CommonJS in 2009 with the goal to specify an ecosystem
+for JavaScript modules on the server.  Node.js follows the CommonJS module
+specification.  Following are a few salient points of the module system:
+
+- Each file is its own module.
+
+  #+cindex:module definition
+  #+cindex:@code{module} variable
+- Each file has access to the current module definition using the ~module~
+  variable.
+
+  #+cindex:@code{module.exports} variable
+- The export of the current module is determined by the ~module.exports~
+  variable.
+
+  #+cindex:@code{require} function
+  #+cindex:import a module
+  #+cindex:module import
+- To import a module, use the globally available ~require~ function.
+
+** Asynchronous Module Definition (AMD)
+#+cindex:Asynchronous Module Definition (AMD)
+#+cindex:AMD
+Node.js follows the CommonJS module specification.  This module system is great
+for the server environment when we have immediate access to the file system.
+Loading a module from the file system in Node.js is a blocking call for the
+first time.
+
+However, if the same module system is used in the browser, each ~require~
+statement would need to trigger an HTTP request to the server.  This is an
+order of magnitude slower and less reliable than a file system access call.
+Loading a large number of modules can quickly degrade the user experience in
+the browser.  The solution is async, in-parallel, and upfront loading of
+modules.
+
+To support this async loading, we need a way to declare that this file will
+depend upon ~./foo~ and ~./bar~ upfront and continue code execution using a
+callback.  There is already a specification for exactly this called /async
+module definition (AMD)/.
+
+#+caption[Asynchronous Module Definition (AMD)]:code snippet to show loading two modules using AMD
+#+name: async-module-definition-example
+#+begin_src js -n
+define(['./foo', './bar'], function(foo, bar){
+        // continue code here
+});
+#+end_src
+
+#+cindex:@code{define} function
+#+cindex:RequireJS library
+The ~define~ function is not native to the browser.  These must be provided by
+a third-party library.  The most popular of these for the browser is [[https://requirejs.org][RequireJS]].
+The different nature of the ~require~ call is what makes reusing Node.js code
+in the browser slightly more involved.
+
+#+begin_quote
+{{{heading(RequireJS)}}}
+
+RequireJS is a JavaScript file and module loader. It is optimized for
+in-browser use, but it can be used in other JavaScript environments, like Rhino
+and Node. Using a modular script loader like RequireJS will improve the speed
+and quality of your code.
+#+end_quote
+
+#+cindex:export from AMD module
+To export something from a module, you can simply return it from the ~define~
+callback.
+
+#+caption[Export from AMD]:export from an AMD module
+#+name:amd-export
+#+begin_src define([], function () {
+    var foo = function () {
+        console.log('foo was called');
+    };
+    return foo; // function foo is exported
+});
+#+end_src
+
+The root of the file contains a call to ~define~.  To load modules ~./foo~ and
+~./bar~ in ~app.js~ in the same folder, the ~define~ call will be as shown:
+
+#+caption:App.js Root define
+#+name:root-define
+#+begin_src js -n
+define(['./foo', './bar'], function (foo, bar) {
+        // use foo and bar here
+});
+#+end_src
+
+~define~ can take a special argument called ~exports~, which behaves similar to
+the ~exports~ variable in Node.js.  Let’s create the module ~bar.js~ using this
+syntax, as shown:
+
+#+caption:Bar.js exports
+#+name:AMD-exports
+#+begin_src js -n
+define(['exports'], function (exports) {
+    var bar = exports.log = function () {
+        console.log('bar.log was called');
+    };
+});
+#+end_src
+
+Note that you can only use ~exports~ to attach variables you want to export
+(for example, ~exports.log =~ =/*something*/=), but you cannot assign it to
+something else (~exports =~ =/*something*/=) as that would break the reference
+to the ~exports~ variable monitored by RequireJS.  This is conceptually quite
+similar to the exports variable in Node.js.
+
+Let’s complete ~app.js~ and consume both of these modules, as shown:
+
+#+caption: App.js consuming foo.js and bar.js
+#+name:app.js-foo.js-bar.js
+#+begin_src js -n
+define(['./foo', './bar'], function (foo, bar) {
+    foo();
+    bar.log();
+});
+#+end_src
+
+The real benefit of using this alternate (AMD) syntax for modules becomes
+evident when we look at the network tab within the chrome debug tools.
+~foo.js~ and ~bar.js~ were downloaded in parallel as soon as ~app.js~ was
+downloaded, and RequireJS found that ~app.js~ needs ~foo.js~ and ~bar.js~ to
+function because of the call to ~define~.
+
+*** Facts about AMD
+
+- Modules are cached.  This is similar to how modules are cached in
+  Node.js---that is, the same object is returned every time.
+
+- Many of these arguments to ~define~ are optional and there are various ways
+  to configure how modules are scanned in RequireJS.
+
+  #+cindex:@code{require}, AMD function
+- You can still do conditional loading of specific modules using a ~require~
+  call, which is another function provided by RequireJS.  This function is also
+  async and is different from the Node.js version of ~require~.
+
+#+caption[AMD ~require~ function]:how you can conditionally load a module in AMD
+#+name:AMD-require
+#+begin_src js -n
+define(['./foo', './bar'], function(foo, bar){
+        if(iReallyNeedThisModule){
+                require(['./bas'], function(bas){
+                        // continue code here.
+                }); 
+        }
+});
+#+end_src
+
 * JavaScript---The Definitive Guide
 :PROPERTIES:
 :author:   David Flanagan
@@ -2017,7 +2188,88 @@ as ~onClick~ in HTML, but it must be specified as ~onclick~ in JavaScript code
 
 ***** Whitespace---Line Breaks---and Format Control Characters
 JavaScript ignores spaces that appear between tokens in programs.  For the most
-part, JavaScript also ignores line breaks (but see ... for an exception).
+part, JavaScript also ignores line breaks (but see [[*Optional Semicolons---Required Semicolons][Optional Semicolons]] for an
+exception).
+
+{{{heading(Whitespace)}}}
+
+#+cindex:whitespace characters
+In addition to the regular space character (\u0020), JavaScript also recognizes
+the following characters as whitespace:
+
+#+cindex:space
+- space :: \u0020
+  #+cindex:tab
+- tab :: \u0009
+  #+cindex:vertical tab
+- vertical tab :: \u000B
+  #+cindex:form feed
+- form feed :: \u000C
+  #+cindex:nonbreaking space
+- nonbreaking space :: \u00A0
+  #+cindex:byte order mark
+- byte order mark :: \uFEFF
+  #+cindex:Unicode category Z
+- Unicode category :: Zs
+
+
+{{{heading(Line Delimiters)}}}
+
+#+cindex:line delimiters
+JavaScript recognizes the following characters as line terminators:
+
+  #+cindex:line feed
+- line feed :: \u000A
+  #+cindex:carriage return
+- carriage return :: \u000D
+  #+cindex:line separator
+- line separator :: \u2028
+  #+cindex:paragraph separator
+- paragraph separator :: \u2029
+  #+cindex:carriage return---line feed
+- carriage return --- line feed :: treated as a single line terminator
+
+
+{{{heading(Unicode format control characters)}}}
+
+#+cindex:Unicode format control characters
+#+cindex:format control characters
+Unicode format control characters (category Cf), such as =RIGHT-TO-LEFT MARK=
+(\u200F) and =LEFT-TO-RIGHT MARK= (\u200E), control the visual presentation of
+the text they occur in.  They are important for the proper display of some
+non-English languages and are allowed in JavaScript comments, string literals,
+and regular expression literals, but not in the identifiers (e.g., variable
+names) of a JavaScript program.
+
+{{{heading(Zero Width Joiners)}}}
+
+As a special case, =ZERO WIDTH JOINER= (\u200D) and =ZERO WIDTH NON-JOINER=
+(\u200C) are allowed in identifiers, but not as the first character.  As noted
+above, the byte order mark format control character (\uFEFF) is treated as a
+space character.
+
+***** Unicode Escape Sequences
+#+cindex:Unicode characters
+#+cindex:Unicode codepoint
+Some computer hardware and software can not display or input the full set of
+Unicode characters. To support programmers using this older technology,
+JavaScript defines special sequences of six ASCII characters to represent any
+16-bit Unicode codepoint.
+
+#+cindex:Unicode escape sequences
+These Unicode escapes begin with the characters =\u= and are followed by
+exactly four hexadecimal digits (using uppercase or lowercase letters =A–F=).
+
+Unicode escapes may appear in
+- JavaScript string literals,
+- regular expression literals, and in
+- identifiers (but not in language keywords)
+
+
+The Unicode escape for the character =é=, for example, is \u00E9, and the
+following two JavaScript strings are identical:
+
+: "café" === "caf\u00e9" // => true
 
 **** Comments
 #+cindex:comments

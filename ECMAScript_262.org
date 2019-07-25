@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-07-25 13:02
-#+macro:version 0.4.2
+#+Date:2019-07-25 13:25
+#+macro:version 0.4.3
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -867,10 +867,11 @@ WithStatement :
      with ( Expression ) Statement
 #+end_example
 
-{{{heading(~with~ is Deprecated)}}}
+{{{heading(The ~with~ Statement is Deprecated)}}}
 
 #+cindex:strict mode, @code{with} statement
-Using ~with~ is not recommended, and is forbidden in ECMAScript 5 strict mode.
+*DEPRECATED*: Using ~with~ is not recommended, and is forbidden in ECMAScript 5
+strict mode.
 
 The recommended alternative is to assign the object whose properties you want
 to access to a temporary variable.
@@ -955,6 +956,51 @@ scope chain, then restores the scope chain.
 8. Return ~C~
 
 
+{{{heading(Intended Use of the ~with~ Statement)}}}
+
+The ~with~ statement's intended use is to avoid redundancy when accessing an
+object several times.  The following is an example of code with redundancies:
+
+#+begin_src js
+foo.bar.baz.bla =123;
+foo.bar.baz.yadda = 'abc';
+#+end_src
+
+~with~ makes this shorter:
+
+#+begin_src js
+  with (foo.bar.baz) { 
+      bla = 123;
+      yadda = 'abc';
+  }
+#+end_src
+
+{{{subheading(Techniques for avoiding the ~with~ statement)}}}
+
+Use a temporary variable with a short name, or an IIFE:
+
+#+begin_src js
+  // Don't do this:
+  with (foo.bar.baz) {
+  console.log('Hello '+first+' '+last);
+
+  // Do this instead:
+  var b = foo.bar.baz;
+  console.log('Hello '+b.first+' '+b.last);
+
+  // Or use an IIFE to avoid exposing ~b~ to the current scope
+  (function () {
+      var b = foo.bar.baz;
+      console.log('Hello '+b.first+' '+b.last);
+  }());
+
+  // Or make the object a parameter of the IIFE:
+  (function (b) {
+      console.log('Hello '+b.first+' '+b.last);
+  }(foo.bar.baz));
+#+end_src
+
+
 {{{heading(Performance Issues)}}}
 
 - pro :: The ~with~ statement can help reduce file size by reducing the need to
@@ -974,6 +1020,12 @@ scope chain, then restores the scope chain.
 - con :: The ~with~ statement makes it hard for a human reader or JavaScript
          compiler to decide whether an unqualified name will be found along the
          scope chain, and if so, in which object.  So given this example:
+
+         #+attr_texinfo: :author Brendan Eich
+         #+begin_quote
+         ``[W]ith violates lexical scope, making program analysis (e.g. for
+         security) hard to infeasible.''
+         #+end_quote
 
          #+begin_src js -n
            function f(x, o) {

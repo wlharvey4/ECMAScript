@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-07-25 13:25
-#+macro:version 0.4.3
+#+Date:2019-08-04 18:29
+#+macro:version 0.4.4
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -786,7 +786,6 @@ language feature ideas.  See our [[https://github.com/tc39/ecma262/blob/master/C
 - [[https://github.com/tc39/proposal-hashbang][Hashbang Grammar]]
 
 * ECMAScript 3 Features
-
 ** Lexical Conventions
 
 *** Tokens
@@ -1051,6 +1050,272 @@ Use a temporary variable with a short name, or an IIFE:
 
 ** Errors
 
+** About This
+*** Understanding JavaScript Function Invocation and "this"
+- https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/
+- By Yehuda Katz
+- 10 Aug 2011
+
+
+{{{heading(Core Function Invocation Primitive)}}}
+
+#+cindex:core function invocation primitive
+Are the semantics of ~this~ in function invocations confusing?  If so, then a
+lot of this confusion is cleared up by understanding the core function
+invocation primitive, and then looking at all other ways of invoking a function
+as sugar on top of that primitive.  This is exactly how the ECMAScript spec
+thinks about it.
+
+{{{subheading(A Function's ~call~ Method)}}}
+
+This is the core function invocation primitive.  The call method is relatively
+straight forward.
+
+1. Make an argument list (~argList~) out of parameters 1 through the end
+
+2. The first parameter is ~thisValue~
+
+3. Invoke the function with ~this~ set to ~thisValue~ and the ~argList~ as its
+   argument list
+
+
+For example:
+
+#+begin_src js
+function hello(thing) {
+  console.log(this + " says hello " + thing);
+}
+
+hello.call("Yehuda", "world") //=> Yehuda says hello world
+#+end_src
+
+We invoked the ~hello~ method with this set to "Yehuda" and a single argument
+"world".  This is the core primitive of JavaScript function invocation.  You can
+think of all other function calls as desugaring to this primitive. (to
+"desugar" is to take a convenient syntax and describe it in terms of a more
+basic core primitive).
+
+**** Simple Function Invocation
+
+Invoking functions with ~call~ all the time would be pretty annoying.
+JavaScript allows us to invoke functions directly using the =parens= syntax
+(~hello("world"~).  When we do that, the invocation desugars:
+
+#+begin_src js
+function hello(thing) {
+  console.log("Hello " + thing);
+}
+
+// this:
+hello("world")
+
+// desugars to:
+hello.call(window, "world");
+#+end_src
+
+This behavior has changed in ECMAScript 5[fn:6] only when using strict mode:
+
+#+begin_src js
+// this:
+hello("world")
+
+// desugars to:
+hello.call(undefined, "world");
+#+end_src
+
+The short version is: a function invocation like ~fn(...args)~ is the same as
+~fn.call(window [ES5-strict: undefined], ...args)~.
+
+Note that this is also true about functions declared inline:
+
+: (function() {})()
+is the same as
+: function() {}).call(window [ES5-strict: undefined)
+
+**** Member Functions
+The next very common way to invoke a method is as a member of an object
+(~person.hello()~).  In this case, the invocation desugars:
+
+#+begin_src js -n
+var person = {
+  name: "Brendan Eich",
+  hello: function(thing) {
+    console.log(this + " says hello " + thing);
+  }
+}
+
+// this:
+person.hello("world")
+
+// desugars to this:
+person.hello.call(person, "world");
+#+end_src
+
+Note that it doesn't matter how the ~hello~ method becomes attached to the object
+in this form.  Remember that we previously defined ~hello~ as a standalone
+function.  Let's see what happens if we attach is to the object dynamically:
+
+#+begin_src js -n
+function hello(thing) {
+  console.log(this + " says hello " + thing);
+}
+
+person = { name: "Brendan Eich" }
+person.hello = hello;
+
+person.hello("world") // still desugars to person.hello.call(person, "world")
+
+hello("world") // "[object DOMWindow]world"
+#+end_src
+
+Notice that the function doesn't have a persistent notion of its 'this'.  It is
+always set at call time based upon the way it was invoked by its caller.
+
+**** Using ~function.prototype.bind~ Method
+Because it can sometimes be convenient to have a reference to a function with a
+persistent ~this~ value, people have historically used a simple closure trick to
+convert a function into one with an unchanging ~this~:
+
+#+begin_src js -n
+var person = {
+  name: "Brendan Eich",
+  hello: function(thing) {
+    console.log(this.name + " says hello " + thing);
+  }
+}
+
+var boundHello = function(thing) { return person.hello.call(person, thing); }
+
+boundHello("world");
+#+end_src
+
+#+cindex:@code{bind} function
+We can make this trick general-purpose with a few tweaks:
+
+#+begin_src js -n
+var bind = function(func, thisValue) {
+  return function() {
+    return func.apply(thisValue, arguments);
+  }
+}
+
+var boundHello = bind(person.hello, person);
+boundHello("world") // "Brendan Eich says hello world"
+#+end_src
+
+#+cindex:@code{Function.prototype.apply} method
+#+cindex:@code{apply} method
+First, arguments is an Array-like object that represents all of the arguments
+passed into a function.  Second, the ~apply~ method works exactly like the
+~call~ primitive, except that it takes an Array-like object instead of listing
+the arguments out one at a time.
+
+Our ~bind~ method simply returns a new function.  When it is invoked, our new
+function simply invokes the original function that was passed in, setting the
+original value as ~this~.  It also passes through the arguments.
+
+#+cindex:ES5
+Because this was a somewhat common idiom, ES5 introduced a new method ~bind~ on
+all Function objects that implements this behavior:
+
+#+begin_src js -n
+var boundHello = person.hello.bind(person);
+boundHello("world") // "Brendan Eich says hello world"
+#+end_src
+
+This is most useful when you need a raw function to pass as a callback:
+
+#+begin_src js -n
+var person = {
+  name: "Alex Russell",
+  hello: function() { console.log(this.name + " says hello world"); }
+}
+
+$("#some-div").click(person.hello.bind(person));
+
+// when the div is clicked, "Alex Russell says hello world" is printed
+#+end_src
+*** This and Function Invocation Context
+#+cindex:invocation context
+In addition to the arguments, each invocation has another value—the /invocation
+context/—that is the value of the ~this~ keyword.  When a function is invoked
+on or through an object, that object is the /invocation context/ or `this`
+value for the function.
+**** Invoking Functions
+#+cindex:invoke function
+#+cindex:function, invoke
+JavaScript functions can be invoked in four ways:
+
+- as functions
+- as methods
+- as constructors
+- indirectly through their ~call()~ and ~apply()~ methods
+
+**** Function Invocation
+#+cindex:invocation expression
+#+cindex:function invocation expression
+#+cindex:method invocation expression
+Functions are invoked as functions or as methods with an /invocation
+expression/.  An /invocation expression/ consists of a function expression that
+evaluates to a function object followed by an open parenthesis, a
+comma-separated list of zero or more argument expressions, and a close
+parenthesis.  If the function expression is a /property-access expression/---if
+the function is the property of an object or an element of an array---then it
+is a /method invocation expression/.
+
+#+cindex:argument expression
+In an invocation, each argument expression (the ones between the parentheses)
+is evaluated, and the resulting values become the arguments to the function.
+These values are assigned to the parameters named in the function definition.
+In the body of the function, a reference to a parameter evaluates to the
+corresponding argument value.
+
+For regular function invocation, the return value of the function becomes the
+value of the invocation expression. If the function returns because the
+interpreter reaches the end, the return value is undefined. If the function
+returns because the interpreter exe- cutes a return, the return value is the
+value of the expression that follows the return or undefined if the return
+statement has no value.
+
+#+cindex:invocation context
+#+cindex:ECMAScript 3
+#+cindex:ECMAScript 5 nonstrict mode, strict mode
+#+cindex:@code{this} value
+For function invocation in ECMAScript 3 and nonstrict ECMAScript 5, the
+invocation context (the ~this~ value) is the global object.  In strict mode,
+however, the invocation context is =undefined=.  Functions written to be
+invoked as functions do not typically use the ~this~ keyword at all.  It can be
+used, however, to determine whether strict mode is in effect:
+
+#+begin_src js
+// Define and invoke a function to determine if we're in strict mode.
+// !undefined == true
+// !window == false
+var strict = (function() { return !this; }());
+#+end_src
+
+**** Method Invocation
+#+cindex:method
+A /method/ is nothing more than a JavaScript function that is stored in a
+property of an object.
+
+: o.m(x, y);
+
+#+cindex:invocation expression
+#+cindex:function expression
+#+cindex:argument expression
+#+cindex:property access expression
+The code above is an /invocation expression/: it includes a /function
+expression/ ~o.m~ and two /argument expressions/, ~x~ and ~y~.  The function
+expression is itself a /property access expression/, and this means that the
+function is invoked as a method rather than as a regular function.
+
+Method invocations differ from function invocations in one important way,
+however: the /invocation context/.  /Property access expressions/ consist of
+two parts: an object (in this case ~o~) and a property name (~m~).  In a method
+invocation expression like this, the object ~o~ becomes the /invocation
+context/, and the function body can refer to that object by using the keyword
+~this~.
 * ECMAScript 5 Features
 
 * ECMAScript 2015 (ES6) Features
@@ -3892,6 +4157,11 @@ a modern view that is as consistent as possible.
 :END:
 
 * Footnotes
+
+[fn:6] The ECMAScript 5 spec says that ~undefined~ is (almost) always passed,
+but that the function being called should change its ~thisValue~ to the global
+object when /not/ in strict mode.  This allows strict mode callers to avoid
+breaking existing non-strict-mode libraries. 
 
 [fn:5] Roughly 2000--2010
 

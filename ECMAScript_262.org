@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-04 18:29
-#+macro:version 0.4.4
+#+Date:2019-08-05 21:31
+#+macro:version 0.4.5
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1238,9 +1238,13 @@ $("#some-div").click(person.hello.bind(person));
 *** This and Function Invocation Context
 #+cindex:invocation context
 In addition to the arguments, each invocation has another value—the /invocation
-context/—that is the value of the ~this~ keyword.  When a function is invoked
+context/---that is the value of the ~this~ keyword.  When a function is invoked
 on or through an object, that object is the /invocation context/ or `this`
 value for the function.
+
+Note that ~this~ is a keyword, not a variable or property name.  JavaScript
+syntax does not allow you to assign a value to ~this~.
+
 **** Invoking Functions
 #+cindex:invoke function
 #+cindex:function, invoke
@@ -1316,6 +1320,31 @@ two parts: an object (in this case ~o~) and a property name (~m~).  In a method
 invocation expression like this, the object ~o~ becomes the /invocation
 context/, and the function body can refer to that object by using the keyword
 ~this~.
+
+{{{heading(Object-Oriented Programming Paradigm)}}}
+
+Methods and the ~this~ keyword are central to the object-oriented programming
+paradigm.  Any function that is used as a method is effectively passed an
+implicit argument---the object through which it is invoked.  Typically, a
+method performs some sort of operation on that object, and the
+method-invocation syntax is an elegant way to express the fact that a function
+is operating on an object.
+
+***** Method Chaining
+
+When methods return objects, you can use the return value of one method
+invocation as part of a subsequent invocation.  This results in a series (or
+“chain” or “cascade”) of method invocations as a single expression.  When you
+write a method that does not have a return value of its own, consider having
+the method return ~this~.  If you do this consistently throughout your API, you
+will enable a style of programming known as /method chaining/ in which an
+object can be named once and then multiple methods can be invoked on it:
+
+: shape.setX(100).setY(100).setSize(50).setOutline("red").setFill("blue").draw();
+
+
+
+
 * ECMAScript 5 Features
 
 * ECMAScript 2015 (ES6) Features

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-05 21:41
-#+macro:version 0.4.6
+#+Date:2019-08-06 22:32
+#+macro:version 0.4.7
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1375,9 +1375,39 @@ o.m();					// Invoke the method m on the object o.
 #+cindex:@code{new} keyword
 #+cindex:invocation context
 If a function or method invocation is preceded by the keyword ~new~, then it is
-a constructor invocation.  Constructor invocations differ from regular function
-and method invocations in their handling of arguments, invocation context, and
-return value.
+a /constructor invocation/.  Constructor invocations differ from regular
+function and method invocations in their handling of arguments, invocation
+context, and return value.  If a constructor has no parameters, then JavaScript
+constructor invocation syntax allows the argument list and parentheses to be
+omitted entirely.
+
+: var o = new Object;
+
+#+cindex:prototype property
+A constructor invocation creates a new, empty object that inherits from the
+prototype property of the constructor.  Constructor functions are intended to
+initialize objects and this newly created object is used as the invocation
+context, so the constructor function can refer to it with the ~this~ keyword.
+
+Constructor functions do not normally use the ~return~ keyword.  They typically
+initialize the new object and then return implicitly when they reach the end of
+their body.  If, however, a constructor explicitly used the ~return~ statement
+to return an object, then that object becomes the value of the invocation
+expression.  If the constructor uses ~return~ with no value, or if it returns a
+primitive value, that return value is ignored and the new object is used as the
+value of the invocation.
+
+**** Indirect Invocation
+#+cindex:@code{call()}
+#+cindex:@code{apply()}
+JavaScript functions are objects and like all JavaScript objects, they have
+methods.  Two of these methods, ~call()~ and ~apply()~, invoke the function
+indirectly.  Both methods allow you to explicitly specify the ~this~ value for
+the invocation, which means you can invoke any function as a method of any
+object, even if it is not actually a method of that object.  Both methods also
+allow you to specify the arguments for the invocation.  The ~call()~ method
+uses its own argument list as arguments to the function and the ~apply()~
+method expects an array of values to be used as arguments.
 
 * ECMAScript 5 Features
 

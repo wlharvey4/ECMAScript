@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-06 22:32
-#+macro:version 0.4.7
+#+Date:2019-08-07 22:27
+#+macro:version 0.4.8
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1408,6 +1408,104 @@ object, even if it is not actually a method of that object.  Both methods also
 allow you to specify the arguments for the invocation.  The ~call()~ method
 uses its own argument list as arguments to the function and the ~apply()~
 method expects an array of values to be used as arguments.
+*** The call() and apply() Methods
+#+cindex:@code{call()}
+#+cindex:@code{apply()}
+#+cindex:invocation context
+~call()~ and ~apply()~ allow you to indirectly invoke a function as if it were
+a method of some other object.  The first argument to both ~call()~ and
+~apply()~ is the object on which the function is to be invoked; this argument
+is the /invocation context/ and becomes the value of the ~this~ keyword within
+the body of the function.  To invoke the function ~f()~ as a method of the
+object ~o~ (passing no arguments), you could use either ~call()~ or ~apply()~:
+
+: f.call(o);
+: f.apply(o);
+
+Any arguments to ~call()~ after the first invocation context argument are the
+values that are passed to the function that is invoked.  The ~apply()~ method
+is like the ~call()~ method, except that the arguments to be passed to the
+function are specified as an array:
+
+: f.call(o, 1, 2);
+: f.apply(o, [1,2]);
+
+If a function is defined to accept an arbitrary number of arguments, the
+~apply()~ method allows you to invoke that function on the contents of an array
+of arbitrary length.  Note that ~apply()~ works with array-like objects as well
+as true arrays.  In particular, you can invoke a function with the same
+arguments as the current function by passing the arguments array directly to
+~apply()~.
+
+#+cindex:ECMAScript 3
+#+cindex:non-strict mode
+#+cindex:global object
+In ECMAScript 3 and non-strict mode, a value of ~null~ or ~undefined~ is
+replaced with the global object and a primitive value is replaced with the
+corresponding wrapper object.
+
+#+cindex:ECMAScript 5
+#+cindex:scrict mode
+In ECMAScript 5 strict mode the first argument to ~call()~ or ~apply()~ becomes
+the value of ~this~, even if it is a primitive value or ~null~ or ~undefined~.
+
+**** Monkey Patching
+This ~trace()~ function is passed an object and a method name.  It replaces the
+specified method with a new method that “wraps” additional functionality around
+the original method.  This kind of dynamic alteration of existing methods is
+sometimes called “monkey-patching.”
+
+Replace the method named ~m~ of the object ~o~ with a version that logs
+messages before and after invoking the original method.
+
+#+begin_src js
+function trace(o, m) {
+    var original = o[m]; // Remember original method in the closure.
+    o[m] = function() { // Now define the new method.
+        console.log(new Date(), "Entering:", m); // Log message.
+        var result = original.apply(this, arguments); // Invoke original.
+        console.log(new Date(), "Exiting:", m); // Log message.
+        return result; // Return result.
+    };
+}
+#+end_src
+
+*** The bind() Method
+#+cindex:ECMAScript 5
+#+cindex:@code{bind()}
+The ~bind()~ method was added in ECMAScript 5, but it is easy to simulate in
+ECMAScript 3.  The primary purpose of ~bind()~ is to bind a function to an
+object.  When you invoke the ~bind()~ method on a function ~f~ and pass an
+object ~o~, the method returns a new function.  Invoking the new function (as a
+function) invokes the original function ~f~ as a method of ~o~.  Any arguments
+you pass to the new function are passed to the original function.
+
+#+begin_src js
+function f(y) { return this.x + y; } // This function needs to be bound
+var o = { x : 1 };                   // An object we'll bind t
+var g = f.bind(o);                   // Calling g(x) invokes o.f(x)
+g(2);                                // => 3
+#+end_src
+
+It is easy to accomplish this kind of binding with code like the following:
+
+#+begin_src js
+// Return a function that invokes f as a method of o, passing all its arguments.
+function bind(f, o) {
+    if (f.bind) return f.bind(o);   // Use the bind method, if there is one
+    else return function() {        // Otherwise, bind it like this
+        return f.apply(o, arguments);
+    };
+}
+#+end_src
+
+**** Partial Application
+#+cindex:currying
+The ECMAScript 5 ~bind()~ method does more than just bind a function to an
+object.  It also performs /partial application/: any arguments you pass to
+~bind()~ after the first are bound along with the ~this~ value.  Partial
+application is a common technique in functional programming and is sometimes
+called /currying/.
 
 * ECMAScript 5 Features
 

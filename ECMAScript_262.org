@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-08 21:43
-#+macro:version 0.4.10
+#+Date:2019-08-09 17:56
+#+macro:version 0.4.11
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1051,6 +1051,39 @@ Use a temporary variable with a short name, or an IIFE:
 ** Errors
 
 ** About This
+*** this and the Global Object
+**** The Global Object
+The global object is a predefined object that serves as a placeholder for the
+global properties and functions of JavaScript.  All other predefined objects,
+functions, and properties are accessible through the global object.
+
+#+cindex:@code{this} keyword
+#+cindex:global object, this
+#+cindex:scope chain, top, global object
+In top-level JavaScript code, you can refer to the global object with the
+keyword ~this~.  It is rarely necessary to refer to the global object in this
+way, however, because the global object serves as the top of the scope chain,
+which means that unqualified variable and function names are looked up as
+properties of the object.  When JavaScript code refers to the ~parseInt()~
+function, for example, it is referring to the ~parseInt~ property of the global
+object.
+
+The fact that the global object is the top of the scope chain also means that
+all variables declared in top-level JavaScript code become properties of the
+global object.
+
+**** Properties of the Global Object using this
+#+cindex:global object properties, using @code{this}
+In core JavaScript, none of the predefined properties of the global object are
+enumerable, so you can list all implicitly and explicitly declared global
+variables with a =for/in= loop like this:
+
+#+begin_src js
+var variables = ""
+for(var name in this)
+    variables += name + "\n";
+#+end_src
+
 *** this as a Primary Expression
 #+cindex:expression
 An /expression/ is a phrase of JavaScript that a JavaScript interpreter can

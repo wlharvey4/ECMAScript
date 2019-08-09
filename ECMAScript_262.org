@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-08 21:05
-#+macro:version 0.4.9
+#+Date:2019-08-08 21:43
+#+macro:version 0.4.10
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1051,6 +1051,68 @@ Use a temporary variable with a short name, or an IIFE:
 ** Errors
 
 ** About This
+*** this as a Primary Expression
+#+cindex:expression
+An /expression/ is a phrase of JavaScript that a JavaScript interpreter can
+evaluate to produce a value.
+
+- A constant embedded literally in your program is a very simple kind of
+  expression.
+
+- A variable name is also a simple expression that evaluates to whatever value
+  has been assigned to that variable.
+
+  #+pindex:expression, complex
+- Complex expressions are built from simpler expressions.
+
+  #+cindex:array access expression
+  - An /array access expression/, for example, consists of one expression that
+    evaluates to an array followed by an open square bracket, an expression
+    that evaluates to an integer, and a close square bracket.  This new, more
+    complex expression evaluates to the value stored at the specified index of
+    the specified array.
+
+    #+cindex:function invocation expression
+  - Similarly, a /function invocation expression/ consists of one expression
+    that evaluates to a function object and zero or more additional expressions
+    that are used as the arguments to the function.
+
+
+#+cindex:primary expression
+The simplest expressions, known as /primary expressions/, are those that stand
+alone---they do not include any simpler expressions.  Primary expressions in
+JavaScript are:
+
+- constant or literal values
+
+  - Literals are constant values that are embedded directly in your program.
+
+    - number literals
+
+    - string literals
+
+    - regular expression literal
+
+- certain language keywords
+
+  - Some of JavaScript’s reserved words are primary expressions:
+
+    - ~true~
+
+    - ~false~
+
+    - ~null~
+
+      #+cindex:@code{this} keyword
+    - ~this~: Evaluates to the "current" object
+
+      Unlike the other keywords, ~this~ is not a constant---it evaluates to
+      different values in different places in the program.  The ~this~ keyword
+      is used in object-oriented programming.  Within the body of a method,
+      ~this~ evaluates to the object on which the method was invoked.
+
+- variable references
+
 *** Understanding JavaScript Function Invocation and "this"
 - https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/
 - By Yehuda Katz
@@ -1524,11 +1586,11 @@ var g = f.bind({x:1}, 2); // Bind this and y
 g(3) // => 6: this.x is bound to 1, y is bound to 2 and z is 3
 #+end_src
 
-**** Partial Application in ECMAScript 3
+***** Partial Application in ECMAScript 3
 We can bind the ~this~ value and perform partial application in ECMAScript 3.
-The standard bind() method can be simulated with code like:[fn:7]
+The standard ~bind()~ method can be simulated with code like:[fn:7]
 
-#+caption:A ~Function.bind()~ method for ECMAScript 3
+#+caption:A @code{Function.bind()} method for ECMAScript 3
 #+name:partial-application-ECMAScript 3
 #+begin_src js
 if (!Function.prototype.bind) {
@@ -1559,6 +1621,26 @@ Notice that the function returned by this ~bind()~ method is a closure that
 uses the variables ~self~ and ~boundArgs~ declared in the outer function, even
 though that inner function has been returned from the outer function and is
 invoked after the outer function has returned.
+
+**** Advantages of ECMAScript 5 bind Method
+The ~bind()~ method defined by ECMAScript 5 does have some features that cannot
+be simulated with the ECMAScript 3 code shown above.
+
+- First, the true ~bind()~ method returns a function object with its ~length~
+  property properly set to the arity of the bound function minus the number of
+  bound arguments (but not less than zero).
+
+- Second, the ECMAScript 5 ~bind()~ method can be used for partial application
+  of constructor functions.  If the function returned by ~bind()~ is used as a
+  constructor, the ~this~ passed to ~bind()~ is ignored, and the original
+  function is invoked as a constructor, with some arguments already bound.
+  Functions returned by the ~bind()~ method do not have a prototype property
+  (the prototype property of regular functions cannot be deleted) and objects
+  created when these bound functions are used as constructors inherit from the
+  prototype of the original, unbound constructor.  Also, a bound constructor
+  works just like the unbound constructor for the purposes of the ~instanceof~
+  operator.
+
 * ECMAScript 5 Features
 
 * ECMAScript 2015 (ES6) Features

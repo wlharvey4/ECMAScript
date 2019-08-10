@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-09 17:56
-#+macro:version 0.4.11
+#+Date:2019-08-09 18:04
+#+macro:version 0.4.12
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1145,6 +1145,18 @@ JavaScript are:
       ~this~ evaluates to the object on which the method was invoked.
 
 - variable references
+
+*** this and Event Handlers
+#+cindex:event handler
+#+cindex:@code{<form>} element
+#+cindex:@code{form} property
+An important thing to know about event handlers is that within the code of an
+event handler, the ~this~ keyword refers to the document element that triggered
+the event.  Since elements within a =<form>= element have a ~form~ property
+that refers to the containing form, the event handlers of these elements can
+always refer to the =Form= object as ~this.form~.  Going a step further, this
+means that an event handler for one form element can refer to a sibling form
+element named ~x~ as ~this.form.x~.
 
 *** Understanding JavaScript Function Invocation and "this"
 - https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/

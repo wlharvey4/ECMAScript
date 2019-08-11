@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-09 18:04
-#+macro:version 0.4.12
+#+Date:2019-08-10 20:33
+#+macro:version 0.4.13
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1147,12 +1147,120 @@ JavaScript are:
 - variable references
 
 *** this and Event Handlers
+**** Event Handler Invocation
+- event handler arguments
+- event handler invocation context (~this~ value)
+- invocation scope
+- event handler return value
+
+**** Event Handler Arguments
+#+cindex:event object
+Event handlers are normally invoked with an event object as their single
+argument.  The properties of the event object provide details about the event.
+
+**** Event Handler Context
 #+cindex:event handler
-#+cindex:@code{<form>} element
-#+cindex:@code{form} property
 An important thing to know about event handlers is that within the code of an
 event handler, the ~this~ keyword refers to the document element that triggered
-the event.  Since elements within a =<form>= element have a ~form~ property
+the event.
+
+When you register an event handler by setting a property, it looks as if you
+are defining a new method on the document element:
+
+#+begin_src js
+e.onclick = function() { /* handler code */ };
+#+end_src
+
+Event handlers are invoked as methods of the object on which they are defined.
+That is, within the body of an event handler, the ~this~ keyword refers to the
+event target.
+
+#+cindex:@code{addEventListener()}
+#+cindex:@code{attachEvent()~
+Handlers are invoked with the target as their ~this~ value even when registered
+using ~addEventListener()~.  This is not true for ~attachEvent()~: handlers
+registered with ~attachEvent()~ are invoked as functions, and their ~this~
+value is the global (Window) object.
+
+You can work around this with code like this:
+
+#+begin_src js
+/*
+,* Register the specified handler function to handle events of the specified
+,* type on the specified target. Ensure that the handler will always be
+,* invoked as a method of the target.
+,*/
+function addEvent(target, type, handler) {
+    if (target.addEventListener)
+        target.addEventListener(type, handler, false); 
+    else
+        target.attachEvent("on" + type, function(event) {
+            // Invoke the handler as a method of target,
+            // passing on the event object
+            return handler.call(target, event);
+        });
+}
+#+end_src
+
+**** Event Handler Scope
+Like all JavaScript functions, event handlers are lexically scoped.  They are
+executed in the scope in which they are defined, not the scope from which they
+are invoked, and they can access any local variables from that scope.
+
+***** HTML Event Handlers
+Event handlers registered as HTML attributes are a special case, however.  They
+are converted into top-level functions that have access to global variables but
+not to any local variables.  But, for historical reasons, they run with a
+modified scope chain.  Event handlers defined by HTML attributes can use the
+properties of the target object, the containing =<form>= object (if there is
+one), and the =Document= object as if they are local variables.
+
+HTML attributes are not natural places to include long strings of code, and
+this modified scope chain allows helpful shortcuts.  You can use ~tagName~
+instead of ~this.tagName~.  You can use ~getElementById~ instead of
+~document.getElementById~.  And, for document elements that are inside a
+=<form>=, you can refer to any other form element by ID, using =zipcode=, for
+example, instead of =this.form.zipcode=.
+
+#+cindex:shadow
+On the other hand, the modified scope chain of HTML event handlers is a source
+of pitfalls, since the properties of each of the objects in the chain shadow
+any properties of the same name in the global object.  The =Document= object
+defines a (rarely used) ~open()~ method, for example, so an HTML event handler
+that wants to invoke the ~open()~ method of the =Window= object must explicitly
+write ~window.open~ instead of ~open~.
+
+There is a similar (but more pernicious) problem with forms, because the names
+and IDs of form elements define properties on the containing form element.  So
+if a form contains an element with the ID “location”, for example, all HTML
+event handlers within that form must use ~window.location~ instead of
+~location~ if they want to refer to the window’s =Location= object.
+
+**** Handler Return Value
+#+cindex:event handler return value
+The return value of an event handler registered by setting an object property
+or an HTML attribute is sometimes significant.  In general, a return value of
+=false= tells the browser that it should not perform the default action
+associated with the event.  The ~onclick~ handler of a =Submit= button in a
+form, for example, can return =false= to prevent the browser from submitting
+the form.  Similarly, an ~onkeypress~ handler on an input field can filter
+keyboard input by returning =false= if the user types an inappropriate
+character.
+
+#+cindex:@code{addEventListener()}
+#+cindex:@code{attachEvent()}
+It is important to understand that event handler return values are significant
+only for handlers registered as properties.  We’ll see below that event
+handlers registered with ~addEventListener()~ or ~attachEvent()~ must instead
+call the ~preventDefault()~ method or set the =returnValue= property of the
+event object.
+
+**** Form Event Handlers
+#+cindex:@code{<form>} element
+#+cindex:@code{form} property
+#+cindex:Form property
+#+cindex:document element, event handler
+Since elements within a =<form>= element have a ~form~ property
 that refers to the containing form, the event handlers of these elements can
 always refer to the =Form= object as ~this.form~.  Going a step further, this
 means that an event handler for one form element can refer to a sibling form

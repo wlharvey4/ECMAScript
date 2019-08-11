@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-10 20:33
-#+macro:version 0.4.13
+#+Date:2019-08-10 20:58
+#+macro:version 0.4.14
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1795,6 +1795,72 @@ be simulated with the ECMAScript 3 code shown above.
   operator.
 
 * ECMAScript 5 Features
+** this and Accessor Properties
+#+cindex:accessor properties
+#+cindex:ECMAScript 5
+#+cindex:getter
+#+cindex:setter
+An object property is a name, a value, and a set of attributes.  In ECMAScript
+5 (and in recent ECMAScript 3 versions of major browsers other than IE) the
+value may be replaced by one or two methods, known as a /getter/ and a
+/setter/.  Properties defined by /getters/ and /setters/ are sometimes known as
+/accessor properties/ to distinguish them from /data properties/ that have a
+simple value.
+
+#+cindex:getter method
+- When a program queries the value of an accessor property, JavaScript invokes
+  the getter method (passing no arguments). The return value of this method
+  becomes the value of the property access expression.
+
+  #+cindex:setter method
+- When a program sets the value of an accessor property, JavaScript invokes the
+  setter method, passing the value of the right-hand side of the assignment.
+  This method is responsible for “setting,” in some sense, the property value.
+  The return value of the setter method is ignored.
+
+  #+cindex:get
+  #+cindex:set
+- Accessor properties are defined as one or two functions whose name is the
+  same as the property name, and with the =function= keyword replaced with
+  =get= and/or =set=.
+
+
+#+cindex:2D Cartesian point
+#+cindex:Cartesian point
+As an example, consider the following object that represents a 2D Cartesian
+point.  It has ordinary data properties to represent the X and Y coordinates of
+the point, and it has accessor properties for the equivalent polar coordinates
+of the point:
+
+#+begin_src js -n
+var p = {
+    // x and y are regular read-write data properties.
+    x: 1.0,
+    y: 1.0,
+
+    // r is a read-write accessor property with getter and setter. // Don't forget to put a comma after accessor methods.
+    get r() { return Math.sqrt(this.x*this.x + this.y*this.y); },
+
+    set r(newvalue) {
+        var oldvalue = Math.sqrt(this.x*this.x + this.y*this.y);
+        var ratio = newvalue/oldvalue;
+        this.x *= ratio;
+        this.y *= ratio;
+    },
+
+    // theta is a read-only accessor property with getter only.
+    get theta() {
+        return Math.atan2(this.y, this.x);
+    }
+};
+#+end_src
+
+#+cindex:@code{this} keyword, accessor property
+Note the use of the keyword ~this~ in the getters and setter above.  JavaScript
+invokes these functions as methods of the object on which they are defined,
+which means that within the body of the function ~this~ refers to the =point=
+object.  So the getter method for the =r= property can refer to the ~x~ and ~y~
+properties as ~this.x~ and ~this.y~.
 
 * ECMAScript 2015 (ES6) Features
 

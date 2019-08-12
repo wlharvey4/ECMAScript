@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-11 21:40
-#+macro:version 0.4.15
+#+Date:2019-08-12 08:48
+#+macro:version 0.4.16
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1051,7 +1051,7 @@ Use a temporary variable with a short name, or an IIFE:
 ** Errors
 
 ** About This
-*** COMMENT this Keyword
+*** this Keyword
 When a function is created, a keyword called ~this~ is created (behind the
 scenes), which links to the object in which the function operates.  ~this~ is
 available to the scope of its function, yet is a reference to the object of
@@ -1124,6 +1124,8 @@ called from, the value of ~this~ is different.
 {{{heading(this in Nested Functions)}}}
 
 #+cindex:ECMAScript 3
+#+cindex:head object
+#+cindex:nest functions and @code{this}
 You might be wondering what happens to ~this~ when it is used inside of a
 function that is contained inside of another function.  The bad news is in ECMA
 3, ~this~ loses its way and refers to the head object (window object in
@@ -1162,13 +1164,15 @@ function will be a reference to the head object.
 var foo = {
     func1:function(bar){
         bar();//logswindow,notfoo
-        console.log(this); // the this keyword fhere will be a reference to foo object
+        console.log(this); // the this keyword here will be a reference to foo object
     }
 }
 
 foo.func1( function() { console.log(this) } );
 #+end_src
 
+#+cindex:scope chain and @code{this}
+#+cindex:@code{that}
 So that the ~this~ value does not get lost, you can simply use the scope chain
 to keep a reference to ~this~ in the parent function.  The code below
 demonstrates how, using a variable called ~that~, and leveraging its scope, we
@@ -1176,7 +1180,7 @@ can keep better track of function context.
 
 #+begin_src js -n
 var myObject = {
-    myProperty: 'Icanseethelight',
+    myProperty: 'I can see the light',
     myMethod:function() {
         var that=this; // store a reference to this (i.e. myObject) in my Methodscope
         var helperFunction function() { //child function
@@ -1189,6 +1193,40 @@ var myObject = {
 
 myObject.myMethod(); // invoke myMethod
 #+end_src
+
+*** Controlling this with call and apply
+You can overwrite/control the value of ~this~ using ~apply()~ or ~call()~ to
+define what object ~this~ points to when invoking a function.  By doing so, the
+default way in which JavaScript determines the value of ~this~ is overridden.
+
+Below, we create an object and a function.  We then invoke the function via
+~call()~ so that the value of ~this~ inside the function uses =myObject= as its
+context.  The statements inside the ~myFunction~ function will then populate
+=myObject= with properties instead of populating the head object.  We have
+altered the object to which ~this~ (inside of ~myFunction~) refers.
+
+#+begin_src js -n
+
+var myObject = {};
+
+var myFunction = function(param1, param2) {
+    //set via call() 'this' points to myObject when function is invoked
+    this.foo=param1;
+    this.bar=param2;
+    console.log(this) // logs Object { foo='foo', bar='bar' }
+};
+
+myFunction.call(myObject, 'foo', 'bar'); // invoke function, set this value to myObject
+
+console.log(myObject) // logs Object {foo = 'foo', bar = 'bar'}
+#+end_src
+
+In the example above, we are using ~call()~, but apply()~ could be used as
+well.  The difference between the two is how the parameters for the function
+are passed.  Using ~call()~, the parameters are just comma-separated values.
+Using ~apply()~, the parameter values are passed inside of an array.
+
+: myFunction.apply(myObject, ['foo', 'bar']); // invoke function, set this value
 
 *** this and the Global Object
 **** The Global Object

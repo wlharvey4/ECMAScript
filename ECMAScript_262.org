@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-10 20:58
-#+macro:version 0.4.14
+#+Date:2019-08-11 21:40
+#+macro:version 0.4.15
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1051,6 +1051,145 @@ Use a temporary variable with a short name, or an IIFE:
 ** Errors
 
 ** About This
+*** COMMENT this Keyword
+When a function is created, a keyword called ~this~ is created (behind the
+scenes), which links to the object in which the function operates.  ~this~ is
+available to the scope of its function, yet is a reference to the object of
+which that function is a property/method.  The keyword ~this~ looks and acts
+like any other variable, except you can't modify it.  As opposed to arguments
+and any parameters sent to the function, ~this~ is a keyword (not a property)
+in the call/activation object.
+
+#+begin_src js
+var cody = {
+    living:true,
+    age:23,
+    gender:'male',
+    getGender:function() { return cody.gender; }
+};
+
+console.log(cody.getGender()); // logs 'male'
+#+end_src
+
+Notice how inside of the ~getGender~ function, we are accessing the gender
+property using dot notation (e.g. ~cody.gender~) on the cody object itself.
+This can be rewritten using ~this~ to access the =cody= object because ~this~
+points to the =cody= object.
+
+#+begin_src js
+var cody = {
+    living:true,
+    age:23,
+    gender:'male',
+    getGender:function() { return this.gender; }
+};
+
+console.log(cody.getGender()); // logs 'male'
+#+end_src
+
+The ~this~ used in ~this.gender~ simply refers to the =cody= object on which
+the function is operating.
+
+{{{heading(The Value of this)}}}
+
+The value of ~this~, passed to all functions, is based on the context in which
+the function is called at runtime.
+
+The ~myObject~ object in the code below is given a property called =sayFoo=,
+which points to the ~sayFoo~ function.  When the ~sayFoo~ function is called
+from the global scope, this refers to the window object.  When it is called as
+a method of ~myObject~, this refers to ~myObject~.
+
+#+begin_src js -n
+var foo = 'foo';
+var myObject = {foo: 'I am myObject.foo'};
+
+var sayFoo = function() {
+    console.log(this['foo']);
+};
+
+// give myObject a sayFoo property and have it point to sayFoo function
+myObject.sayFoo = sayFoo;
+
+myObject.sayFoo(); // logs 'I am myObject.foo'
+
+sayFoo(); // logs 'foo'
+#+end_src
+
+Clearly, the value of ~this~ is based on the context in which the function is
+being called.  Consider that both ~myObject.sayFoo~ and ~sayFoo~ point to the
+same function.  However, depending upon where (i.e. the context) ~sayFoo()~ is
+called from, the value of ~this~ is different.
+
+{{{heading(this in Nested Functions)}}}
+
+#+cindex:ECMAScript 3
+You might be wondering what happens to ~this~ when it is used inside of a
+function that is contained inside of another function.  The bad news is in ECMA
+3, ~this~ loses its way and refers to the head object (window object in
+browsers), instead of the object within which the function is defined.
+
+In the code below, ~this~ inside of ~func2~ and ~func3~ loses its way and
+refers not to =myObject= but instead to the head object.
+
+#+begin_src js -n
+var myObject = {
+    func1:function() {
+        console.log(this); //logs myObject
+        varfunc2=function() {
+            console.log(this) //logs window, and will do so from this point on
+            varfunc3=function() {
+                console.log(this);//logs window, as it’s the head object
+            }();
+        }();
+    }
+};
+
+myObject.func1();
+#+end_src
+
+#+cindex:ECMAScript 5
+The good news is that this will be fixed in ECMAScript 5.  For now, you should
+be aware of this predicament, especially when you start passing functions
+around as values to other functions.
+
+Consider the code below and what happens when passing an anonymous function to
+~foo.func1~.  When the anonymous function is called inside of ~foo.func1~ (a
+function inside of a function) the ~this~ value inside of the anonymous
+function will be a reference to the head object.
+
+#+begin_src js -n
+var foo = {
+    func1:function(bar){
+        bar();//logswindow,notfoo
+        console.log(this); // the this keyword fhere will be a reference to foo object
+    }
+}
+
+foo.func1( function() { console.log(this) } );
+#+end_src
+
+So that the ~this~ value does not get lost, you can simply use the scope chain
+to keep a reference to ~this~ in the parent function.  The code below
+demonstrates how, using a variable called ~that~, and leveraging its scope, we
+can keep better track of function context.
+
+#+begin_src js -n
+var myObject = {
+    myProperty: 'Icanseethelight',
+    myMethod:function() {
+        var that=this; // store a reference to this (i.e. myObject) in my Methodscope
+        var helperFunction function() { //child function
+            // logs 'I can see the light' via scope chain because that=this
+            console.log(that.myProperty); // logs 'I can see the light'
+            console.log(this); // logs window object, if we don't use "that"
+        }();
+    }
+}
+
+myObject.myMethod(); // invoke myMethod
+#+end_src
+
 *** this and the Global Object
 **** The Global Object
 The global object is a predefined object that serves as a placeholder for the

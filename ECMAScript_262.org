@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-13 09:08
-#+macro:version 0.4.19
+#+Date:2019-08-13 09:11
+#+macro:version 0.4.20
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1503,7 +1503,7 @@ That is, within the body of an event handler, the ~this~ keyword refers to the
 event target.
 
 #+cindex:@code{addEventListener()}
-#+cindex:@code{attachEvent()~
+#+cindex:@code{attachEvent()}
 Handlers are invoked with the target as their ~this~ value even when registered
 using ~addEventListener()~.  This is not true for ~attachEvent()~: handlers
 registered with ~attachEvent()~ are invoked as functions, and their ~this~
@@ -5052,6 +5052,7 @@ breaking existing non-strict-mode libraries.
 #+macro:subheading @@html:<h3>@@@@texinfo:@subheading @@$1@@html:</h3>@@
 #+macro:dfn @@texinfo:@dfn{@@$1@@texinfo:}@@
 #+macro:noindent @@texinfo:@noindent @@
+#+macro:var @@texinfo:@var{@@$1@@texinfo:}@@
 
 ** Export to HTML
 *** HTML Options

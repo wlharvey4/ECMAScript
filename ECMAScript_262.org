@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-12 17:27
-#+macro:version 0.4.17
+#+Date:2019-08-13 09:01
+#+macro:version 0.4.18
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1092,8 +1092,13 @@ the function is operating.
 
 {{{heading(The Value of this)}}}
 
+#+cindex:@code{this} value
+#+cindex:strict mode
 The value of ~this~, passed to all functions, is based on the context in which
-the function is called at runtime.
+the function is called at runtime.  The value of ~this~ in nonmethod functions is
+the global object unless strict mode is in effect, in which case the value will
+be =undefined=.  The value of ~this~ when passed to a method will be a
+reference to the object making the call.
 
 The ~myObject~ object in the code below is given a property called =sayFoo=,
 which points to the ~sayFoo~ function.  When the ~sayFoo~ function is called
@@ -1121,7 +1126,7 @@ being called.  Consider that both ~myObject.sayFoo~ and ~sayFoo~ point to the
 same function.  However, depending upon where (i.e. the context) ~sayFoo()~ is
 called from, the value of ~this~ is different.
 
-{{{heading(this in Nested Functions)}}}
+*** this in Nested Functions
 
 #+cindex:ECMAScript 3
 #+cindex:head object
@@ -1163,7 +1168,7 @@ function will be a reference to the head object.
 #+begin_src js -n
 var foo = {
     func1:function(bar){
-        bar();//logswindow,notfoo
+        bar();//logs window, not foo
         console.log(this); // the this keyword here will be a reference to foo object
     }
 }
@@ -1193,6 +1198,89 @@ var myObject = {
 
 myObject.myMethod(); // invoke myMethod
 #+end_src
+
+The following is an example where we call ~forEach~ with a function to iterate
+over an array.  Calling ~logHiToFriends~ produces an error:
+
+#+begin_src js -n
+var jane = {
+    name: 'Jane',
+    friends: [ 'Tarzan', 'Cheeta' ],
+    logHiToFriends: function () {
+        'use strict';
+        this.friends.forEach(function (friend) {
+            // `this` is undefined here
+            console.log(this.name+' says hi to '+friend);
+        });
+    }
+}
+
+> jane.logHiToFriends()
+TypeError: Cannot read property 'name' of undefined
+#+end_src
+
+So while ~this~ is defined inside the ~logHiToFriends~ method, it is
+=undefined= inside the ~forEach~ function.  In addition to the prevous method
+of storing the ~this~ value inside a different variable, e.g., ~that~,
+~forEach~ has a second parameter that allows you to provide a value for ~this~:
+
+#+begin_src js -n
+logHiToFriends: function () {
+    'use strict';
+    this.friends.forEach(function (friend) {
+        console.log(this.name+' says hi to '+friend);
+    }, this);
+}
+#+end_src
+
+#+attr_texinfo: :options Array.prototype forEach ( callback( curValue [, index [, array]]) [, thisArg] );
+#+begin_defmethod
+
+The ~forEach()~ method calls a provided callback function once for each element
+in an array in ascending order.  It is not invoked for index properties that
+have been deleted or are uninitialized (sparse arrays).  The ~callback~ is
+invoked with three arguments.  Unlike ~map()~ or ~reduce()~ it always returns
+the value =undefined= and is not chainable.  The typical use case is to execute
+side effects at the end of a chain.  ~forEach()~ does not mutate the array on
+which it is called (although ~callback~, if invoked, may do so).
+
+- {{{var(callback)}}} :: Function to execute on each element, taking three
+     arguments:
+
+  - {{{var(curValue)}}} :: The current element being processed in the array.
+
+  - {{{var(index)}}} (optional) :: The index of the current element being
+       processed in the array.
+
+  - {{{var(array)}}} (optional) :: The array ~forEach()~ was called upon.
+
+- {{{var(thisArg)}}} (optional) :: Value to use as ~this~ when executing
+     callback.
+
+- Return Value :: =undefined=
+
+
+There is no way to stop or break a ~forEach()~ loop other than by throwing an
+exception.  If you need such behavior, the ~forEach()~ method is the wrong
+tool.  Early termination may be accomplished with:
+
+- A simple ~for~ loop
+
+- A ~for...of~ / ~for...~ in loops
+
+- ~Array.prototype.every()~
+
+- ~Array.prototype.some()~
+
+- ~Array.prototype.find()~
+
+- ~Array.prototype.findIndex()~
+
+
+Array methods: ~every()~, ~some()~, ~find()~, and ~findIndex()~ test the array
+elements with a predicate returning a truthy value to determine if further
+iteration is required.
+#+end_defmethod
 
 *** Controlling this with call and apply
 You can overwrite/control the value of ~this~ using ~apply()~ or ~call()~ to
@@ -1252,7 +1340,26 @@ console.log(cody.name); // logs 'Cody Lindley'
 ~this~ refers to the "object that is to be" when the constructor function is
 invoked using the ~new~ keyword.  Had we not used the ~new~ keyword, the value
 of ~this~ would be the context in which Person is invoked---in this case the
-head object.
+head object (i.e., =window=).
+
+When in strict mode, if a constructor function is called without the =new=
+keyword, any attempt to set a property will raise a warning, since the ~this~
+value will be =undefined=:
+
+#+begin_src js
+function Point(x, y) {
+    'use strict';
+    this.x = x;
+    this.y = y;
+}
+
+> var pt = Point(3, 1);
+TypeError: Cannot set property 'x' of undefined
+#+end_src
+
+Due to strict mode, you get a warning when you accidentally forget =new= and
+call it as a function.  In sloppy mode, you don’t get a warning, and global
+variables ~x~ and ~y~ are created.
 
 *** this in a Prototype Method
 When used in functions added to a constructorʼs prototype property, ~this~

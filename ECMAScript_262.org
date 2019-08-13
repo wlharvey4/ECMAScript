@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-12 08:48
-#+macro:version 0.4.16
+#+Date:2019-08-12 17:27
+#+macro:version 0.4.17
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1227,6 +1227,39 @@ are passed.  Using ~call()~, the parameters are just comma-separated values.
 Using ~apply()~, the parameter values are passed inside of an array.
 
 : myFunction.apply(myObject, ['foo', 'bar']); // invoke function, set this value
+
+*** this and a Constructor Function
+When a function is invoked with the ~new~ keyword, the value of ~this~ within
+the function refers to the instance itself.  In the constructor function, we
+can leverage the object via ~this~ before the object is actually created.
+
+Below, we set up a =Person= constructor function that uses ~this~ to reference
+an object being created.  When an instance of =Person= is created, ~this.name~
+will reference the newly created object and place a property called =name= in
+the new object with a value from the parameter (=name=) passed to the
+constructor function.
+
+#+begin_src js -n
+var Person = function(name) {
+    this.name=name || 'johndoe'; //this will refer to the instance created
+}
+
+var cody = new Person('Cody Lindley'); // create an instance, based on Person constructor
+
+console.log(cody.name); // logs 'Cody Lindley'
+#+end_src
+
+~this~ refers to the "object that is to be" when the constructor function is
+invoked using the ~new~ keyword.  Had we not used the ~new~ keyword, the value
+of ~this~ would be the context in which Person is invoked---in this case the
+head object.
+
+*** this in a Prototype Method
+When used in functions added to a constructorʼs prototype property, ~this~
+refers to the instance on which the method is invoked.  The keyword ~this~ is
+used to refer to instances when used inside of a method contained in the
+prototype object.  If the instance does not contain the property, the prototype
+lookup begins.
 
 *** this and the Global Object
 **** The Global Object

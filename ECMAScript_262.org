@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-15 09:42
-#+macro:version 0.4.22
+#+Date:2019-08-15 10:20
+#+macro:version 0.4.23
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2758,11 +2758,86 @@ promise is settled its outcome can’t change.
 ** Meta-Programming
 
 ** Internationalization & Localization
+* EMCAScript 2016
+* ECMAScript 2017
+ECMAScript 2017 introduced
+- Async Functions :: Async functions improve the asynchronous programming
+     experience by providing syntax for promise-returning functions.
+- Shared Memory :: Shared Memory and Atomics introduce a new [[https://tc39.es/ecma262/#sec-memory-model][memory model]] that
+                   allows multi-agent programs to communicate using atomic
+                   operations that ensure a well-defined execution order even
+                   on parallel CPUs.
+- Atomics :: introduce a new [[https://tc39.es/ecma262/#sec-memory-model][memory model]]
+
+
+along with smaller language and library enhancements, bug fixes, and editorial
+updates.
+
+This specification also includes new static methods on Object:
+
+- Object.values
+- Object.entries
+- Object.getOwnPropertyDescriptors
+
+* ECMAScript 2018
+ECMAScript 2018 introduced support for asynchronous iteration via the
+- AsyncIterator protocol and
+- async generators.
+
+
+It also included four new regular expression features:
+- the dotAll flag,
+- named capture groups,
+- Unicode property escapes, and
+- look-behind assertions.
+
+
+Lastly it included object
+- rest and
+- spread properties.
 * ECMAScript 2019
 - [[https://www.ecma-international.org/ecma-262/10.0/index.html#Title][ECMAScript® 2019 Language Specification]]
+- [[https://github.com/tc39/ecma262][tc39 / ecma262 on GitHub]]
+  - This repository contains the source for the current draft of ECMA-262, the
+    ECMAScript® Language Specification.
+- [[https://tc39.es/ecma262/][Draft ECMA-262 / August 7, 2019]]
+  - Currently at ECMAScript 2020
+  - This Ecma Standard defines the ECMAScript 2020 Language. It is the tenth
+    edition of the ECMAScript Language Specification.
 
 
 ECMA-262, 10th Edition, June 2019
+
+This specification, the 10th edition, introduces a few new built-in functions:
+- Array.prototype.flat
+- Array.prototype.flatMap
+
+  for flattening arrays
+
+- Object.fromEntries
+
+  for directly turning the return value of ~Object.entries~ into a new Object
+
+- String.prototype.trimStart
+- String.prototype.trimEnd
+
+  as better-named alternatives to the widely implemented but non-standard
+  ~String.prototype.trimLeft~ and ~trimRight~ built-ins.
+
+
+In addition, this specification includes a few minor updates to syntax and
+semantics.  Updated syntax includes:
+- optional catch binding parameters and
+- allowing U+2028 (LINE SEPARATOR) and U+2029 (PARAGRAPH SEPARATOR) in string
+  literals to align with JSON.
+
+
+Other updates include:
+- requiring that Array.prototype.sort be a stable sort,
+- requiring that JSON.stringify return well-formed UTF-8 regardless of input,
+  and
+- clarifying Function.prototype.toString by requiring that it either return the
+  corresponding original source text or a standard placeholder.
 
 ** Object.fromEntries
 #+cindex:@code{Object.fromEntries}
@@ -2914,6 +2989,9 @@ not match.
 ~Promise.allSettled~ returns a promise that is fulfilled with an array of
 promise state snapshots, but only after all the original promises have settled,
 i.e. become either fulfilled or rejected.
+
+* ECMAScript Proposals
+- [[https://github.com/tc39/proposals][tc39/proposals]]
 
 * ECMAScript compatibility table
 

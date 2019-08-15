@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-15 08:35
-#+macro:version 0.4.21
+#+Date:2019-08-15 09:42
+#+macro:version 0.4.22
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2764,8 +2764,156 @@ promise is settled its outcome can’t change.
 
 ECMA-262, 10th Edition, June 2019
 
+** Object.fromEntries
+#+cindex:@code{Object.fromEntries}
+A proposal[fn:8] for a new static method ~Object.fromEntries~ in ECMAScript for
+transforming a list of key-value pairs into an object.
+
+~Object.fromEntries~ is proposed to perform the reverse of ~Object.entries~: it
+accepts an iterable of key-value pairs and returns a new object whose own keys
+and corresponding values are given by those pairs.
+
+: obj = Object.fromEntries([['a', 0], ['b', 1]]); // { a: 0, b: 1 }
+
+There is no inverse of ~Object.entries~ for constructing objects from key-value
+pairs, so to do so one typically must write a helper or inline reducer:
+
+: obj = Array.from(map).reduce((acc, [ key, val ]) => Object.assign(acc, { [key]: val }), {});
+
+This can be written many different ways, and potentially adds noise because
+it's not likely to be obviously related to the outward purpose of the function
+doing it.
+** String.prototype.trimStart and String.prototype.trimEnd
+ES5 standardized ~String.prototype.trim~.  All major engines have also
+implemented corresponding ~trimLeft~ and ~trimRight~ functions---without any
+standard specification.  For consistency with ~padStart~/~padEnd~ we
+propose[fn:9] ~trimStart~ and ~trimEnd~ and ~trimLeft~/~trimRight~ as aliases
+required for web compatibility.
+** Array.prototype.flatMap and Array.prototype.flat
+
+#+attr_texinfo: :indic code
+- Array.prototype.flat :: returns a new array with all sub-array elements
+     concatenated into it recursively up to the specified depth.
+
+  #+attr_texinfo: :options Array.prototype flat ( [ depth ] )
+  #+begin_defmethod
+  When the flat method is called with zero or one arguments, the following
+  steps are taken:
+
+  1. Let O be ? ToObject(this value).
+  2. Let sourceLen be ? ToLength(? Get(O, "length")).
+  3. Let depthNum be 1.
+  4. If depth is not undefined, then
+     a. Set depthNum to ? ToInteger(depth).
+  5. Let A be ? ArraySpeciesCreate(O, 0).
+  6. Perform ? FlattenIntoArray(A, O, sourceLen, 0, depthNum).
+  7. Return A.
+  #+end_defmethod
+
+- Array.prototype.flatMap :: first maps each element using a mapping function,
+     then flattens the result into a new array.  It is identical to a map
+     followed by a flatten of depth 1, but ~flatMap~ is quite often useful and
+     merging both into one method is slightly more efficient.
+
+  #+attr_texinfo: :options Array.prototype flatMap ( mapperFunction [, thisArg] )
+  #+begin_defmethod
+  When the ~flatMap~ method is called with one or two arguments, the following
+  steps are taken:
+
+  1. Let O be ? ToObject(this value).
+  2. Let sourceLen be ? ToLength(? Get(O, "length")).
+  3. If IsCallable(mapperFunction) is false, throw a TypeError exception.
+  4. If thisArg is present, let T be thisArg; else let T be undefined.
+  5. Let A be ? ArraySpeciesCreate(O, 0).
+  6. Perform ? FlattenIntoArray(A, O, sourceLen, 0, 1, mapperFunction, T).
+  7. Return A.
+  #+end_defmethod
+** Optional Catch Binding
+This proposal[fn:8] makes a grammatical change to ECMAScript, allowing the
+omission of a catch binding in cases where the binding would not be used.  The
+grammar change introduced by this proposal allows for the catch binding and its
+surrounding parentheses to be omitted, as in
+
+#+caption:Grammar change for optional catch binding
+#+name:optional-catch-binding
+#+begin_src js
+try {
+  // ...
+} catch {
+  // ...
+}
+#+end_src
+** Symbol.prototype.description
+Proposal[fn:8] to add ~Symbol.prototype.description~ to ECMAScript.
+
+Goal is to expose the =[[Description]]= internal slot of a symbol directly
+instead of just indirectly through ~Symbol.prototype.toString~.
+
+- Symbol.prototype.description :: is an accessor property whose ~set~ accessor
+     function is undefined.  Its ~get~ accessor function performs the following
+     steps:
+
+  1. Let s be the this value.
+  2. Let sym be ? thisSymbolValue(s).
+  3. Return sym. =[[Description]]=
+** Function.prototype.toString Revision
+ ECMA-262 proposal[fn:8] to update ~Function.prototype.toString~
+
+- https://tc39.es/Function-prototype-toString-revision/
+
+** JSON Superset
+Proposal[fn:8] to make all JSON text valid ECMA-262, i.e., to extend ECMA-262
+syntax into a superset of JSON.
+
+{{{heading(Motivation)}}}
+
+ECMAScript claims JSON as a subset in JSON.parse, but (as has been
+well-documented) that is not true because JSON strings can contain unescaped
+=U+2028 LINE SEPARATOR= and =U+2029 PARAGRAPH SEPARATOR= characters while
+ECMAScript strings cannot.
+
+These exceptions add unnecessary complexity to the specification and increase
+the cognitive burden on both implementers and users, allowing for the
+introduction of subtle bugs.  Also, as a lesser but concrete corrolary problem,
+certain source concatenation and construction tasks currently require
+additional steps to process valid JSON into valid ECMAScript before embedding
+it.
+
+{{{heading(Proposed Solution)}}}
+
+JSON syntax is defined by [[http://www.ecma-international.org/publications/standards/Ecma-404.htm][ECMA-404]] and permanently fixed by [[https://tools.ietf.org/html/rfc7159][RFC 7159]], but the
+=DoubleStringCharacter= and =SingleStringCharacter= productions of ECMA-262 can
+be extended to allow unescaped =U+2028 LINE SEPARATOR= and =U+2029 PARAGRAPH
+SEPARATOR= characters.
+
+** Well-Formed JSON Stringify
+A proposal[fn:8] to prevent ~JSON.stringify~ from returning ill-formed Unicode
+strings.
+
+Rather than return unpaired surrogate code points as single UTF-16 code units,
+represent them with JSON escape sequences.
+
 * ECMAScript 2020
 - https://tc39.es/ecma262/
+
+** String.prototype.matchAll
+If I have a string, and either a sticky or a global regular expression which
+has multiple capturing groups, I often want to iterate through all of the
+matches.
+
+~String#matchAll~ would solve this use case by both providing access to all of
+the capturing groups, and not visibly mutating the regular expression object in
+question.
+
+Performs a regular expression match of the String representing the this value
+against regexp and returns an iterator.  Each iteration result’s value is an
+Array object containing the results of the match, or =null= if the String did
+not match.
+
+** Promise.allSettled
+~Promise.allSettled~ returns a promise that is fulfilled with an array of
+promise state snapshots, but only after all the original promises have settled,
+i.e. become either fulfilled or rejected.
 
 * ECMAScript compatibility table
 
@@ -5090,6 +5238,10 @@ a modern view that is as consistent as possible.
 :END:
 
 * Footnotes
+
+[fn:9] Now Stage 3 
+
+[fn:8] Now Stage 4 
 
 [fn:7] Note that we save this method as ~Function.prototype.bind~, so that all
 function objects inherit it. 

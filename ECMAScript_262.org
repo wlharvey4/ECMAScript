@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-13 09:11
-#+macro:version 0.4.20
+#+Date:2019-08-15 08:35
+#+macro:version 0.4.21
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -793,7 +793,6 @@ language feature ideas.  See our [[https://github.com/tc39/ecma262/blob/master/C
 
 This specification defines APIs for console debugging facilities.  Last Updated
 9 August 2019
-
 
 * ECMAScript 3 Features
 ** Lexical Conventions
@@ -2201,6 +2200,70 @@ properties as ~this.x~ and ~this.y~.
 ** Arrow Functions
 
 ** Extended Parameter Handling
+*** Default Parameter Values
+*** Rest Parameter
+
+#+cindex:rest parameter
+#+cindex:ECMAScript 2015
+#+cindex:variadic function
+Aggregation of remaining arguments into single parameter of variadic functions.
+
+#+caption:Example of the rest Parameter
+#+name:rest-parameter
+#+begin_src js
+function f (x, y, ...a) {
+    return (x + y) * a.length
+}
+f(1, 2, "hello", true, 7) === 9;
+#+end_src
+
+#+cindex:ECMAScript 3
+#+caption:Example of rest Parameter in ES5
+#+name:ES5-rest-parameter
+#+begin_src js
+function f (x, y) {
+    var a = Array.prototype.slice.call(arguments, 2);
+    return (x + y) * a.length;
+};
+f(1, 2, "hello", true, 7) === 9;
+#+end_src
+
+*** Spread Operator
+#+cindex:spread operator
+#+cindex:iterable collection
+Spreading of elements of an iterable collection (like an array or even a
+string) into both literal elements and individual function parameters.
+
+#+caption:Example of spread Operator
+#+name:spread-operator
+#+begin_src js
+var params = [ "hello", true, 7 ];
+var other = [ 1, 2, ...params ]; // [ 1, 2, "hello", true, 7 ]
+
+function f (x, y, ...a) {
+    return (x + y) * a.length
+}
+f(1, 2, ...params) === 9;
+
+var str = "foo";
+var chars = [ ...str ]; // [ "f", "o", "o" ]
+#+end_src
+
+#+caption:Example of spread Operator in ES3
+#+name:ES3-spread-operator
+#+begin_src js
+var params = [ "hello", true, 7 ];
+var other = [ 1, 2 ].concat(params); // [ 1, 2, "hello", true, 7 ]
+
+function f (x, y) {
+    var a = Array.prototype.slice.call(arguments, 2);
+    return (x + y) * a.length;
+};
+f.apply(undefined, [ 1, 2 ].concat(params)) === 9;
+
+var str = "foo";
+var chars = str.split(""); // [ "f", "o", "o" ]
+#+end_src
 
 ** Template Literals
 
@@ -2695,7 +2758,6 @@ promise is settled its outcome can’t change.
 ** Meta-Programming
 
 ** Internationalization & Localization
-
 * ECMAScript 2019
 - [[https://www.ecma-international.org/ecma-262/10.0/index.html#Title][ECMAScript® 2019 Language Specification]]
 

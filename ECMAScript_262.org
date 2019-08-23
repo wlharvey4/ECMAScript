@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-15 11:05
-#+macro:version 0.4.24
+#+Date:2019-08-23 11:55
+#+macro:version 0.5.0
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3481,15 +3481,36 @@ sound type system.
 
     - [[https://github.com/getify/You-Dont-Know-JS/blob/master/es6%2520&%2520beyond/README.md#you-dont-know-js-es6--beyond][ES6 and Beyond]]
 
-* Modules Systems---CJS and AMD
+* Module Systems---CommonJS • AMD •  ES2015
 #+cindex:module systems
-
 JavaScript was originally designed to be read from top to bottom in a
 simplistic manner by a web browser, and files were loaded using =<script>=
 tags.  As larger and larger applications have been written in JavaScript, two
 module systems (AMD and CommonJS) have been developed.  Two patterns exist
 because the browser and server offer different challenges in terms of
 module-loading latency (network requests vs. file system).
+
+#+cindex:RequireJS
+RequireJS is a JavaScript file and module loader.  It is optimized for
+in-browser use, but it can be used in other JavaScript environments, like Rhino
+and Node.  Using a modular script loader like RequireJS will improve the speed
+and quality of your code.
+
+#+cindex:Asynchronous Module Definition (AMD)
+#+cindex:AMD, Asynchronous Module Definition
+#+cindex:asynchronous module loading
+The Asynchronous Module Definition (AMD) API specifies a mechanism for defining
+modules such that the module and its dependencies can be asynchronously loaded.
+This is particularly well suited for the browser environment where synchronous
+loading of modules incurs performance, usability, debugging, and cross-domain
+access problems.
+
+#+cindex:import statement
+#+cindex:export statement
+#+cindex:ES2015
+Within JavaScript itself, beginning with ES2015, modern browsers have started
+to support module functionality natively.  Use of native JavaScript modules is
+dependent on the ~import~ and ~export~ statements
 
 ** CommonJS (CJS)
 #+cindex:CommonJS module system
@@ -3645,6 +3666,235 @@ define(['./foo', './bar'], function(foo, bar){
                 }); 
         }
 });
+#+end_src
+
+** ES2015 Import and Export Statements
+#+cindex:ES2015
+The definition of /imports/ was first standardized in ES2015.
+
+*** Export Statement
+#+cindex:@code{export} statement
+#+cindex:JasvaScript modules
+#+cindex:strict mode, modules exported
+The ~export~ statement is used when creating JavaScript modules to export
+functions, objects, or primitive values from the module so they can be used by
+other programs with the ~import~ statement.  Exported modules are in =strict=
+mode whether you declare them as such or not.  The ~export~ statement cannot be
+used in embedded scripts.
+
+{{{heading(Export Types)}}}
+
+There are two different types of export, named and default.  You can have
+multiple named exports per module but only one default export.
+
+There is also a hybrid export.
+
+#+cindex:named export
+#+cindex:export, named
+1. Named Exports (Zero or more exports per module), the names of which may be
+   renamed.  During the import, it is mandatory to use the same name of the
+   corresponding object.
+
+   #+caption:Named Exports
+   #+name:named-exports
+   #+begin_src js
+   // Exporting individual (named) features
+   export let name1, name2, …, nameN; // also var, const
+   export let name1 = …, name2 = …, …, nameN; // also var, const
+   export function functionName(){...}
+   export class ClassName {...}
+   /* Can export:
+      - var, let, const
+      - function
+      - class
+   */
+
+   // Export list of expressions declared earlier
+   export { name1, name2, …, nameN };
+
+   // Renaming exports
+   export { variable1 as name1, variable2 as name2, …, nameN };
+
+   // Exporting destructured assignments with renaming
+   export const { name1, name2: bar } = o;
+   #+end_src
+
+   #+cindex:default export
+   #+cindex:export, default
+2. Default Exports (One per module); a default export can be imported with any
+   name
+
+   #+caption:Default Exports
+   #+name:default-exports
+   #+begin_src js
+   // Default export of a feature or previously declared expression
+   export default expression;
+   export default function (…) { … } // also class, function*
+   export default function name1(…) { … } // also class, function*
+   export { name1 as default, … }; // previously declared
+   #+end_src
+
+   #+cindex:hybrid export
+   #+cindex:export, hybrid
+3. Hybrid Exports; submodules can be aggregated and exported from a parent
+   module;
+
+   #+caption:Hybrid Exports
+   #+name:hybrid-exports
+   #+begin_src js
+   // Aggregating modules
+   export * from …;
+   export { name1, name2, …, nameN } from …;
+   export { import1 as name1, import2 as name2, …, nameN } from …;
+   export { default } from …;
+   #+end_src
+
+   #+caption:Parent Module Example
+   #+name:parent-module-example
+   #+begin_src js
+   // In parentModule.js
+   export { myFunction, myVariable } from 'childModule1.js';
+   export { myClass } from 'childModule2.js';
+
+   // In top-level module
+   import { myFunction, myVariable, myClass } from 'parentModule.js'
+   #+end_src
+
+*** Import Statement
+#+cindex:@code{import} static statement
+#+cindex:strict mode
+#+cindex:@code{type="module"}
+#+cindex:script, import
+#+cindex:static import
+The static ~import~ statement is used to import bindings which are exported by
+another module.  Imported modules are in =strict mode whether you declare them
+as such or not.  The ~import~ statement cannot be used in embedded scripts
+unless such script has a =type="module"=.
+
+#+cindex:@code{import()} dynamic function
+There is also a function-like dynamic ~import()~, which does not require
+scripts of =type="module"=.[fn:10]
+
+#+cindex:dynamic import
+#+cindex:static import
+#+cindex:tree shaking
+/Dynamic import/ is useful in situations where you wish to load a module
+conditionally, or on demand.  The /static form/ is preferable for loading
+initial dependencies, and can benefit more readily from static analysis tools
+and tree shaking.
+
+{{{heading(Import Syntax Forms)}}}
+
+#+begin_src js
+import defaultExport from "module-name";
+import * as name from "module-name";
+import { export1 } from "module-name";
+import { export1 as alias1 } from "module-name";
+import { export1 , export2 } from "module-name";
+import { foo , bar } from "module-name/path/to/specific/un-exported/file";
+import { export1 , export2 as alias2 , [...] } from "module-name";
+
+/* The following two examples create namespace or named imports from a
+ ,* default export */
+import defaultExport, { export1 [ , [...] ] } from "module-name";
+import defaultExport, * as name from "module-name";
+
+import "module-name"; /* Import an entire module for side effects
+                       ,* only, without importing anything. This runs
+                       ,* the module's global code, but doesn't
+                       ,* actually import any values. */
+
+/* The import keyword may be called as a function to dynamically
+ ,* import a module.  When used this way, it returns a promise. */
+var promise = import("module-name");
+
+import('/modules/my-module.js')
+  .then((module) => {
+    // Do something with the module.
+  });
+
+let module = await import('/modules/my-module.js');
+#+end_src
+
+#+attr_texinfo: :indic code
+- module-name :: The module to import from.  This is often a relative or
+                 absolute path name to the ~.js~ file containing the module.
+                 Certain bundlers may permit or require the use of the
+                 extension; check your environment.  Only single quoted and
+                 double quoted Strings are allowed.
+
+- name :: Name of the module object that will be used as a kind of namespace
+          when referring to the imports.  The =name= parameter is the name of
+          the "module object" which will be used as a kind of namespace to
+          refer to the exports.  The export parameters specify individual named
+          exports, while the ~import * as name~ syntax imports all of them.
+
+- exportN :: Name of the exports to be imported.
+
+- aliasN :: Names that will refer to the named imports.
+
+
+{{{heading(Examples)}}}
+
+{{{subheading(Standard Static Import)}}}
+
+#+cindex:import, static
+#+cindex:static import
+The code below shows how to import from a secondary module to assist in
+processing an AJAX JSON request.
+
+#+caption:A Standard Module in ~file.js~
+#+name:example-static-import-file.js
+#+begin_src js
+function getJSON(url, callback) {
+  let xhr = new XMLHttpRequest();
+  xhr.onload = function () { 
+    callback(this.responseText) 
+  };
+  xhr.open('GET', url, true);
+  xhr.send();
+}
+
+export function getUsefulContents(url, callback) {
+  getJSON(url, data => callback(JSON.parse(data)));
+}
+#+end_src
+
+#+caption:The Main Program in ~main.js~
+#+name:example-static-import-main.js
+#+begin_src js
+import { getUsefulContents } from '/modules/file.js';
+
+getUsefulContents('http://www.example.com',
+    data => { doSomethingUseful(data); });
+#+end_src
+
+{{{subheading(Dynamic Import)}}}
+
+This example shows how to load functionality on to a page based on a user
+action, in this case a =button click, and then call a function within that
+module.  This is not the only way to implement this functionality.  The
+~import()~ function also supports ~await~.
+
+#+cindex:import, dynamic
+#+cindex:dynamic import
+#+caption:Example Dynamic Import based upon user action
+#+name:example-dynamic-import-main.js
+#+begin_src js
+const main = document.querySelector("main");
+for (const link of document.querySelectorAll("nav > a")) {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+
+    import('/modules/my-module.js')
+      .then(module => {
+        module.loadPageInto(main);
+      })
+      .catch(err => {
+        main.textContent = err.message;
+      });
+  });
+}
 #+end_src
 
 * JavaScript---The Definitive Guide
@@ -5640,6 +5890,9 @@ a modern view that is as consistent as possible.
 :END:
 
 * Footnotes
+
+[fn:10] Dynamic import is an ECMAScript propsal due to be standardized in
+ES2020. 
 
 [fn:9] Now Stage 3 
 

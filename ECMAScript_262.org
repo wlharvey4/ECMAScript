@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-23 11:55
-#+macro:version 0.5.0
+#+Date:2019-08-24 00:53
+#+macro:version 0.5.1
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3490,6 +3490,291 @@ module systems (AMD and CommonJS) have been developed.  Two patterns exist
 because the browser and server offer different challenges in terms of
 module-loading latency (network requests vs. file system).
 
+{{{heading(Encapsulation and Dependency Management)}}}
+
+#+cindex:namespace
+#+cindex:dependency management
+#+cindex:encapsulation
+As JavaScript development gets more and more common, namespaces and depedencies
+get much more difficult to handle.[fn:11]  Different solutions were developed to deal
+with this problem in the form of module systems.  Modules were developed around
+the concepts of /encapsulation/ and /dependency/.  At the moment that another
+piece of software is brought into a project, a /dependency/ is created between
+it and the new piece of code.  Since these pieces of software need to work
+together, it is of importance that no conflicts arise between them.  Without
+some sort of /encapsulation/ it is a matter of time before two modules conflict
+with each other.  /Encapsulation/ is essential to prevent conflicts and ease
+development.
+
+#+cindex:dependencies
+#+cindex:refactoring
+Dependencies in traditional client-side JavaScript development are
+/implicit/---it is the job of the developer to make sure dependencies are
+satisfied at the point any block of code is executed.  Developers also need to
+make sure dependencies are satisfied in the right order.  As JavaScript
+development gets more and more complex, dependency management can get
+cumbersome.  Refactoring is also impaired: where should newer dependencies be
+put to maintain proper order of the load chain?
+
+JavaScript module systems attempt to deal with these problems and others.  They
+were born out of necessity to accommodate the ever growing JavaScript
+landscape.
+
+{{{heading(The Revealing Module Pattern)}}}
+
+#+cindex:the revealing module pattern
+In the beginning, before the modern module systems were developed, there was
+=The Revealing Module Pattern=.
+
+#+caption:The Revealing Module Pattern
+#+name:the-revealing-module-pattern
+#+begin_src js
+var myRevealingModule = (function () {
+    var privateVar = "Ben Cherry",
+        publicVar = "Hey there!";
+
+    function privateFunction() {
+        console.log( "Name:" + privateVar );
+    }
+
+    function publicSetName( strName ) {
+        privateVar = strName;
+    }
+
+    function publicGetName() {
+        privateFunction();
+    }
+
+    // Reveal public pointers to
+    // private functions and properties
+    return {
+        setName: publicSetName,
+        greeting: publicVar,
+        getName: publicGetName
+    };
+})();
+
+myRevealingModule.setName( "Paul Kinlan" );
+#+end_src
+
+See [[https://addyosmani.com/resources/essentialjsdesignpatterns/book/][Addy Osmani's JavaScript Design Patterns book]].
+
+The revealing module pattern relies on functions, or function scoping, to
+encapsulate private contents: whatever binding is declared inside a function
+cannot escape its scope.  In the example above, public symbols are exposed in
+the returned dictionary. All other declarations are protected by the function
+scope enclosing them.  This pattern has been in use for quite some time in
+JavaScript projects and deals fairly nicely with the encapsulation matter.  It
+does not do much about the dependencies issue.  Another limitation lies in the
+fact that including other modules cannot be done in the same source.
+
+{{{subheading(Pros)}}}
+
+- Simple enough to be implemented anywhere (no libraries, no language support
+  required).
+
+- Multiple modules can be defined in a single file.
+
+{{{subheading(Cons)}}}
+
+- No way to programmatically import modules (except by using eval).
+
+- Dependencies need to be handled manually.
+
+- Asynchronous loading of modules is not possible.
+
+- Circular dependencies can be troublesome.
+
+- Hard to analyze for static code analyzers.
+
+
+{{{heading(CommonJS)}}}
+
+#+cindex:CommonJS
+#+cindex:server-side JavaScript
+#+cindex:Node.js
+CommonJS is a project that aims to define a series of specifications to help in
+the development of server-side JavaScript applications.  One of the areas the
+CommonJS team attempts to address are modules.  Node.js developers originally
+intended to follow the CommonJS specification but later decided against it.
+When it comes to modules, however, Node.js's implementation is very influenced
+by the CommonJS specification.
+
+#+caption:CommonJS Modules in Node.js
+#+name:commonjs-nodejs
+#+begin_src js
+// In circle.js
+const PI = Math.PI;
+
+exports.area = (r) => PI * r * r;
+
+exports.circumference = (r) => 2 * PI * r;
+
+// In some file
+const circle = require('./circle.js');
+console.log( `The area of a circle of radius 4 is ${circle.area(4)}`);
+#+end_src
+
+{{{subheading(Require and Exports)}}}
+
+In both Node's and CommonJS's modules there are essentially two elements to
+interact with the module system: ~require~ and ~exports~.
+
+~require~ is a function that can be used to import symbols from another module
+to the current scope.  The parameter passed to ~require~ is the =id= of the
+module.  In Node's implementation, it is the name of the module inside the
+~node_modules~ directory (or, if it is not inside that directory, the path to
+it).
+
+~exports~ is a special object: anything put in it will get exported as a public
+element.  Names for fields are preserved.
+
+A peculiar difference between Node and CommonJS arises in the form of the
+~module.exports~ object.  In Node, ~module.exports~ is the real special object
+that gets exported, while ~exports~ is just a variable that gets bound by
+default to ~module.exports~.  CommonJS, on the other hand, has no
+~module.exports~ object.  The practical implication is that in Node it is not
+possible to export a fully pre-constructed object without going through
+~module.exports~:
+
+#+begin_src js
+// This won't work, replacing exports entirely breaks the binding to
+// modules.exports.
+exports =  (width) => {
+  return {
+    area: () => width * width
+  };
+}
+
+// This works as expected.
+module.exports = (width) => {
+  return {
+    area: () => width * width
+  };
+}
+#+end_src
+
+#+cindex:server-side development
+#+cindex:synchronous API
+CommonJS modules were designed with server development in mind.  Naturally, the
+API is synchronous.  In other words, modules are loaded at the moment and in
+the order they are required inside a source file.
+
+{{{subheading(Pros)}}}
+
+- Simple: a developer can grasp the concept without looking at the docs.
+
+- Dependency management is integrated: modules require other modules and get
+  loaded in the needed order.
+
+- require can be called anywhere: modules can be loaded programmatically.
+
+- Circular dependencies are supported.
+
+
+{{{subheading(Cons)}}}
+
+- Synchronous API makes it not suitable for certain uses (client-side).
+
+- One file per module.
+
+- Browsers require a loader library or transpiling.
+
+- No constructor function for modules (Node supports this though).
+
+- Hard to analyze for static code analyzers.
+
+
+{{{heading(CommonJS Implementations)}}}
+
+On the server, there is Node.js (partially).
+
+#+cindex:webpack
+#+cindex:browserify
+For the client there are currently two popular options: webpack and browserify.
+
+/Browserify/ was explicitly developed to parse Node-like module definitions
+(many Node packages work out-of-the-box with it!) and bundle your code plus the
+code from those modules in a single file that carries all dependencies.
+
+/Webpack/ on the other hand was developed to handle creating complex pipelines
+of source transformations before publishing.  This includes bundling together
+CommonJS modules.
+
+{{{heading(Asynchronous Module Definition (AMD))}}}
+
+#+cindex:Asynchronous Module Definition (AMD)
+#+cindex:AMD, Asynchronous Module Definition
+AMD was born out of a group of developers that were displeased with the
+direction adopted by CommonJS.  In fact, AMD was split from CommonJS early in
+its development.  The main difference between AMD and CommonJS lies in its
+support for asynchronous module loading.
+
+#+caption:Example of asynchronous module loading in AMD
+#+name:asynchronous-module-loading-in-amd
+#+begin_src js
+//Calling define with a dependency array and a factory function
+define(['dep1', 'dep2'], function (dep1, dep2) {
+
+    //Define the module value by returning a value.
+    return function () {};
+});
+
+// Or:
+define(function (require) {
+    var dep1 = require('dep1'),
+        dep2 = require('dep2');
+
+    return function () {};
+});
+#+end_src
+
+#+cindex:closure idiom
+Asynchronous loading is made possible by using JavaScript's traditional closure
+idiom: a function is called when the requested modules are finished loading.
+Module definitions and importing a module is carried by the same function: when
+a module is defined its dependencies are made explicit.  An AMD loader can
+therefore have a complete picture of the dependency graph for a given project
+at runtime.  Libraries that do not depend on each other for loading can thus be
+loaded at the same time.  This is particularly important for browsers, where
+startup times are essential to a good user experience.
+
+{{{subheading(Pros)}}}
+
+- Asynchronous loading (better startup times).
+
+- Circular dependencies are supported.
+
+- Compatibility for require and exports.
+
+- Dependency management fully integrated.
+
+- Modules can be split in multiple files if necessary.
+
+- Constructor functions are supported.
+
+- Plugin support (custom loading steps).
+
+
+{{{subheading(Cons)}}}
+
+- Slightly more complex syntactically.
+
+- Loader libraries are required unless transpiled.
+
+- Hard to analyze for static code analyzers.
+
+
+{{{heading(AMD Implementations)}}}
+
+#+cindex:require.js
+#+cindex:Dojo
+Currently the most popular implementations of AMD are {{{command(require.js)}}}
+and =Dojo=.  Using {{{command(require.js)}}} is pretty straightforward: include
+the library in your HTML file and use the =data-main= attribute to tell
+{{{command(require.js)}}} which module should be loaded first.  Dojo has a
+similar setup.
+
 #+cindex:RequireJS
 RequireJS is a JavaScript file and module loader.  It is optimized for
 in-browser use, but it can be used in other JavaScript environments, like Rhino
@@ -3504,6 +3789,109 @@ modules such that the module and its dependencies can be asynchronously loaded.
 This is particularly well suited for the browser environment where synchronous
 loading of modules incurs performance, usability, debugging, and cross-domain
 access problems.
+
+{{{heading(ES2015 Module System)}}}
+
+The ECMA team behind the standardization of JavaScript decided to tackle the
+issue of modules.  The result can be seen in the latest release of the
+JavaScript standard: ECMAScript 2015 (previously known as ECMAScript 6).  The
+result is syntactically pleasing and compatible with both synchronous and
+asynchronous modes of operation.
+
+#+caption:ES2015 Module System
+#+name:es2015-module-system
+#+begin_src js
+//------ lib.js ------
+export const sqrt = Math.sqrt;
+export function square(x) {
+    return x * x;
+}
+export function diag(x, y) {
+    return sqrt(square(x) + square(y));
+}
+
+//------ main.js ------
+import { square, diag } from 'lib';
+console.log(square(11)); // 121
+console.log(diag(4, 3)); // 5
+#+end_src
+
+#+cindex:@code{import} directive
+#+cindex:@code{export} directive
+The ~import~ directive can be used to bring modules into the namespace.  This
+directive, in contrast with ~require~ and ~define~, is not dynamic.  The
+~export~ directive, on the other hand, can be used to explicitly make elements
+public.  The static nature of the ~import~ and ~export~ directive allows static
+analyzers to build a full tree of dependencies without running code.  There is
+a now a specification for dynamic loading of modules.
+
+In truth, ES2015 only specifies the /syntax/ for static module loaders.  In
+practice, ES2015 implementations are not required to do anything after parsing
+these directives.  Module loaders such as ~System.js~ are still required.  This
+solution, by virtue of being integrated in the language, lets runtimes pick the
+best loading strategy for modules.  In other words, when asynchronous loading
+gives benefits, it can be used by the runtime.
+
+{{{subheading(Pros)}}}
+
+- Synchronous and asynchronous loading supported.
+
+- Syntactically simple.
+
+- Support for static analysis tools.
+
+- Integrated in the language (eventually supported everywhere, no need for libraries).
+
+- Circular dependencies supporte.
+
+
+{{{subheading(Cons)}}}
+
+- Still not supported everywhere.
+
+
+{{{heading(Implementations)}}}
+
+#+cindex:babel
+Unfortunately none of the major JavaScript runtimes support ES2015 modules in
+their current stable branches.  Fortunately many transpilers do support modules
+and a polyfill is also available.  Currently, the ES2015 preset for Babel can
+handle modules with no trouble.
+
+{{{heading(System.js---The all-in-one Solution)}}}
+
+#+cindex:System.js
+#+cindex:universal loader
+System.js is a universal module loader that supports CommonJS, AMD and ES2015
+modules.  It can work in tandem with transpilers such as Babel or Traceur and
+can support Node and IE8+ environments.  Using it is a matter of loading
+System.js in your code and then pointing it to your base URL:
+
+#+caption:Example of System.js
+#+name:system.js-example
+#+begin_src html
+<script src="system.js"></script>
+<script>
+  // set our baseURL reference path
+  System.config({
+    baseURL: '/app',
+    // or 'traceur' or 'typescript'
+    transpiler: 'babel',
+    // or traceurOptions or typescriptOptions
+    babelOptions: {
+
+    }
+  });
+
+  // loads /app/main.js
+  System.import('main.js');
+</script>
+#+end_src
+
+As System.js does all the job on-the-fly, using ES2015 modules should generally
+be left to a transpiler during the build step in production mode.  When not in
+production mode, System.js can call the transpiler for you, providing seamless
+transition between production and debugging environments.
 
 #+cindex:import statement
 #+cindex:export statement
@@ -5890,6 +6278,9 @@ a modern view that is as consistent as possible.
 :END:
 
 * Footnotes
+
+[fn:11] See ``JavaScript Module Systems Showdown: CommonJS vs AMD vs ES2015''
+by Sebastian Peyrott at https://auth0.com/blog/javascript-module-systems-showdown/. 
 
 [fn:10] Dynamic import is an ECMAScript propsal due to be standardized in
 ES2020. 

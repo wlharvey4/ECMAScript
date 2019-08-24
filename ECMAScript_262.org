@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-24 00:53
-#+macro:version 0.5.1
+#+Date:2019-08-24 15:17
+#+macro:version 0.5.2
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -861,6 +861,137 @@ IterationStatement :
 
 **** =for..in=
 
+#+cindex:@code{for...in} statement
+#+cindex:non-Symbol
+#+cindex:Symbol, non-
+#+cindex:enumerable properties, object
+The =for...in= statement iterates over all non-Symbol, enumerable properties of
+an object in an arbitrary order.
+
+{{{heading(Syntax)}}}
+
+#+begin_example
+for (variable in object)
+  statement
+#+end_example
+
+- variable :: A different property name is assigned to variable on each
+              iteration.
+
+- object :: Object whose non-Symbol enumerable properties are iterated over.
+
+
+{{{heading(Description)}}}
+
+A =for...in= loop only iterates over enumerable, non-Symbol properties.  The
+loop will iterate over all enumerable properties of the object itself and those
+the object inherits from its constructor's prototype.  A =for...in= loop
+iterates over the properties of an object in an arbitrary order.
+
+If a property is modified in one iteration and then visited at a later time,
+its value in the loop is its value at that later time.  A property that is
+deleted before it has been visited will not be visited later.  Properties added
+to the object over which iteration is occurring may either be visited or
+omitted from iteration.
+
+In general, it is best not to add, modify, or remove properties from the object
+during iteration, other than the property currently being visited.  There is no
+guarantee whether an added property will be visited, whether a modified
+property (other than the current one) will be visited before or after it is
+modified, or whether a deleted property will be visited before it is deleted.
+
+{{{heading(Iterating Over Arrays)}}}
+
+#+begin_cartouche
+*NOTE:* =for...in= should not be used to iterate over an Array where the index
+order is important.
+#+end_cartouche
+
+Array indexes are just enumerable properties with integer names and are
+otherwise identical to general object properties.  There is no guarantee that
+=for...in= will return the indexes in any particular order.  The =for...in=
+loop statement will return all enumerable properties, including those with
+non–integer names and those that are inherited.
+
+Because the order of iteration is implementation-dependent, iterating over an
+array may not visit elements in a consistent order.  Therefore, it is better to
+use a =for= loop with a numeric index (or ~Array.prototype.forEach()~ or the
+=for...of= loop) when iterating over arrays where the order of access is
+important.
+
+{{{heading(Iterating Over Own Properties Only)}}}
+
+#+cindex:@code{getOwnPropertyNames()} method
+#+cindex:@code{hasOwnProperty()} method
+#+cindex:@code{propertyIsEnumerable()} method
+#+cindex:@code{check} method
+If you only want to consider properties attached to the object itself, and not
+its prototypes, use ~getOwnPropertyNames()~ or perform a ~hasOwnProperty()~
+check (~propertyIsEnumerable()~ can also be used).  Alternatively, if you know
+there won't be any outside code interference, you can extend built-in
+prototypes with a ~check~ method.
+
+{{{heading(When to User for...in)}}}
+
+=for...in= is built for iterating object properties.  It may be most
+practically used for debugging purposes, being an easy way to check the
+properties of an object (by outputting to the console or otherwise).  Although
+arrays are often more practical for storing data, in situations where a
+key-value pair is preferred for working with data (with properties acting as
+the "key"), there may be instances where you want to check if any of those keys
+hold a particular value.
+
+{{{heading(Examples)}}}
+
+{{{subheading(Basic Use of for...in Iteration)}}}
+
+The =for...in= loop below iterates over all of the object's enumerable,
+non-Symbol properties and logs a string of the property names and their values.
+
+#+caption:Example of basic for...in iteration
+#+name:example-basic-for-in-iteration
+#+begin_src js
+var obj = {a: 1, b: 2, c: 3};
+
+for (const prop in obj) {
+  console.log(`obj.${prop} = ${obj[prop]}`);
+}
+
+// Output:
+// "obj.a = 1"
+// "obj.b = 2"
+// "obj.c = 3"
+#+end_src
+
+{{{subheading(Iterating Over Property's Own)}}}
+
+#+cindex:@code{hasOwnProperty()} method
+The following function illustrates the use of ~hasOwnProperty()~: the inherited
+properties are not displayed.
+
+#+caption:Example of iterating over only an object's own properties
+#+name:example-for-in-own-properties-only
+#+begin_src js
+var triangle = {a: 1, b: 2, c: 3};
+
+function ColoredTriangle() {
+  this.color = 'red';
+}
+
+ColoredTriangle.prototype = triangle;
+
+var obj = new ColoredTriangle();
+
+for (const prop in obj) {
+  if (obj.hasOwnProperty(prop)) {
+    console.log(`obj.${prop} = ${obj[prop]}`);
+  } 
+}
+
+// Output:
+// "obj.color = red"
+#+end_src
+
 *** =continue=
 
 *** =break=
@@ -1050,7 +1181,6 @@ Use a temporary variable with a short name, or an IIFE:
          define ~x~ in the object you pass as the second argument, or if there's
          some similar bug or confusion, you won't get an error --- just
          unexpected results.
-
 ** Function Definition
 
 ** Program
@@ -2193,7 +2323,389 @@ properties as ~this.x~ and ~this.y~.
   - http://es6-features.org/
   - https://github.com/rse/es6-features
 
-** Constants
+
+** Review of New Features in ECMAScript 2015
+- [[https://hacks.mozilla.org/category/es6-in-depth/][ES2015 In Depth Articles]] by Jason Orendorff
+
+*** ES2015 In Depth Introduction
+:PROPERTIES:
+:date:     2015-04-23
+:END:
+- https://hacks.mozilla.org/2015/04/es6-in-depth-an-introduction/
+
+
+#+cindex:ES6 In Depth
+#+cindex:ECMAScript 6, ES6
+Welcome to ES6 In Depth!  In this new weekly series, we’ll be exploring
+ECMAScript 6, the upcoming new edition of the JavaScript language.  ES6
+contains many new language features that will make JS more powerful and
+expressive, and we’ll visit them one by one in weeks to come.  But before we
+start in on the details, maybe it’s worth taking a minute to talk about what
+ES6 is and what you can expect.
+
+**** What falls under the scope of ECMAScript?
+The JavaScript programming language is standardized by ECMA (a standards body
+like W3C) under the name ECMAScript.  Among other things, ECMAScript defines:
+
+#+cindex:language syntax
+#+cindex:parsing rules
+- [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar][Language syntax]] :: parsing rules, keywords, statements, declarations,
+     operators, etc.
+
+#+cindex:types
+- [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures][Types]] :: boolean, number, string, object, etc.
+
+#+cindex:prototypes
+#+cindex:inheritance
+- [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain][Prototypes and inheritance]] ::
+
+#+cindex:standard library
+- [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects][The standard library]] of built-in objects and functions :: JSON, Math, Array
+     methods, Object introspection methods, etc.
+
+
+#+cindex:DOM, Document Object Model
+#+cindex:Document Object Model (DOM)
+#+cindex:node.js
+What it doesn’t define is anything to do with HTML or CSS, or the Web APIs,
+such as the DOM (Document Object Model).  Those are defined in separate
+standards. ECMAScript covers the aspects of JS that are present not only in the
+browser, but also in non-browser environments such as ~node.js~.
+
+**** The New Standard
+Last week, the final draft of the ECMAScript Language Specification, Edition 6,
+was submitted to the Ecma General Assembly for review.  What does that mean?
+It means that this summer, we’ll have a new standard for the core JavaScript
+programming language.  This is big news.  A new JS language standard doesn’t
+drop every day.  The last one, ES5, happened back in 2009.  The ES standards
+committee has been working on ES6 ever since.
+
+ES6 is a major upgrade to the language.  At the same time, your JS code will
+continue to work.  ES6 was designed for maximum compatibility with existing
+code.  In fact, many browsers already support various ES6 features, and
+implementation efforts are ongoing.  This means all your JS code has already
+been running in browsers that implement some ES6 features!  If you haven’t seen
+any compatibility issues by now, you probably never will.
+
+**** Promises resolved
+#+cindex:ES5
+ES5, the 2009 update to the language, introduced ~Object.create()~,
+~Object.defineProperty()~, getters and setters, strict mode, and the JSON
+object.  I’ve used all these features, and I like what ES5 did for the
+language.  But it would be too much to say any of these features had a dramatic
+impact on the way I write JS code.  The most important innovation, for me, was
+probably the new Array methods: ~.map()~, ~.filter()~, and so on.
+
+Well, ES6 is different.  It’s the product of years of harmonious work.  And
+it’s a treasure trove of new language and library features, the most
+substantial upgrade for JS ever.  The new features range from welcome
+conveniences, like arrow functions and simple string interpolation, to
+brain-melting new concepts like proxies and generators.
+
+This series aims to show you how, by examining the new features ES6 offers to
+JavaScript programmers.  We’ll start with a classic “missing feature” that I’ve
+been eager to see in JavaScript for the better part of a decade.  So join us
+next week for a look at ES6 iterators and the new for-of loop.
+
+*** Iterators and the for-of loop
+- https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/
+
+
+How do you loop over the elements of an array?  When JavaScript was introduced,
+twenty years ago, you would do it like this:
+
+{{{subheading(for Statement)
+
+#+cindex:@code{for} Statement
+#+begin_src js
+for (var index = 0; index < myArray.length; index++) {
+  console.log(myArray[index]);
+}
+#+end_src
+
+{{{subheading(forEach Method on Array.prototype)}}}
+
+#+cindex:@code{forEach} method
+Since ES5, you can use the built-in ~forEach~ method (on ~Array.prototype~):
+
+#+begin_src myArray.forEach(function (value) {
+  console.log(value);
+});
+#+end_src
+
+#+cindex:@code{break} statement, @code{forEach}
+#+cindex:@code{return} statement, @code{forEach}
+This is a little shorter, but there is one minor drawback: you can’t break out
+of this loop using a ~break~ statement or return from the enclosing function
+using a ~return~ statement.
+
+It sure would be nice if there were just a ~for-loop~ syntax that looped over
+array elements.
+
+{{{subheading(for-in Statement)}}}
+
+#+cindex:@code{for-in} Statement
+How about a ~for–in~ loop?
+
+#+begin_src js
+for (var index in myArray) {    // don't actually do this
+  console.log(myArray[index]);
+}
+#+end_src
+
+This is a bad idea for several reasons:
+
+- The values assigned to ~index~ in this code are the strings "0", "1", "2" and
+  so on, not actual numbers.  Since you probably don’t want string arithmetic
+  ("2" + 1 == "21"), this is inconvenient at best.
+
+- The loop body will execute not only for array elements, but also for any
+  other expando properties someone may have added.  For example, if your array
+  has an enumerable property ~myArray.name~, then this loop will execute one
+  extra time, with index == "name".  Even properties on the array’s prototype
+  chain can be visited.
+
+- Most astonishing of all, in some circumstances, this code can loop over the
+  array elements in an arbitrary order.
+
+
+In short, ~for–in~ was designed to work on plain old Objects with string
+keys.  For Arrays, it’s not so great.
+
+{{{subheading(The mighty for-of loop)}}}
+
+#+cindex:@code{for-of} loop statement
+Remember last week I promised that ES6 would not break the JS code you’ve
+already written.  Well, millions of Web sites depend on the behavior of
+~for–in~ --- yes, even its behavior on arrays.  So there was never any question
+of “fixing” ~for–in~ to be more helpful when used with arrays.  The only way
+for ES6 to improve matters was to add some kind of new loop syntax.
+
+And here it is: ~for-of~ statement:
+
+#+begin_src js
+for (var value of myArray) {
+  console.log(value);
+}
+#+end_src
+
+Hmm. After all that build-up, it doesn’t seem all that impressive, does it?
+Well, we’ll see whether ~for–of~ has any neat tricks up its sleeve.  For now,
+just note that:
+
+- this is the most concise, direct syntax yet for looping through array
+  elements
+
+- it avoids all the pitfalls of ~for–in~
+
+- unlike ~forEach(),~ it works with ~break~, ~continue~, and ~return~
+
+
+The ~for–in~ loop is for looping over object properties.
+
+The ~for–of~ loop is for looping over data --- like the values in an array.
+
+But that’s not all.  ~for–of~ is not just for arrays.  It also works on most
+array-like objects, like DOM NodeLists.  It also works on strings, treating the
+string as a sequence of Unicode characters:
+
+#+begin_src js
+for (var chr of "😺😲") {
+  alert(chr);
+}
+#+end_src
+
+#+cindex:Maps
+#+cindex:Sets
+It also works on Map and Set objects.  Oh, I’m sorry.  You’ve never heard of
+Map and Set objects?  Well, they are new in ES6.  We’ll do a whole post about
+them at some point.  If you’ve worked with maps and sets in other languages,
+there won’t be any big surprises.
+
+For example, a Set object is good for eliminating duplicates:
+
+#+begin_src js
+// make a set from an array of words
+var uniqueWords = new Set(words);
+#+end_src
+
+Once you’ve got a Set, maybe you’d like to loop over its contents. Easy:
+
+#+begin_src js
+for (var word of uniqueWords) {
+  console.log(word);
+}
+#+end_src
+
+A Map is slightly different: the data inside it is made of key-value pairs, so
+you’ll want to use destructuring to unpack the key and value into two separate
+variables:
+
+#+begin_src js
+for (var [key, value] of phoneBookMap) {
+  console.log(key + "'s phone number is: " + value);
+}
+#+end_src
+
+Destructuring is yet another new ES6 feature and a great topic for a future
+blog post. I should write these down.
+
+By now, you get the picture: JS already has quite a few different collection
+classes, and even more are on the way.  ~for–of~ is designed to be the
+workhorse loop statement you use with all of them.
+
+~for–of~ does not work with plain old Objects, but if you want to iterate over
+an object’s properties you can either use ~for–in~ (that’s what it’s for) or
+the builtin ~Object.keys()~:
+
+#+begin_src js
+// dump an object's own enumerable properties to the console
+for (var key of Object.keys(someObject)) {
+  console.log(key + ": " + someObject[key]);
+}
+#+end_src
+
+**** Under the Hood
+A running theme in ES6 is that the new features being added to the language
+didn’t come out of nowhere.  Most have been tried and proven useful in other
+languages.  The ~for–of~ loop, for example, resembles similar loop statements
+in C++, Java, C#, and Python.  Like them, it works with several different data
+structures provided by the language and its standard library.  But it’s also an
+extension point in the language.
+
+#+cindex:method calls
+#+cindex:@code{iterator} method
+Like the =for/foreach= statements in those other languages, =for–of= works
+entirely in terms of method calls.  What Arrays, Maps, Sets, and the other
+objects we talked about all have in common is that they have an ~iterator~
+method.
+
+#+cindex:@code{[Symbol.iterator]} method
+And there’s another kind of object that can have an ~iterator~ method too: any
+object you want.  Just as you can add a ~myObject.toString()~ method to any
+object and suddenly JS knows how to convert that object to a string, you can
+add the ~myObject[Symbol.iterator]()~ method to any object and suddenly JS will
+know how to loop over that object.
+
+For example, suppose you’re using jQuery, and although you’re very fond of
+~.each(),~ you would like jQuery objects to work with =for–of= as well.  Here’s
+how to do that:
+
+#+begin_src js
+// Since jQuery objects are array-like,
+// give them the same iterator method Arrays have
+jQuery.prototype[Symbol.iterator] =
+  Array.prototype[Symbol.iterator];
+#+end_src
+
+#+cindex:@code{[Symbol.iterator]} syntax
+OK, I know what you’re thinking.  That ~[Symbol.iterator]~ syntax seems weird.
+What is going on there?  It has to do with the method’s name.  The standard
+committee could have just called this method ~.iterator()~, but then, your
+existing code might already have some objects with ~.iterator()~ methods, and
+that could get pretty confusing.  So the standard uses a symbol, rather than a
+string, as the name of this method.
+
+#+cindex:symbols
+Symbols are new in ES6, and we’ll tell you all about them in---you guessed
+it---a future blog post.  For now, all you need to know is that the standard
+can define a brand-new symbol, like ~Symbol.iterator~, and it’s guaranteed not
+to conflict with any existing code.  The trade-off is that the syntax is a
+little weird.  But it’s a small price to pay for this versatile new feature and
+excellent backward compatibility.
+
+An object that has a ~[Symbol.iterator]()~ method is called =iterable=.  In
+coming weeks, we’ll see that the concept of iterable objects is used throughout
+the language, not only in =for–of= but in the Map and Set constructors,
+destructuring assignment, and the new ~spread~ operator.
+
+**** Iterator Objects
+#+cindex:iterator object
+Now, there is a chance you will never have to implement an iterator object of
+your own from scratch.  We’ll see why next week.  But for completeness, let’s
+look at what an iterator object looks like.  (If you skip this whole section,
+you’ll mainly be missing crunchy technical details.)
+
+A =for–of= loop starts by calling the ~[Symbol.iterator]()~ method on the
+collection.  This returns a new iterator object.  An iterator object can be any
+object with a ~.next()~ method; the =for–of= loop will call this method
+repeatedly, once each time through the loop.  For example, here’s the simplest
+iterator object I can think of:
+
+#+begin_src js
+var zeroesForeverIterator = {
+  [Symbol.iterator]: function () {
+    return this; // the `iterator' object
+  },
+  next: function () { // with a `next' method
+    return {done: false, value: 0};
+  }
+};
+#+end_src
+
+Every time this ~.next()~ method is called, it returns the same result, telling
+the =for–of= loop (a) we’re not done iterating yet; and (b) the next value
+is 0.  This means that ~for (value of zeroesForeverIterator) {}~ will be an
+infinite loop.  Of course, a typical iterator will not be quite this trivial.
+
+This iterator design, with its =.done= and =.value= properties, is
+superficially different from how iterators work in other languages.  In Java,
+iterators have separate ~.hasNext()~ and ~.next()~ methods.  In Python, they
+have a single ~.next()~ method that throws =StopIteration= when there are no
+more values.  But all three designs are fundamentally returning the same
+information.
+
+#+cindex:@code{.return()} method
+#+cindex:@code{.throw(exc)} method
+An iterator object can also implement optional ~.return()~ and ~.throw(exc)~
+methods.  The =for–of= loop calls ~.return()~ if the loop exits prematurely,
+due to an =exception= or a =break= or =return= statement.  The iterator can
+implement ~.return()~ if it needs to do some cleanup or free up resources it
+was using.  Most iterator objects won’t need to implement it. ~.throw(exc)~ is
+even more of a special case: =for–of= never calls it at all.  But we’ll hear
+more about it next week.
+
+Now that we have all the details, we can take a simple =for–of= loop and
+rewrite it in terms of the underlying method calls.
+
+First the for–of loop:
+
+#+begin_src js
+for (VAR of ITERABLE) {
+  STATEMENTS
+}
+#+end_src
+
+Here is a rough equivalent, using the underlying methods and a few temporary
+variables:
+
+#+begin_src js
+var $iterator = ITERABLE[Symbol.iterator]();
+var $result = $iterator.next();
+while (!$result.done) {
+  VAR = $result.value;
+  STATEMENTS
+  $result = $iterator.next();
+}
+#+end_src
+
+This code doesn’t show how ~.return()~ is handled.  We could add that, but I
+think it would obscure what’s going on rather than illuminate it.  =for–of= is
+easy to use, but there is a lot going on behind the scenes.
+
+{{{heading(Generators)}}}
+
+Well, we’re done for today, but we’re still not done with the =for–of= loop.
+
+There is one more new kind of object in ES6 that works beautifully with for–of.
+I didn’t mention it because it’s the topic of next week’s post.  I think this
+new feature is the most magical thing in ES6.  If you haven’t already
+encountered it in languages like Python and C#, you’ll probably find it
+mind-boggling at first.  But it’s the easiest way to write an iterator, it’s
+useful in refactoring, and it might just change the way we write asynchronous
+code, both in the browser and on the server.  So join us next week as we look
+at ES6 generators in depth.
+** constants
 
 ** Scoping
 
@@ -2282,6 +2794,116 @@ var chars = str.split(""); // [ "f", "o", "o" ]
 ** Symbol Type
 
 ** Iterators
+
+*** The for-of Statement
+The =for...of= statement creates a loop iterating over /iterable objects/,
+including: built-in String, Array, Array-like objects (e.g., arguments or
+NodeList), TypedArray, Map, Set, and user-defined iterables.  It invokes a
+/custom iteration hook/ with statements to be executed for the value of each
+distinct property of the object.
+
+#+caption:Basic Example of a for-of Statement
+#+name:example-for-of-statement
+#+begin_src js
+function* foo(){
+  yield 1;
+  yield 2;
+}
+
+for (let o of foo()) {
+  console.log(o);
+  // expected output: 1
+
+  break; // closes iterator, triggers return
+}
+#+end_src
+
+{{{heading(Syntax of for-of Statement)}}}
+
+#+begin_example
+for (variable of iterable) {
+  statement
+}
+#+end_example
+
+- variable :: On each iteration a value of a different property is assigned to
+              ~variable~.  ~variable~ may be declared with ~const~, ~let~, or
+              ~var~.
+
+- iterable :: Object whose iterable properties are iterated.
+
+
+{{{heading(Difference Between for-of and for-in Statements)}}}
+
+Both =for...in= and =for...of= statements iterate over something.  The main
+difference between them is in what they iterate over.
+
+{{{subheading(The for-in Statement)}}}
+
+The =for...in= statement iterates over the enumerable properties of an object,
+in an arbitrary order.
+
+{{{subheading(The for-of Statement)}}}
+
+The ~for...of~ statement iterates over values that the iterable object defines
+to be iterated over.
+
+{{{heading(Example of Difference between for-in and for-of Statements)}}}
+
+The following example shows the difference between a ~for...of~ loop and a
+~for...in~ loop when used with an Array.
+
+#+caption:Difference between ~for...in~ and ~for...of~ statements
+#+begin_src js
+Object.prototype.objCustom = function() {}; 
+Array.prototype.arrCustom = function() {};
+
+let iterable = [3, 5, 7];
+iterable.foo = 'hello';
+
+for (let i in iterable) {
+  console.log(i); // logs 0, 1, 2, "foo", "arrCustom", "objCustom"
+}
+
+for (let i in iterable) {
+  if (iterable.hasOwnProperty(i)) {
+    console.log(i); // logs 0, 1, 2, "foo"
+  }
+}
+
+for (let i of iterable) {
+  console.log(i); // logs 3, 5, 7
+}
+#+end_src
+
+Every object will inherit the =objCustom= property and every object that is an
+Array will inherit the =arrCustom= property since these properties have been
+added to ~Object.prototype~ and ~Array.prototype~, respectively.  The object
+iterable inherits the properties =objCustom= and =arrCustom= because of
+inheritance and the prototype chain.
+
+{{{subheading(The First =for...in= Loop)}}}
+
+This loop logs only enumerable properties of the iterable object, in arbitrary
+order.  It doesn't log array elements 3, 5, 7 or 'hello' because those are not
+enumerable properties; in fact they are not properties at all --- they are
+values.  It logs array indexes as well as =arrCustom= and =objCustom, which
+are. If you're not sure why these properties are iterated over, there's a more
+thorough [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in#Array_iteration_and_for...in][explanation]] of how array iteration and =for...in= work.
+
+{{{subheading(The Second =for...in= Loop)}}}
+
+This loop is similar to the first one, but it uses ~hasOwnProperty()~ to check
+if the found enumerable property is the object's own, i.e. not inherited.  If
+it is, the property is logged.  Properties 0, 1, 2 and =foo= are logged because
+they are own properties (not inherited).  Properties =arrCustom= and
+=objCustom= are not logged because they are inherited.
+
+{{{subheading(The =for...of= Loop)}}}
+
+This loop iterates and logs /values/ that are *iterable*, as an iterable
+object, defines to be iterated over.  The object's elements 3, 5, 7 are shown,
+but none of the object's properties.
 
 ** Generators
 

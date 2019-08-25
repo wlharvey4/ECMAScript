@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-25 12:04
-#+macro:version 0.5.7
+#+Date:2019-08-25 14:30
+#+macro:version 0.5.8
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -4058,6 +4058,10 @@ protocols.  These protocols can be implemented by any object respecting some
 conventions.
 
 There are two protocols: The /iterable protocol/ and the /iterator protocol/.
+
+#+caption:The Iterable and Iterator Protocols
+#+name:the-iterable-and-iterator-protocols
+[[file:figs/iterable_and_iterator_protocols.png]]
 
 *** Iterable Protocol
 #+cindex:iterable protocol

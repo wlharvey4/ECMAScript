@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-25 11:29
-#+macro:version 0.5.6
+#+Date:2019-08-25 12:04
+#+macro:version 0.5.7
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -4050,6 +4050,254 @@ promise is settled its outcome can’t change.
 ** Meta-Programming
 
 ** Internationalization & Localization
+
+** Protocols
+#+cindex:protocols, new to ES2015
+A couple of additions to ECMAScript 2015 aren't new built-ins or syntax, but
+protocols.  These protocols can be implemented by any object respecting some
+conventions.
+
+There are two protocols: The /iterable protocol/ and the /iterator protocol/.
+
+*** Iterable Protocol
+#+cindex:iterable protocol
+#+cindex:protocol, iterable
+#+cindex:iteration beehavior
+The /iterable protocol/ allows JavaScript objects to define or customize their
+iteration behavior, such as what values are looped over in a =for..of=
+construct.  Some built-in types are built-in iterables with a default iteration
+behavior, such as Array or Map, while other types (such as Object) are not.
+
+In order to be /iterable/, an object must implement the ~@@iterator~ method,
+meaning that the object (or one of the objects up its prototype chain) must
+have a property with a ~@@iterator~ key which is available via constant
+~Symbol.iterator~:
+
+| Property            | Value                                                                                    |
+|---------------------+------------------------------------------------------------------------------------------|
+| ~[Symbol.iterator]~ | A zero arguments function that returns an object, conforming to the /iterator protocol/. |
+|---------------------+------------------------------------------------------------------------------------------|
+
+Whenever an object needs to be iterated (such as at the beginning of a
+=for..of= loop), its ~@@iterator~ method is called with no arguments, and the
+returned iterator is used to obtain the values to be iterated.
+
+*** Iterator Protocol
+#+cindex:iterator protocol
+#+cindex:protocol, iterator
+The /iterator protocol/ defines a standard way to produce a sequence of values
+(either finite or infinite), and potentially a return value when all values
+have been generated.
+
+#+cindex:iterator object
+An object is an iterator when it implements a ~next()~ method with the
+following semantics:
+
+- next ::
+
+          A zero arguments function that returns an object with at least the
+          following two properties:
+
+  - done (boolean) ::
+
+    - Has the value =true= if the iterator is past the end of
+      the iterated sequence.  In this case =value= optionally
+      specifies the return value of the iterator.
+
+    - Has the value =false= if the iterator was able to produce the next value
+      in the sequence.  This is equivalent of not specifying the =done=
+      property altogether.
+
+  - value ::
+
+             any JavaScript value returned by the iterator.  Can be omitted
+             when =done= is true.
+
+  The ~next~ method always has to return an object with appropriate properties
+          including =done= and =value=.  If a non-object value gets returned
+          (such as =false= or =undefined=), a =TypeError= ("iterator.next()
+          returned a non-object value") will be thrown.
+
+
+It is not possible to know reflectively whether a particular object implements
+the iterator protocol; however it is easy to create an object that satisfies
+both the /iterator/ and /iterable/ protocols (as shown in the example below).
+Doing so allows an iterator to be consumed by the various syntaxes expecting
+iterables.  *Thus it is rarely desirable to implement the iterator protocol
+without also implementing iterable*.
+
+#+caption:Example of Implementing both iterable and iterator
+#+name:implementing-both-iterable-and-iterator
+#+begin_src js -n
+var myIterator = {
+    next: function() {
+        // ...
+    },
+    [Symbol.iterator]: function() { return this }
+};
+#+end_src
+
+*** Examples of the Iterator and Iterable Protocols
+
+**** Examples using the Iteration Protocols
+
+A =String= is an example of a built-in iterable object:
+
+#+begin_src js -n
+var someString = 'hi';
+typeof someString[Symbol.iterator];          // "function"
+#+end_src
+
+String's default iterator returns the string's code points one by one:
+
+#+begin_src js -n
+var iterator = someString[Symbol.iterator]();
+iterator + '';                               // "[object String Iterator]"
+
+iterator.next();                             // { value: "h", done: false }
+iterator.next();                             // { value: "i", done: false }
+iterator.next();                             // { value: undefined, done: true }
+#+end_src
+
+#+cindex:@code{spread} operator
+Some built-in constructs, such as the =spread= syntax, use the same iteration
+protocol under the hood:
+
+: [...someString]                              // ["h", "i"]
+
+We can redefine the iteration behavior by supplying our own ~@@iterator~:
+
+#+caption:Example of redefining the iteration behavior
+#+name:redefine-iteration-behavior
+#+begin_src js -n
+var someString = new String('hi');           // need to construct a String object explicitly to avoid auto-boxing
+
+someString[Symbol.iterator] = function() {
+  return { // this is the iterator object, returning a single element, the string "bye"
+    next: function() {
+      if (this._first) {
+        this._first = false;
+        return { value: 'bye', done: false };
+      } else {
+        return { done: true };
+      }
+    },
+    _first: true
+  };
+};
+#+end_src
+
+Notice how redefining ~@@iterator~ affects the behavior of built-in constructs
+that use the iteration protocol:
+
+#+begin_src js -n
+[...someString];                             // ["bye"]
+someString + '';                             // "hi"
+#+end_src
+
+**** Examples using the Iterable Protocol
+
+***** Built-in Iterables
+#+cindex:iterable, built-in
+String, Array, TypedArray, Map and Set are all built-in iterables, because each
+of their prototype objects implements an ~@@iterator~ method.
+
+***** User-defined Iterables
+#+cindex:iterable, user-defined
+We can make our own iterables like this:
+
+#+caption:Example of Making a User-defined Iterable
+#+name:making-a-user-defined-iterable
+#+begin_src js -n
+var myIterable = {};
+myIterable[Symbol.iterator] = function* () {
+    yield 1;
+    yield 2;
+    yield 3;
+};
+[...myIterable]; // [1, 2, 3]
+#+end_src
+
+***** Built-in APIs Accepting Iterables
+#+cindex:iterable API
+There are many APIs that accept iterables, for example:
+- Map([iterable]),
+- WeakMap([iterable]),
+- Set([iterable])
+- WeakSet([iterable])
+
+
+#+caption:Example of APIs accepting and iterable
+#+name:apis-accepting-iterable
+#+begin_src js -n
+var myObj = {};
+new Map([[1, 'a'], [2, 'b'], [3, 'c']]).get(2);               // "b"
+new WeakMap([[{}, 'a'], [myObj, 'b'], [{}, 'c']]).get(myObj); // "b"
+new Set([1, 2, 3]).has(3);                               // true
+new Set('123').has('2');                                 // true
+new WeakSet(function* () {
+    yield {};
+    yield myObj;
+    yield {};
+}()).has(myObj);                                         // true
+#+end_src
+
+Also see
+- Promise.all(iterable),
+- Promise.race(iterable)
+- Array.from()
+
+***** Syntaxes Expecting Iterables
+Some statements and expressions expect iterables, for example the =for-of=
+loops, =spread= syntax, =yield*=, and destructuring assignment:
+
+#+caption:Examples of Syntaxes Expecting Iterables
+#+name:syntaxes-expecting-iterables
+#+begin_src js -n
+for(let value of ['a', 'b', 'c']){
+    console.log(value);
+}
+// "a"
+// "b"
+// "c"
+
+[...'abc']; // ["a", "b", "c"]
+
+function* gen() {
+  yield* ['a', 'b', 'c'];
+}
+
+gen().next(); // { value:"a", done:false }
+
+[a, b, c] = new Set(['a', 'b', 'c']);
+a // "a"
+#+end_src
+**** Examples of Iterators
+***** Simple iterator
+***** Infinite iterator
+***** With a generator
+***** With ES2015 class
+**** Is a Generator Object an Iterator or an Iterable
+#+cindex:generator object
+A generator object is both, iterator and iterable:
+
+#+caption:Generator Object is both iterator and iterable
+#+name:generator-object-both-iterator-and-iterable
+#+begin_src js -n
+var aGeneratorObject = function* () {
+    yield 1;
+    yield 2;
+    yield 3;
+}();
+typeof aGeneratorObject.next;
+// "function", because it has a next method, so it's an iterator
+typeof aGeneratorObject[Symbol.iterator];
+// "function", because it has an @@iterator method, so it's an iterable
+aGeneratorObject[Symbol.iterator]() === aGeneratorObject;
+// true, because its @@iterator method returns itself (an iterator), so it's an well-formed iterable
+[...aGeneratorObject];
+// [1, 2, 3]
+#+end_src
 * EMCAScript 2016
 * ECMAScript 2017
 ECMAScript 2017 introduced

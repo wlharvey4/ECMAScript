@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-25 11:17
-#+macro:version 0.5.5
+#+Date:2019-08-25 11:29
+#+macro:version 0.5.6
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3249,6 +3249,9 @@ let numbers = [ ...fibonacci(1000) ];
 let [ n1, n2, n3, ...others ] = fibonacci(1000);
 #+end_src
 *** function* --- Generator Function
+
+{{{function* Declaration)}}}
+
 #+cindex:generator function
 #+cindex:@code{function*} declaration
 #+cindex:Generator object
@@ -3275,7 +3278,33 @@ console.log(gen.next().value);
 You can also define generator functions using the =GeneratorFunction=
 constructor, or the function expression syntax.
 
+{{{heading(function* Expression)}}}
+
+#+cindex:@code{function*} keyword
+The ~function*~ keyword can be used to define a generator function inside an
+expression.
+
+#+caption:Demo of function* as an Expression
+#+name:demo-function*-as-expression
+#+begin_src js -n
+function* foo() {
+  yield 'a';
+  yield 'b';
+  yield 'c';
+}
+
+var str = "";
+for (let val of foo()) {
+  str = str + val;
+}
+
+console.log(str);
+// expected output: "abc"
+#+end_src
+
 **** function* Syntax
+
+{{{heading(function* Declaration or Statement)}}}
 
 #+begin_src js
 function* <name> ([<param>[, <param>[, ... <param>]]]) {
@@ -3289,7 +3318,24 @@ function* <name> ([<param>[, <param>[, ... <param>]]]) {
 
 - <statements> :: The statements comprising the body of the function.
 
-**** function* Description
+
+{{{heading(function* Expression or Keyword)}}}
+
+#+begin_src js
+function* [name]([param1[, param2[, ..., paramN]]]) {
+   statements
+}
+#+end_src
+
+- name :: The function name. Can be omitted, in which case the function is
+          anonymous.  The name is only local to the function body.
+
+- paramN :: The name of an argument to be passed to the function.  A function
+            can have up to 255 arguments.
+
+- statements :: The statements which comprise the body of the function.
+
+**** function* Declaration or Statement Description
 #+cindex:Generator
 Generators are functions which can be exited and later re-entered.  Their
 context (variable bindings) will be saved across re-entrances.
@@ -3339,6 +3385,13 @@ the generator finished --- unless caught within the generator's body.
 When a generator is finished, subsequent next calls will not execute any of
 that generator's code, they will just return an object of this form: ={value:
 undefined, done: true}=.
+
+**** function* Expression or Keyword Description
+#+cindex:@code{function*} expression
+A ~function*~ expression is very similar to and has almost the same syntax as a
+~function*~ statement.  The main difference between a ~function*~n expression
+and a ~function*~ statement is the function name, which can be omitted in
+~function*~ expressions to create anonymous generator functions.
 
 **** Examples of the Generator Function
 
@@ -3512,6 +3565,17 @@ const foo = function* () {
 
 const bar = foo();
 console.log(bar.next()); // {value: 10, done: false}
+#+end_src
+***** Unnamed Generator Function
+The following example defines an unnamed generator function and assigns it to
+~x~.  The function yields the square of its argument:
+
+#+caption:Example of function* Expression
+#+name:unnamed-generator-function
+#+begin_src js -n
+var x = function*(y) {
+   yield y * y;
+};
 #+end_src
 ** Map/Set & WeakMap/WeakSet
 

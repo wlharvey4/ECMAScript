@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-24 15:17
-#+macro:version 0.5.2
+#+Date:2019-08-25 09:26
+#+macro:version 0.5.3
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2705,6 +2705,237 @@ mind-boggling at first.  But it’s the easiest way to write an iterator, it’s
 useful in refactoring, and it might just change the way we write asynchronous
 code, both in the browser and on the server.  So join us next week as we look
 at ES6 generators in depth.
+*** In Depth Generators
+I’m excited about today’s post. Today, we’re going to discuss the most magical
+feature in ES6.  What do I mean by “magical”?  For starters, this feature is so
+different from things that already existed in JS that it may seem completely
+arcane at first.  In a sense, it turns the normal behavior of the language
+inside out!  If that’s not magic, I don’t know what is.  Not only that: this
+feature’s power to simplify code and straighten out “callback hell” borders on
+the supernatural.  Am I laying it on a bit thick? Let’s dive in and you can
+judge for yourself.
+
+**** Introducing ES6 Generators
+#+cindex:generator
+What are generators?  Let’s start by looking at one.
+
+#+begin_src js
+function* quips(name) {
+  yield "hello " + name + "!";
+  yield "i hope you are enjoying the blog posts";
+  if (name.startsWith("X")) {
+    yield "it's cool how your name starts with X, " + name;
+  }
+  yield "see you later!";
+}
+#+end_src
+
+#+cindex:generator function
+This is some code for a talking cat. It looks sort of like a function, right?
+This is called a generator-function and it has a lot in common with
+functions. But you can see two differences right away:
+
+#+cindex:@code{function*}
+- Regular functions start with ~function~.  Generator-functions start with
+  ~function*~.
+
+  #+cindex:@code{yield}
+- Inside a generator-function, ~yield~ is a keyword, with syntax rather like
+  return.  The difference is that while a function (even a generator-function)
+  can only return once, a generator-function can yield any number of times.
+  The ~yield~ expression suspends execution of the generator so it can be
+  resumed again later.
+
+
+So that’s it, that’s the big difference between regular functions and
+generator-functions.  Regular functions can’t pause
+themselves.  Generator-functions can.
+
+**** What Generators Do
+What happens when you call the ~quips()~ generator-function?
+
+#+begin_src sh
+> var iter = quips("jorendorff");
+  [object Generator]
+> iter.next()
+  { value: "hello jorendorff!", done: false }
+> iter.next()
+  { value: "i hope you are enjoying the blog posts", done: false }
+> iter.next()
+  { value: "see you later!", done: false }
+> iter.next()
+  { value: undefined, done: true }
+#+end_src
+
+#+cindex:generator, call
+#+cindex:generator object, paused
+Calling a generator looks just the same: ~quips("jorendorff")~. But when you
+call a generator, it doesn’t start running yet.  Instead, it returns a paused
+Generator object (called ~iter~ in the example above).  You can think of this
+Generator object as a function call, frozen in time.  Specifically, it’s frozen
+right at the top of the generator-function, just before running its first line
+of code.
+
+#+cindex:@code{next()} method
+#+cindex:@code{yield}
+Each time you call the Generator object’s ~.next()~ method, the function call
+thaws itself out and runs until it reaches the next ~yield~ expression.  That’s
+why each time we called iter.next()~ above, we got a different string value.
+Those are the values produced by the ~yield~ expressions in the body of
+~quips()~.
+
+#+cindex:@code{done} field
+#+cindex:@code{value} field
+On the last ~iter.next()~ call, we finally reached the end of the
+generator-function, so the =.done= field of the result is =true=.  Reaching the
+end of a function is just like returning =undefined=, and that’s why the
+=.value= field of the result is =undefined=.
+
+#+cindex:stack frame, generator
+In technical terms, each time a generator yields, its stack frame---the local
+variables, arguments, temporary values, and the current position of execution
+within the generator body---is removed from the stack.  However, the Generator
+object keeps a reference to (or copy of) this stack frame, so that a later
+~.next()~ call can reactivate it and continue execution.
+
+All right.  We know what generators are.  We’ve seen a generator run, pause
+itself, then resume execution.  Now for the big question.  How could this weird
+ability possibly be useful?
+
+**** Generators are Iterators
+Last week, we saw that ES6 iterators are not just a single built-in class.
+They’re an extension point of the language.  You can create your own iterators
+just by implementing two methods: ~[Symbol.iterator]()~ and ~.next()~.
+
+#+cindex:range iterator
+But implementing an interface is always at least a little work.  Let’s see what
+an iterator implementation looks like in practice.  As an example, let’s make a
+simple ~range~ iterator that simply counts up from one number to another, like
+an old-fashioned C ~for~ (=;;)= loop.
+
+#+begin_src js
+// This should "ding" three times
+for (var value of range(0, 3)) {
+  alert("Ding! at floor #" + value);
+}
+#+end_src
+
+Here’s one solution, using an ES6 class.
+
+#+caption:Implementing a range Iterator
+#+name:class-RangeIterator
+#+begin_src js -n
+class RangeIterator {
+  constructor(start, stop) {
+    this.value = start;
+    this.stop = stop;
+  }
+
+  [Symbol.iterator]() { return this; }
+
+  next() {
+    var value = this.value;
+    if (value < this.stop) {
+      this.value++;
+      return {done: false, value: value};
+    } else {
+      return {done: true, value: undefined};
+    }
+  }
+}
+
+// Return a new iterator that counts up from 'start' to 'stop'.
+function range(start, stop) {
+  return new RangeIterator(start, stop);
+}
+#+end_src
+
+[[https://codepen.io/anon/pen/mJewga][See this code in action.]]
+
+The above 4-line generator is a drop-in replacement for the previous 23-line
+implementation of ~range()~, including the entire =RangeIterator= class.  This
+is possible because generators are iterators.  All generators have a built-in
+implementation of ~.next()~ and ~[Symbol.iterator]()~.  You just write the
+looping behavior.
+
+{{{heading(Uses of Generators)}}}
+
+How else can we use the ability of generators to act as iterators?
+
+- Making any object iterable. ::
+
+     Just write a generator-function that traverses ~this~, yielding each value
+     as it goes.  Then install that generator-function as the
+     ~[Symbol.iterator]~ method of the object.
+
+- Simplifying array-building functions. ::
+
+     Suppose you have a function that returns an array of results each time
+     it’s called, like this one:
+
+     #+begin_src js
+	// Divide the one-dimensional array 'icons'
+	// into arrays of length 'rowLength'.
+	function splitIntoRows(icons, rowLength) {
+            var rows = [];
+            for (var i = 0; i < icons.length; i += rowLength) {
+                rows.push(icons.slice(i, i + rowLength));
+            }
+            return rows;
+        }
+     #+end_src
+
+     Generators make this kind of code a bit shorter:
+
+     #+begin_src js
+	function* splitIntoRows(icons, rowLength) {
+            for (var i = 0; i < icons.length; i += rowLength) {
+                yield icons.slice(i, i + rowLength);
+            }
+        }
+     #+end_src
+
+     The only difference in behavior is that instead of computing all the
+     results at once and returning an array of them, this returns an iterator,
+     and the results are computed one by one, on demand.
+
+- Results of unusual size. ::
+
+     You can’t build an infinite array.  But you can return a generator that
+     generates an endless sequence, and each caller can draw from it however
+     many values they need.
+
+- Refactoring complex loops. ::
+
+     Do you have a huge ugly function?  Would you like to break it into two
+     simpler parts?  Generators are a new knife to add to your refactoring
+     toolkit.  When you’re facing a complicated loop, you can factor out the
+     part of the code that produces data, turning it into a separate
+     generator-function.  Then change the loop to say:
+     : for (var data of myNewGenerator(args))
+
+- Tools for working with iterables. ::
+
+     ES6 does not provide an extensive library for filtering, mapping, and
+     generally hacking on arbitrary iterable data sets.  But generators are
+     great for building the tools you need with just a few lines of code.
+
+     For example, suppose you need an equivalent of ~Array.prototype.filter~
+     that works on DOM NodeLists, not just Arrays.  Piece of cake:
+
+     #+begin_src js
+	function* filter(test, iterable) {
+            for (var item of iterable) {
+                if (test(item))
+                    yield item;
+            }
+        }
+     #+end_src
+
+So are generators useful?  Sure.  They are an astonshingly easy way to
+implement custom iterators, and iterators are the new standard for data and
+loops throughout ES6.
+
 ** constants
 
 ** Scoping

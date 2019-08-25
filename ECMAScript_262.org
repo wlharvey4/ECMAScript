@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-25 09:26
-#+macro:version 0.5.3
+#+Date:2019-08-25 09:41
+#+macro:version 0.5.4
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3137,6 +3137,116 @@ object, defines to be iterated over.  The object's elements 3, 5, 7 are shown,
 but none of the object's properties.
 
 ** Generators
+*** Generator Function Iterator Protocol
+Support for generators, a special case of Iterators containing a generator
+function, where the control flow can be paused and resumed, in order to produce
+sequence of values (either finite or infinite).
+
+#+caption:Example of a Generator in ES2015
+#+name:fibonacci-generator-ES2015
+#+begin_src js -n
+let fibonacci = {
+    *[Symbol.iterator]() {
+        let pre = 0, cur = 1;
+        for (;;) {
+            [ pre, cur ] = [ cur, pre + cur ];
+            yield cur;
+        }
+    }
+}
+
+for (let n of fibonacci) {
+    if (n > 1000)
+        break;
+    console.log(n);
+}
+#+end_src
+
+#+caption:Example of ES5 Code for Fibonacci
+#+namee:fibonacci-ES5
+#+begin_src js -n
+var fibonacci = {
+    next: (function () {
+        var pre = 0, cur = 1;
+        return function () {
+            tmp = pre;
+            pre = cur;
+            cur += tmp;
+            return cur;
+        };
+    })()
+};
+
+var n;
+for (;;) {
+    n = fibonacci.next();
+    if (n > 1000)
+        break;
+    console.log(n);
+}
+#+end_src
+
+*** Generator Function Direct Use
+Support for generator functions, a special variant of functions where the
+control flow can be paused and resumed, in order to produce sequence of values
+(either finite or infinite).
+
+#+caption:Generator function, direct use
+#+name:generator-function-direct-use
+#+begin_src js -n
+function* range (start, end, step) {
+    while (start < end) {
+        yield start;
+        start += step;
+    }
+}
+
+for (let i of range(0, 10, 2)) {
+    console.log(i); // 0, 2, 4, 6, 8
+}
+#+end_src
+
+#+caption:Generator function direct use in ES5
+#+name:generator-function-direct-use-ES5
+#+begin_src js -n
+function range (start, end, step) {
+    var list = [];
+    while (start < end) {
+        list.push(start);
+        start += step;
+    }
+    return list;
+}
+
+var r = range(0, 10, 2);
+for (var i = 0; i < r.length; i++) {
+    console.log(r[i]); // 0, 2, 4, 6, 8
+}
+#+end_src
+
+*** Generator Matching
+Support for generator functions, a special variant of functions where the
+control flow can be paused and resumed, in order to produce sequence of values
+(either finite or infinite).
+
+#+caption:Generator matching
+#+name:generator-matching-ES2015
+#+begin_src js -n
+let fibonacci = function* (numbers) {
+    let pre = 0, cur = 1;
+    while (numbers-- > 0) {
+        [ pre, cur ] = [ cur, pre + cur ];
+        yield cur;
+    }
+};
+
+for (let n of fibonacci(1000))
+    console.log(n);
+
+let numbers = [ ...fibonacci(1000) ];
+
+let [ n1, n2, n3, ...others ] = fibonacci(1000);
+#+end_src
 
 ** Map/Set & WeakMap/WeakSet
 

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-25 09:41
-#+macro:version 0.5.4
+#+Date:2019-08-25 11:17
+#+macro:version 0.5.5
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3137,7 +3137,8 @@ object, defines to be iterated over.  The object's elements 3, 5, 7 are shown,
 but none of the object's properties.
 
 ** Generators
-*** Generator Function Iterator Protocol
+*** New in ES2015
+**** Generator Function Iterator Protocol
 Support for generators, a special case of Iterators containing a generator
 function, where the control flow can be paused and resumed, in order to produce
 sequence of values (either finite or infinite).
@@ -3186,7 +3187,7 @@ for (;;) {
 }
 #+end_src
 
-*** Generator Function Direct Use
+**** Generator Function Direct Use
 Support for generator functions, a special variant of functions where the
 control flow can be paused and resumed, in order to produce sequence of values
 (either finite or infinite).
@@ -3224,7 +3225,7 @@ for (var i = 0; i < r.length; i++) {
 }
 #+end_src
 
-*** Generator Matching
+**** Generator Matching
 Support for generator functions, a special variant of functions where the
 control flow can be paused and resumed, in order to produce sequence of values
 (either finite or infinite).
@@ -3247,7 +3248,271 @@ let numbers = [ ...fibonacci(1000) ];
 
 let [ n1, n2, n3, ...others ] = fibonacci(1000);
 #+end_src
+*** function* --- Generator Function
+#+cindex:generator function
+#+cindex:@code{function*} declaration
+#+cindex:Generator object
+The ~function*~ declaration (~function~ keyword followed by an asterisk)
+defines a generator function, which returns a Generator object.
 
+#+caption:Demo of the Statement function*
+#+name:demo-statement-function*
+#+begin_src js -n
+function* generator(i) {
+  yield i;
+  yield i + 10;
+}
+
+var gen = generator(10);
+
+console.log(gen.next().value);
+// expected output: 10
+
+console.log(gen.next().value);
+// expected output: 20
+#+end_src
+
+You can also define generator functions using the =GeneratorFunction=
+constructor, or the function expression syntax.
+
+**** function* Syntax
+
+#+begin_src js
+function* <name> ([<param>[, <param>[, ... <param>]]]) {
+    <statements>
+}
+#+end_src
+
+- <name> :: The function name.
+
+- <param> :: The name of a formal parameter for the function.
+
+- <statements> :: The statements comprising the body of the function.
+
+**** function* Description
+#+cindex:Generator
+Generators are functions which can be exited and later re-entered.  Their
+context (variable bindings) will be saved across re-entrances.
+
+#+cindex:Promises
+#+cindex:asynchronous programming
+#+cindex:callbacks
+#+cindex:Callback Hell
+#+cindex:Inversion of Control
+Generators in JavaScript --- especially when combined with Promises --- are a
+very powerful tool for asynchronous programming as they mitigate -- if not
+entirely eliminate -- the problems with callbacks, such as Callback Hell and
+Inversion of Control.
+
+#+cindex:generator function, call
+#+cindex:iterator object
+#+cindex:@code{yield} expression
+#+cindex:@code{done} property
+#+cindex:@code{value} property
+#+cindex:@code{next(<argument>)}
+Calling a generator function does not execute its body immediately; an iterator
+object for the function is returned instead.  When the iterator's ~next()~
+method is called, the generator function's body is executed until the first
+~yield~ expression, which specifies the value to be returned from the iterator
+or, with ~yield*~, delegates to another generator function.  The ~next()~
+method returns an object with a =value= property containing the yielded value
+and a =done= property which indicates whether the generator has yielded its
+last value, as a =boolean=.  Calling the ~next()~ method with an argument will
+resume the generator function execution, replacing the ~yield~ expression where
+execution was paused with the argument from ~next()~.
+
+{{{subheading(return Statement)}}}
+
+A ~return~ statement in a generator, when executed, will make the generator
+finish (i.e. the =done= property of the object returned by it will be set to
+=true=).  If a value is returned, it will be set as the =value= property of the
+object returned by the generator.
+
+{{{subheading(Thrown Error)}}}
+
+#+cindex:finished
+Much like a return statement, an error thrown inside the generator will make
+the generator finished --- unless caught within the generator's body.
+
+{{{subheading(Finished Generator)}}}
+
+When a generator is finished, subsequent next calls will not execute any of
+that generator's code, they will just return an object of this form: ={value:
+undefined, done: true}=.
+
+**** Examples of the Generator Function
+
+***** Simple Example
+
+#+caption:Simple Generator Function
+#+name:simple-generator-function
+#+begin_src js -n
+function* idMaker() {
+  var index = 0;
+  while (index < index+1)
+    yield index++;
+}
+
+var gen = idMaker();
+
+console.log(gen.next().value); // 0
+console.log(gen.next().value); // 1
+console.log(gen.next().value); // 2
+console.log(gen.next().value); // 3
+// ...
+#+end_src
+
+***** Example with Yielding to Another Generator Function
+
+#+caption:Example with yielding to another Generator Function
+#+name:example-with-yield
+#+begin_src js -n
+function* anotherGenerator(i) {
+  yield i + 1;
+  yield i + 2;
+  yield i + 3;
+}
+
+function* generator(i) {
+  yield i;
+  yield* anotherGenerator(i);
+  yield i + 10;
+}
+
+var gen = generator(10);
+
+console.log(gen.next().value); // 10
+console.log(gen.next().value); // 11
+console.log(gen.next().value); // 12
+console.log(gen.next().value); // 13
+console.log(gen.next().value); // 20
+#+end_src
+
+***** Passing Arguments into Generators
+
+#+caption:Example of Passing Arguments into Generators
+#+name:passing-arguments-into-generators
+#+begin_src js -n
+function* logGenerator() {
+  console.log(0);
+  console.log(1, yield);
+  console.log(2, yield);
+  console.log(3, yield);
+}
+
+var gen = logGenerator();
+
+// the first call of next executes from the start of the function
+// until the first yield statement
+gen.next();             // 0
+gen.next('pretzel');    // 1 pretzel
+gen.next('california'); // 2 california
+gen.next('mayonnaise'); // 3 mayonnaise
+#+end_src
+
+***** Return Statement in a Generator
+
+#+caption:Example of the return statement in a Generator
+#+name:return-statement-in-generator
+#+begin_src js -n
+function* yieldAndReturn() {
+  yield "Y";
+  return "R";
+  yield "unreachable";
+}
+
+var gen = yieldAndReturn()
+console.log(gen.next()); // { value: "Y", done: false }
+console.log(gen.next()); // { value: "R", done: true }
+console.log(gen.next()); // { value: undefined, done: true }
+#+end_src
+
+***** Generator as an Object Property
+
+#+caption:Example of a Generator as an Object Property
+#+name:generator-as-an-object-property
+#+begin_src js -n
+const someObj = {
+  *generator () {
+    yield 'a';
+    yield 'b';
+  }
+}
+
+const gen = someObj.generator()
+
+console.log(gen.next()); // { value: 'a', done: false }
+console.log(gen.next()); // { value: 'b', done: false }
+console.log(gen.next()); // { value: undefined, done: true }
+#+end_src
+
+***** Generator as an object method
+
+#+caption:Example of a Generator as an Object Method
+#+name:generator-as-an-object-method
+#+begin_src js -n
+class Foo {
+  *generator () {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+}
+
+const f = new Foo ();
+const gen = f.generator();
+
+console.log(gen.next()); // { value: 1, done: false }
+console.log(gen.next()); // { value: 2, done: false }
+console.log(gen.next()); // { value: 3, done: false }
+console.log(gen.next()); // { value: undefined, done: true }
+#+end_src
+
+***** Generator as a Computed Property
+
+#+caption:Example of a Generator as a Computed Property
+#+name:generator-as-a-computed-proptery
+#+begin_src js -n
+class Foo {
+  *[Symbol.iterator] () {
+    yield 1;
+    yield 2;
+  }
+}
+
+const SomeObj = {
+  *[Symbol.iterator] () {
+    yield 'a';
+    yield 'b';
+  }
+}
+
+console.log(Array.from(new Foo)); // [ 1, 2 ]
+console.log(Array.from(SomeObj)); // [ 'a', 'b' ]
+#+end_src
+
+***** Generators are not Constructable
+
+#+caption:Generators are not constructable
+#+name:generators-are-not-constructable
+#+begin_src js -n
+function* f() {}
+var obj = new f; // throws "TypeError: f is not a constructor
+#+end_src
+
+***** Generator Defined in an Expression
+
+#+caption:Example of a Generator defined in an expression
+#+name:generator-defined-in-an-expression
+#+begin_src js -n
+const foo = function* () {
+  yield 10;
+  yield 20;
+};
+
+const bar = foo();
+console.log(bar.next()); // {value: 10, done: false}
+#+end_src
 ** Map/Set & WeakMap/WeakSet
 
 ** Typed Arrays

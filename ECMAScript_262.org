@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-26 09:25
-#+macro:version 0.5.11
+#+Date:2019-08-26 10:08
+#+macro:version 0.5.12
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -867,6 +867,219 @@ expressions, logical expressions, assignment expressions, and more.
 | =,=              | Discard 1st operand, return second | L | 2 | any,any->any      |
 |------------------+------------------------------------+---+---+-------------------|
 
+*** Arithmetic Operators
+
+*** Assignment Operators
+
+*** Bitwise Operators
+
+*** Comma Operator
+
+*** Comparison Operators
+
+*** Conditional Ternary Operator
+
+*** Grouping Operator
+
+*** Logical Operators
+
+*** Delete Operator
+
+*** In Operator
+
+*** Instanceof Operator
+#+cindex:@code{instanceof} operator
+#+cindex:@code{prototype} property
+#+cindex:prototype chain
+#+cindex:@code{constructor.prototype}
+The =instanceof= operator tests whether the =prototype= property of a
+constructor appears anywhere in the prototype chain of an object.  Said another
+way, the =instanceof= operator tests the presence of ~constructor.prototype~ in
+object's prototype chain.
+
+: <object> instanceof <constructor>
+
+#+cindex:@code{Object.setPrototypeOf}
+#+pindex:@code{__proto__} property
+Note that the value of an =instanceof= test can change based on changes to the
+=prototype= property of constructors, and it can also be changed by changing an
+object prototype using ~Object.setPrototypeOf~.  It is also possible using the
+non-standard =__proto__= pseudo-property.
+
+*** Typeof Operator
+#+cindex:@code{typeof} operator
+The =typeof= operator returns a string indicating the type of the unevaluated
+operand.
+
+: typeof operand
+: typeof(operand)
+
+{{{heading(Possible Return Values of typeof)}}}
+
+#+caption:Possible return values of the operator typeof
+#+name:possible-return-values-of-typeof
+| Type             | Result      |
+|------------------+-------------|
+| Undefined        | "undefined" |
+| Null             | "object"    |
+| Boolean          | "boolean"   |
+| Number           | "number"    |
+| BigInt           | "bigint"    |
+| String           | "string"    |
+| Symbol           | "symbol"    |
+| Host object      | depends     |
+| Function object  | "function"  |
+| Any other object | "object"    |
+|------------------+-------------|
+
+**** Notes on the typeof Operator
+
+{{{subheading(new Operator)}}}
+
+All constructor functions, with the exception of the Function constructor, will
+always be typeof 'object'
+
+#+begin_src js
+var str = new String('String');
+var num = new Number(100);
+
+typeof str; // It will return 'object'
+typeof num; // It will return 'object'
+
+var func = new Function();
+
+typeof func; // It will return 'function'
+#+end_src
+
+{{{subheading(Need for parentheses)}}}
+
+Parentheses can be used for determining the data type of expressions.
+
+#+begin_src js
+var iData = 99;
+
+typeof iData + ' Wisen'; // 'number Wisen'
+typeof (iData + ' Wisen'); // 'string'
+#+end_src
+
+{{{subheading(Regular Expressions)}}}
+
+Callable regular expressions were a non-standard addition in some browsers.
+
+#+begin_src js
+typeof /s/ === 'function'; // Chrome 1-12 Non-conform to ECMAScript 5.1
+typeof /s/ === 'object';   // Firefox 5+  Conform to ECMAScript 5.1
+#+end_src
+
+{{{subheading(Errors and the Temporal Dead Zone)}}}
+
+#+cindex:temporal dead zone
+Before ECMAScript 2015, =typeof= was always guaranteed to return a string for
+any operand it was supplied with.  Even with undeclared identifiers, =typeof=
+will return 'undefined'.  Using =typeof= could never generate an error.
+
+But with the addition of block-scoped =let= and =Statements/const= using
+=typeof= on =let= and =const= variables (or using =typeof= on a class) in a
+block before they are declared will throw a =ReferenceError=.  Block scoped
+variables are in a "temporal dead zone" from the start of the block until the
+initialization is processed, during which, it will throw an error if accessed.
+
+#+begin_src js
+typeof undeclaredVariable === 'undefined';
+
+typeof newLetVariable; // ReferenceError
+typeof newConstVariable; // ReferenceError
+typeof newClass; // ReferenceError
+
+let newLetVariable;
+const newConstVariable = 'hello';
+class newClass{};
+#+end_src
+
+{{{subheading(Exceptions)}}}
+
+All current browsers expose a non-standard host object =document.all= with type
+=undefined=.
+
+Although the specification allows custom type tags for non-standard exotic
+objects, it requires those type tags to be different from the predefined ones.
+The case of =document.all= having type 'undefined' is classified in the web
+standards as a "willful violation" of the original ECMA JavaScript standard.
+
+*** Void Operator
+
+#+cindex:@code{void} operator
+The =void= operator evaluates the given expression and then returns
+=undefined=.
+
+: void <expression>
+
+This operator allows evaluating expressions that produce a value into places
+where an expression that evaluates to =undefined= is desired.
+
+The =void= operator is often used merely to obtain the =undefined= primitive
+value, usually using ~void(0)~ (which is equivalent to ~void 0~).  In these
+cases, the global variable =undefined= can be used instead (assuming it has not
+been assigned to a non-default value).
+
+{{{heading(The IIFE and Void)}}}
+
+#+cindex:immediately-invoked function expression
+#+cindex:IIFE
+When using an immediately-invoked function expression, =void= can be used to
+force the =function= keyword to be treated as an expression instead of a
+declaration.
+
+#+begin_src js -n
+void function iife() {
+    var bar = function () {};
+    var baz = function () {};
+    var foo = function () {
+        bar();
+        baz();
+     };
+    var biz = function () {};
+
+    foo();
+    biz();
+}();
+#+end_src
+
+Without the =void=, the above will throw a =SyntaxError= at the closing
+parenthesis.
+
+{{{heading(JavaScript URIs)}}}
+
+#+cindex:javascript: uri
+When a browser follows a ~javascript: URI~, it evaluates the code in the URI
+and then replaces the contents of the page with the returned value, unless the
+returned value is =undefined=.  The =void= operator can be used to return
+=undefined=.  For example:
+
+#+begin_src js -n
+<a href="javascript:void(0);">
+  Click here to do nothing
+</a>
+
+<a href="javascript:void(document.body.style.backgroundColor='green');">
+  Click here for green background
+</a>
+#+end_src
+
+{{{heading(Non-leaking Arrow Functions)}}}
+
+#+cindex:arrow function
+Arrow functions introduce a short-hand braceless syntax that returns an
+expression.  This can cause unintended side effects by returning the result of
+a function call that previously returned nothing.  To be safe, when the return
+value of a function is not intended to be used, it can be passed to the =void=
+operator to ensure that (for example) changing APIs do not cause arrow
+functions' behaviors to change.
+
+: button.onclick = () => void doSomething();
+
+This ensures the return value of ~doSomething~ changing from =undefined= to
+=true= will not change the behavior of this code.
 ** Statements
 
 #+begin_example
@@ -8137,6 +8350,12 @@ a modern view that is as consistent as possible.
 :index:    cp
 :unnumbered: t
 :END:
+
+* List of Tables
+:PROPERTIES:
+:unnumbered: t
+:END:
+#+texinfo:@listoffloats Table
 
 * Footnotes
 

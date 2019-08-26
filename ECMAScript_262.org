@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-26 08:31
-#+macro:version 0.5.10
+#+Date:2019-08-26 09:25
+#+macro:version 0.5.11
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -814,6 +814,58 @@ This specification defines APIs for console debugging facilities.  Last Updated
 ** Execution Contexts
 
 ** Expressions
+
+** Operators
+#+cindex:operators
+Operators are used for JavaScript’s arithmetic expressions, comparison
+expressions, logical expressions, assignment expressions, and more.
+
+#+caption:JavaScript Operators
+#+name:javascript-operators
+| Operator         | Operation                          | A | N | Types             |
+|------------------+------------------------------------+---+---+-------------------|
+| =++=             | Pre- or post-increment             | R | 1 | lval->num         |
+| =--=             | Pre- or post-decrement             | R | 1 | lval->num         |
+| =-=              | Negate number                      | R | 1 | num->num          |
+| =+=              | Convert to number                  | R | 1 | num->num          |
+| =~=              | Invert bits                        | R | 1 | int->int          |
+| =!=              | Invert boolean value               | R | 1 | bool->bool        |
+| =delete=         | Remove a property                  | R | 1 | lval->bool        |
+| =typeof=         | Determine type of operand          | R | 1 | any->str          |
+| =void=           | Return undefined value             | R | 1 | any->undef        |
+|------------------+------------------------------------+---+---+-------------------|
+| =*,/,%=          | Multiply, divide, remainder        | L | 2 | num,num->num      |
+|------------------+------------------------------------+---+---+-------------------|
+| =+,-=            | Add, subtract                      | L | 2 | num,num->num      |
+| =+=              | Concatenate strings                | L | 2 | num,num->num      |
+|------------------+------------------------------------+---+---+-------------------|
+| =<<=             | Shift left                         | L | 2 | int,int->int      |
+| =>>=             | Shift right with sign extension    | L | 2 | int,int->int      |
+| =>>>=            | Shift right with zero extension    | L | 2 | int,int->int      |
+|------------------+------------------------------------+---+---+-------------------|
+| =<,<==           | Compare in numeric order           | L | 2 | num,num->bool     |
+| =>,>==           | Compare in alphabetic order        | L | 2 | str,str->bool     |
+| =instanceof=     | Test object class                  | L | 2 | obj,func->bool    |
+| =in=             | Test whether property exists       | L | 2 | str,obj->bool     |
+|------------------+------------------------------------+---+---+-------------------|
+| ~==~             | Test for equality                  | L | 2 | any,any->bool     |
+| ~!=~             | Test for inequality                | L | 2 | any,any->bool     |
+| ~===~            | Test for strict equality           | L | 2 | any,any->bool     |
+| ~!==~            | Test for strict inequality         | L | 2 | any,any->bool     |
+|------------------+------------------------------------+---+---+-------------------|
+| =&,^,pipe=       | Compute bitwise AND, XOR,OR        | L | 2 | int,int->int      |
+|------------------+------------------------------------+---+---+-------------------|
+| =&&,pipe-pipe=   | Compute logical AND, OR            | L | 2 | any,any->any      |
+|------------------+------------------------------------+---+---+-------------------|
+| =?:=             | Choose 2nd or 3rd operand          | R | 3 | bool,any,any->any |
+|------------------+------------------------------------+---+---+-------------------|
+| ~=~              | Assign to a variable or property   | R | 2 | lval,any->any     |
+| ~*=,/=,%=,+=~    | Operate and assign                 | R | 2 | lval,any->any     |
+| ~-=,&=,^=,pipe=~ |                                    | R | 2 | lval,any->any     |
+| ~<<=,>>=,>>>=~   |                                    | R | 2 | lval,any->any     |
+|------------------+------------------------------------+---+---+-------------------|
+| =,=              | Discard 1st operand, return second | L | 2 | any,any->any      |
+|------------------+------------------------------------+---+---+-------------------|
 
 ** Statements
 

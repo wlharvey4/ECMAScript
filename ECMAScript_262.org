@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-26 00:29
-#+macro:version 0.5.9
+#+Date:2019-08-26 08:31
+#+macro:version 0.5.10
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -5215,6 +5215,81 @@ sound type system.
 
     - [[https://github.com/getify/You-Dont-Know-JS/blob/master/es6%2520&%2520beyond/README.md#you-dont-know-js-es6--beyond][ES6 and Beyond]]
 
+* ECMAScript Guide
+** Enumeration
+#+cindex:ES5
+#+cindex:enumerate object properties
+#+cindex:iterate object properties
+#+cindex:object, enumerate properties
+#+cindex:properties, enumerte
+#+cindex:object properties, enumerate
+Starting with ECMAScript 5, there are three native ways to list/traverse object
+properties:
+
+#+cindex:@code{for-in} loop
+- =for...in= loops ::
+
+     #+cindex:bracket notation
+     This method traverses all /enumerable/ properties of an object and its
+     /prototype chain/.  You use the bracket notation with =for...in= to
+     iterate over all the enumerable properties of an object.
+
+     The following function displays the properties of the object when you pass
+     the object and the object's name as arguments to the function:
+
+     #+caption:Display the properties of an object
+     #+name:display-the-properties-of-an-object
+     #+begin_src js -n
+     function showProps(obj, objName) {
+       var result = ``;
+       for (var i in obj) {
+         // obj.hasOwnProperty() is used to filter out properties from the object's prototype chain
+         if (obj.hasOwnProperty(i)) {
+           result += `${objName}.${i} = ${obj[i]}\n`;
+         }
+       }
+       return result;
+     }
+     #+end_src
+
+- ~Object.keys(obj) ::
+
+     This method returns an array with all the own (not in the prototype chain)
+     enumerable properties' names ("keys") of an object /obj/.
+
+- ~Object.getOwnPropertyNames(obj) ::
+
+     This method returns an array containing all own properties' names
+     (enumerable or not) of an object /obj/.
+
+
+Before ECMAScript 5, there was no /native/ way to list all properties
+(enumerable and not) of an object (own and on the prototype chain).  However,
+this can be achieved with the following function:
+
+#+caption:Enumerate All Object Properties in ES3
+#+name:enumerate-all-object-properties-in-es3
+#+begin_src js -n
+function listAllProperties(o) {
+	var objectToInspect;
+	var result = [];
+
+	for(objectToInspect = o; objectToInspect !== null;
+           objectToInspect = Object.getPrototypeOf(objectToInspect)) {
+        result = result.concat(
+            Object.getOwnPropertyNames(objectToInspect)
+        );
+    }
+
+	return result;
+}
+#+end_src
+
+#+cindex:hidden properties
+This can be useful to reveal "hidden" properties (properties in the prototype
+chain which are not accessible through the object, because another property has
+the same name earlier in the prototype chain).  Listing accessible properties
+only can easily be done by removing duplicates in the array.
 * Module Systems---CommonJS • AMD •  ES2015
 #+cindex:module systems
 JavaScript was originally designed to be read from top to bottom in a

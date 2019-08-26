@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-25 14:30
-#+macro:version 0.5.8
+#+Date:2019-08-26 00:29
+#+macro:version 0.5.9
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -4057,11 +4057,86 @@ A couple of additions to ECMAScript 2015 aren't new built-ins or syntax, but
 protocols.  These protocols can be implemented by any object respecting some
 conventions.
 
+{{{heading(The Two New Protocols)}}}
+
 There are two protocols: The /iterable protocol/ and the /iterator protocol/.
 
 #+caption:The Iterable and Iterator Protocols
 #+name:the-iterable-and-iterator-protocols
 [[file:figs/iterable_and_iterator_protocols.png]]
+
+An object that conforms to the /iterable/ protocol has a method
+~[Symbol.iterator]~ that returns an object that convorms to the /iteration/
+protoocol.  An object that conforms to the /iteration/ protocol has a ~next()~
+method that returns an object containing a =done= property (which returns a
+=boolean=) which returns =false= so long as there are more values to iterate
+over, and =true= at the completion of all the values; and a =value= property,
+which returns some value (the next iterated value) or =undefined= (when all
+done iterating).
+
+- Iterable ::
+
+              A data structure that wants to make its elements accessible to
+              the public. It does so by implementing a method whose key is
+              ~Symbol.iterator~.  That method is a factory for iterators.  That
+              is, it will create iterators.
+
+- Iterator ::
+
+              A pointer for traversing the elements of a data structure.
+
+
+#+caption:Outline of the Iterable and Iteration protocols
+#+name:outline-of-iterable-and-iteration-protocols
+#+begin_src js
+const iterable = {
+    [Symbol.iterator]() {
+        const iterator = {
+            <Statements>...
+            next() {
+                <Statements>...
+                {done: ..., value: ...}
+            }
+        };
+        return iterator;
+    }
+};
+
+var iterator = iterable[Symbole.iterator]();
+iterator.next();
+...
+#+end_src
+
+For example, the =for-of= loop takes an iterable, and creates its iterator.  It keeps on
+calling the ~next()~ method until =done= is =true=.
+
+{{{heading(Iterables in JavaScript)}}}
+
+- Arrays and TypedArrays
+
+- Strings
+
+- Maps
+
+- Sets
+
+- ~arguments~
+
+- DOM elements
+
+
+{{{heading(Things that Take Iterables)}}}
+
+
+- =for...of= loop
+
+- destructuring of Arrays
+
+- =spread= operator
+
+- Maps and Sets
+
+- Promise.all and Promise.race
 
 *** Iterable Protocol
 #+cindex:iterable protocol
@@ -4142,7 +4217,6 @@ var myIterator = {
 #+end_src
 
 *** Examples of the Iterator and Iterable Protocols
-
 **** Examples using the Iteration Protocols
 
 A =String= is an example of a built-in iterable object:
@@ -4302,6 +4376,122 @@ aGeneratorObject[Symbol.iterator]() === aGeneratorObject;
 [...aGeneratorObject];
 // [1, 2, 3]
 #+end_src
+**** Turning a Random Object into an Iterable and Iterator
+Given the following object, implement code so that it conforms to the Iterable
+and Iterator protocols.
+
+#+caption:The Object 'myFavoriteAuthors'
+#+name:myFavoriteAuthors
+#+header: :mkdirp yes :noweb tangle
+#+begin_src js -n :tangle examples/protocols/myFavoriteAuthors.js
+exports.myFavoriteAuthors = {
+    allAuthors: {
+        fiction: [
+            'Agatha Christie',
+            'J. K. Rowling',
+            'Dr. Seuss',
+        ],
+        scienceFiction: [
+            'Neal Stephenson',
+            'Arthur C. Clark',
+            'Isaac Asimov',
+            'Robert Heinlein',
+        ],
+        fantapsy: [
+            'J. R. R. Tolkien',
+            'J. K. Rowling',
+            'Terry Pratchett',
+        ],
+    },
+    <<myFavoriteAuthorsIterable>>,
+}
+#+end_src
+
+{{{heading(for-of Iterates over the Authors in the Object)}}}
+
+Given an implemented Iterable and Iterator, the following statement works
+without throwing an Error (currently, you would get a =TypeError= saying that
+the object is not iterable).
+
+#+caption:Iterate over the object 'myFavoriteAuthors'
+#+name:iterate-over-myFavoriteAuthors
+#+begin_src js
+for (let author of myFavouriteAuthors) {
+  console.log(author)
+}
+#+end_src
+
+{{{heading(Implement the Iterable Protocol)}}}
+
+The first thing that must happen is to make the object an Iterable (by adding a
+~[Symbol.iterator]~ method).  This method must return an object that is an
+Iterator, that is, that implements a ~next()~ method that returns an object
+that includes a =value= property and a =done= property: ={value:
+<value>, done: <boolean>}=.
+
+The ~Object.values(<obj>)~ class method returns an array of an object's own
+enumerable property values (no properties from the prototype chain are
+included) in the same order as that provided by a =for...in= loop.
+
+#+caption:Implement an Iterable
+#+name:myFavoriteAuthorsIterable
+#+header: :noweb yes
+#+begin_src js -n
+[Symbol.iterator]() {
+    // Get all the authors in an array
+    const genres = Object.values(this.allAuthors);
+
+    // Store the current genre and author index
+    let currentAuthorIndex = 0;
+    let currentGenreIndex = 0;
+
+    return {
+        <<myFavoriteAuthorsIterator>>
+    }
+}
+#+end_src
+
+The Iterator is implemented as follows:
+
+#+caption:Create an Iterator
+#+name:myFavoriteAuthorsIterator
+#+begin_src js -n
+// Implementation of next()
+next () {
+    // authors according to current genre index
+    const authors = genres[currentGenreIndex];
+
+    // doNotHaveMoreAuthors is true when the authors array is exhausted.
+    // That is, all items are consumed.
+    const doNothaveMoreAuthors = !(currentAuthorIndex < authors.length);
+    if (doNothaveMoreAuthors) {
+      // When that happens, we move the genre index to the next genre
+      currentGenreIndex++;
+      // and reset the author index to 0 again to get new set of authors
+      currentAuthorIndex = 0;
+    }
+
+    // if all genres are over, then we need tell the iterator that we
+    // can not give more values.
+    const doNotHaveMoreGenres = !(currentGenreIndex < genres.length);
+    if (doNotHaveMoreGenres) {
+      // Hence, we return done as true.
+      return {
+        value: undefined,
+        done: true
+      };
+    }
+
+    // if everything is correct, return the author from the
+    // current genre and incerement the currentAuthorindex
+    // so next time, the next author can be returned.
+    return {
+      value: genres[currentGenreIndex][currentAuthorIndex++],
+      done: false
+    }
+}
+#+end_src
+
 * EMCAScript 2016
 * ECMAScript 2017
 ECMAScript 2017 introduced
@@ -7857,6 +8047,7 @@ breaking existing non-strict-mode libraries.
 #+macro:dfn @@texinfo:@dfn{@@$1@@texinfo:}@@
 #+macro:noindent @@texinfo:@noindent @@
 #+macro:var @@texinfo:@var{@@$1@@texinfo:}@@
+#+macro:command @@texinfo:@command{@@$1@@texinfo:}@@
 
 ** Export to HTML
 *** HTML Options

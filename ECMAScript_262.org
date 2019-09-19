@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-08-26 10:08
-#+macro:version 0.5.12
+#+Date:2019-09-18 23:57
+#+macro:version 0.5.13
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -59,6 +59,7 @@ associated with an object via a property.
 {{{heading(Built-in Objects)}}}
 
 #+cindex:built-in objects
+#+cindex:objects, built-in
 ECMAScript defines a collection of *built-in objects* that round out the
 definition of ECMAScript entities.  These built-in objects include:
 - the global object
@@ -84,6 +85,7 @@ definition of ECMAScript entities.  These built-in objects include:
 {{{heading(Built-In Operators)}}}
 
 #+cindex:built-in operators
+#+cindex:operators, built-in
 ECMAScript also defines a set of *built-in operators*.  ECMAScript operators
 include:
 - unary operators
@@ -408,6 +410,66 @@ relaxed to enable it to serve as an easy-to-use scripting language.
 
    [[https://arstechnica.com/information-technology/2009/12/commonjs-effort-sets-javascript-on-path-for-world-domination/][CommonJS effort sets JavaScript on path for world domination]] KRIS KOWAL -
    12/1/2009, 9:19 PM
+
+** Prototype-Based Inheritance
+
+{{{heading(Constructors)}}}
+
+#+cindex:constructors
+#+cindex:objects, from constructors
+ECMAScript supports /constructors/ which create *objects* by executing code
+that allocates storage for the objects and initialises all or part of them by
+assigning initial values to their properties.
+
+{{{subheading(Prototype Property)}}}
+
+#+cindex:Prototype property
+#+cindex:protype-based inheritance
+#+cindex:inheritance, prototype-based
+#+cindex:properties, shared
+Each constructor has a /Prototype/ property that is used to implement
+prototype-based inheritance and shared properties.
+
+{{{subheading(new Expressions)}}}
+
+#+cindex:@code{new} expressions
+Objects are created by using constructors in ~new~ expressions.  Invoking a
+constructor without using new has consequences that depend on the
+constructor. For example, =String("A String")= produces a primitive string, not
+an object.
+
+{{{heading(Prototype Chain)}}}
+
+#+cindex:constructor
+#+cindex:prototype
+#+cindex:object
+Every constructor has an associated prototype, and every object created by that
+constructor has an implicit reference to the prototype (called the object’s
+prototype) associated with its constructor.  A prototype may have a non-null
+implicit reference to its prototype, and so on.  This is called the prototype
+chain.
+
+{{{subheading(References to Properties)}}}
+
+#+cindex:reference to property
+When a reference is made to a property in an object, that reference is to the
+property of that name in the first object in the prototype chain that contains
+a property of that name.  In other words, first the object mentioned directly
+is examined for such a property; if that object contains the named property,
+that is the property to which the reference refers; if that object does not
+contain the named property, the prototype for that object is examined next; and
+so on.
+
+{{{heading(State)}}}
+
+#+cindex:state
+#+cindex:inheritance
+In a class-based object-oriented language, in general, state is carried by
+instances, methods are carried by classes, and inheritance is only of structure
+and behaviour. In ECMAScript, the state and methods are carried by objects, and
+structure, behaviour, and state are all inherited.  All objects that do not
+directly contain a particular property that their prototype contains share that
+property and its value.
 * ECMAScript Specifications
 
   [[http://www.ecma-international.org/publications/standards/Ecma-262.htm][Current edition]].
@@ -1451,6 +1513,28 @@ Use a temporary variable with a short name, or an IIFE:
 ** Program
 
 ** Native Objects
+
+*** Global Objects
+
+*** Object Objects
+
+*** Function Objects
+
+*** Array Objects
+
+*** String Objects
+
+*** Boolean Objects
+
+*** Number Objects
+
+*** Math Objects
+
+*** Date Objects
+
+*** RegExp Objects
+
+*** Error Objects
 
 ** Errors
 

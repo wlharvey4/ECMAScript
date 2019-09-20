@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-09-18 23:57
-#+macro:version 0.5.13
+#+Date:2019-09-19 23:33
+#+macro:version 0.5.14
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2598,6 +2598,113 @@ be simulated with the ECMAScript 3 code shown above.
   prototype of the original, unbound constructor.  Also, a bound constructor
   works just like the unbound constructor for the purposes of the ~instanceof~
   operator.
+
+** Inheritance and the Prototype Chain
+JavaScript is prototype-based.  JavaScript has one construct---the object.
+Each object has a private property which holds a link to another object called
+its *prototype*.  That prototype object has a prototype of its own, and so on
+until an object is reached with =null= as its prototype.  By definition, =null=
+has no prototype, and acts as the final link in this prototype chain.  Nearly
+all objects in JavaScript are instances of =Object= which sits on the top of a
+prototype chain.
+
+The prototypal inheritance model itself is, in fact, more powerful than the
+classic model.  It is, for example, fairly trivial to build a classic model on
+top of a prototypal model.
+
+*** Accessing the Prototype
+- ~Object.getPrototypeOf(<object>)~ :: get a reference to an object's prototype
+     object.
+
+- ~Object.setPrototypeOf(<object>)~ :: set a reference to an object's prototype
+     object.
+
+- ~<object>.__proto__~ :: non-stanard JavaScript property referencing the
+     object's prototype.
+
+- ~<func>.prototype~ :: property of functions which specifies the prototype to be
+     assigned to all instances of objects created by the given function when
+     used as a constructor.
+
+*** Inheriting Properties
+JavaScript objects have properties, called *own properties*.  JavaScript
+objects have a link to a prototype object.  When trying to access a property of
+an object, the property will not only be sought on the object but on the
+prototype of the object, the prototype of the prototype, and so on until either
+a property with a matching name is found or the end of the prototype chain is
+reached.
+
+#+begin_src js
+let f = function() {
+    this.a = 1;
+    this.b = 2;
+}
+
+let o = new f(); // {a: 1, b: 2}
+
+f.prototype.b = 3;
+f.prototype.c = 4;
+
+/*
+  Do not try to set the prototype as f.prototype = {b:3,c:4};
+  this will break the prototype chain.
+  
+  o.[[Prototype]] has properties b and c.
+  o.[[Prototype]].[[Prototype]] is Object.prototype.
+  o.[[Prototype]].[[Prototype]].[[Prototype]] is null.
+  This is the end of the prototype chain, as null, by definition, has no [[Prototype]].
+
+  The full prototype chain looks like:
+  {a: 1, b: 2} ---> {b: 3, c: 4} ---> Object.prototype ---> null
+*/
+
+console.log(o.a); // 1
+console.log(o.b); // 2
+
+/*
+  The prototype also has a 'b' property, but it's not visited.
+  This is called Property Shadowing
+*/
+
+console.log(o.c); // 4
+
+/*
+  Is there a 'c' own property on o? No, check its prototype.
+  Is there a 'c' own property on o.[[Prototype]]? Yes, its value is 4.
+*/
+
+console.log(o.d); // undefined
+#+end_src
+
+Setting a property to an object creates an own property.
+
+*** Inheriting Methods
+JavaScript does not have "methods" in the form that class-based languages
+define them.  Rather, any function can be added to an object in the form of a
+property.  An inherited function acts just as any other property, including
+property shadowing.  When an inherited function is executed, the value of
+~this~ points to the inheriting object, not to the prototype object where the
+function is an own property.
+
+#+begin_src js
+  var o = {
+    a: 2,
+    m: function() {
+      return this.a + 1;
+    }
+  };
+
+  console.log(o.m()); // 3; 'this' refers to 'o'
+
+  var p = Object.create(o); // 'p' inherits from 'o'
+  p.a = 4; // creates a property 'a' on 'p'
+  console.log(p.m()); // 5
+
+  /*
+    When 'p.m' is called, 'this' refers to 'p'.  So when 'p' inherits
+    the function 'm' of 'o', 'this.a' means 'p.a', the property 'a' of p
+  */
+#+end_src
 
 * ECMAScript 5 Features
 ** this and Accessor Properties
@@ -8520,4 +8627,5 @@ breaking existing non-strict-mode libraries.
 # fill-column: 79
 # time-stamp-pattern: "8/^\\#\\+Date:%:y-%02m-%02d %02H:%02M$"
 # eval: (setq org-publish-project-alist '(("ecmascript_262" :base-directory "." :publishing-directory "./public_html" :publishing-function org-html-publish-to-html :section-numbers t :table-of-contents t)))
+# eval: (org-indent-mode)
 # End:

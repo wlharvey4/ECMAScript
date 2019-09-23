@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-09-22 16:40
-#+macro:version 0.5.15
+#+Date:2019-09-22 17:38
+#+macro:version 0.5.16
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2133,7 +2133,7 @@ hello("world")
 hello.call(window, "world");
 #+end_src
 
-This behavior has changed in ECMAScript 5[fn:6] only when using strict mode:
+This behavior has changed in ECMAScript 5[fn:5] only when using strict mode:
 
 #+begin_src js
 // this:
@@ -2546,7 +2546,7 @@ g(3) // => 6: this.x is bound to 1, y is bound to 2 and z is 3
 
 ***** Partial Application in ECMAScript 3
 We can bind the ~this~ value and perform partial application in ECMAScript 3.
-The standard ~bind()~ method can be simulated with code like:[fn:7]
+The standard ~bind()~ method can be simulated with code like:[fn:6]
 
 #+caption:A @code{Function.bind()} method for ECMAScript 3
 #+name:partial-application-ECMAScript 3
@@ -2857,7 +2857,7 @@ properties as ~this.x~ and ~this.y~.
 
   - http://es6-features.org/
   - https://github.com/rse/es6-features
-
+  - [[https://leanpub.com/understandinges6/read/][Understanding ECMAScript 6 by Nicholas Zakas]]
 
 ** Review of New Features in ECMAScript 2015
 - [[https://hacks.mozilla.org/category/es6-in-depth/][ES2015 In Depth Articles]] by Jason Orendorff
@@ -3550,6 +3550,257 @@ var chars = str.split(""); // [ "f", "o", "o" ]
 ** Enhanced Regular Expression
 
 ** Enhanced Object Properties
+#+cindex:Object global
+One of the design goals of ECMAScript beginning with ECMAScript 5 was to avoid
+creating new global functions or methods on Object.prototype, and instead try
+to find objects on which new methods should be available.  As a result, the
+Object global has received an increasing number of methods when no other
+objects are more appropriate.  ECMAScript 6 introduces a couple new methods on
+the Object global that are designed to make certain tasks easier.
+
+*** ~Object.assign~
+The ~Object.assign()~ method is used to copy the values of all =enumerable own
+properties= from one or more source objects to a target object.  It will return
+the target object.
+
+#+caption:Object.assign() Demo
+#+name:Object.assign-demo
+#+begin_src js
+const target = { a: 1, b: 2 };
+const source = { b: 4, c: 5 };
+
+const returnedTarget = Object.assign(target, source);
+
+console.log(target);
+// expected output: Object { a: 1, b: 4, c: 5 }
+
+console.log(returnedTarget);
+// expected output: Object { a: 1, b: 4, c: 5 }
+#+end_src
+
+#+attr_texinfo: :options Object assign ( target, ...sources )
+#+begin_defmethod
+- {{{var(target)}}} :: The target object.
+
+- {{{var(sources)}}} :: The source object(s).
+
+- Return Value :: The target object.
+#+end_defmethod
+
+**** Description of ~Object.assign()~
+The ~Object.assign()~ method only copies =enumerable and own= properties from a
+source object to a target object.  It uses [[Get]] on the source and [[Set]] on the
+target, so it will invoke getters and setters.  Therefore it /assigns/
+properties versus just copying or defining new properties.  This may make it
+unsuitable for merging new properties into a prototype if the merge sources
+contain getters.
+
+For copying property definitions, including their enumerability, into
+prototypes, ~Object.getOwnPropertyDescriptor()~ and ~Object.defineProperty()~
+should be used instead.
+
+Both =String= and =Symbol= properties are copied.
+
+**** Cloning an Object
+
+#+name:clone-an-object
+#+begin_src js
+var obj = { a: 1 };
+var copy = Object.assign({}, obj);
+console.log(copy); // { a: 1 }
+#+end_src
+
+*WARNING*: For deep cloning, we need to use other alternatives because
+~Object.assign()~ copies property values.  If the source value is a reference
+to an object, it only copies that reference value.
+
+**** Merging Objects
+
+#+name:merge-objects
+#+begin_src js
+var o1 = { a: 1 };
+var o2 = { b: 2 };
+var o3 = { c: 3 };
+
+var obj = Object.assign(o1, o2, o3);
+console.log(obj); // { a: 1, b: 2, c: 3 }
+console.log(o1);  // { a: 1, b: 2, c: 3 }, target object itself is changed.
+#+end_src
+
+*WARNING*: The properties are overwritten by other objects that have the same
+properties later in the parameters order.
+
+**** Copying Symbol-Typed Properties
+
+#+name:copying-symbol-typed-properties
+#+begin_src js
+var o1 = { a: 1 };
+var o2 = { [Symbol('foo')]: 2 };
+
+var obj = Object.assign({}, o1, o2);
+console.log(obj); // { a : 1, [Symbol("foo")]: 2 } (cf. bug 1207182 on Firefox)
+Object.getOwnPropertySymbols(obj); // [Symbol(foo)]
+#+end_src
+
+**** Properties on Prototype Chain and Non-Enumerable Properties
+
+Properties on the prototype chain and non-enumerable properties cannot be
+copied:
+
+#+name:properties-prototype-non-enumeable
+#+begin_src js
+  var obj = Object.create({ foo: 1 }, { // foo is on obj's prototype chain.
+    bar: {
+      value: 2  // bar is a non-enumerable property.
+    },
+    baz: {
+      value: 3,
+      enumerable: true  // baz is an own enumerable property.
+    }
+  });
+
+  var copy = Object.assign({}, obj);
+  console.log(copy); // { baz: 3 }
+#+end_src
+
+**** Copying Accessors
+
+Accessors are not assigned:
+
+#+name:accessors-not-assigned
+#+begin_src js
+var obj = {
+  foo: 1,
+  get bar() {
+    return 2;
+  }
+};
+
+var copy = Object.assign({}, obj);
+console.log(copy);
+// { foo: 1, bar: 2 }, the value of copy.bar is obj.bar's getter's return value.
+#+end_src
+
+This is an assign function that copies full descriptors:
+
+#+name:assign-function-to-copy-full-descriptors
+#+begin_src js
+function completeAssign(target, ...sources) {
+  sources.forEach(source => {
+    let descriptors = Object.keys(source).reduce((descriptors, key) => {
+      descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
+      return descriptors;
+    }, {});
+    // by default, Object.assign copies enumerable Symbols too
+    Object.getOwnPropertySymbols(source).forEach(sym => {
+      let descriptor = Object.getOwnPropertyDescriptor(source, sym);
+      if (descriptor.enumerable) {
+        descriptors[sym] = descriptor;
+      }
+    });
+    Object.defineProperties(target, descriptors);
+  });
+  return target;
+}
+
+var copy = completeAssign({}, obj);
+console.log(copy);
+// { foo:1, get bar() { return 2 } }
+#+end_src
+
+*** ~Object.assign()~ and Mixins
+
+#+cindex:mixins
+#+cindex:mixin method
+*Mixins* are among the most popular patterns for object composition in
+JavaScript.  In a /mixin/, one object receives properties and methods from
+another object.  Many JavaScript libraries have a /mixin method/ similar to
+this:
+
+#+caption:Mixin Method
+#+name:mixin-method
+#+begin_src js
+function mixin(receiver, supplier) {
+    Object.keys(supplier).forEach(function(key) {
+        receiver[key] = supplier[key];
+    });
+
+    return receiver;
+}
+#+end_src
+
+The ~mixin()~ function iterates over the =own properties= of ~supplier~ and
+copies them onto ~receiver~ (a shallow copy, where object references are shared
+when property values are objects).  This allows the ~receiver~ to gain new
+properties without inheritance, as in this code:
+
+#+name:mixin-method-example
+#+begin_src js
+function EventTarget() { /*...*/ }
+EventTarget.prototype = {
+    constructor: EventTarget,
+    emit: function() { /*...*/ },
+    on: function() { /*...*/ }
+};
+
+var myObject = {};
+mixin(myObject, EventTarget.prototype);
+
+myObject.emit("somethingChanged");
+#+end_src
+
+Here, ~myObject~ receives behavior from the ~EventTarget.prototype~ object.
+This gives ~myObject~ the ability to publish events and subscribe to them using
+the ~emit()~ and ~on()~ methods, respectively.
+
+This pattern became popular enough that ECMAScript 6 added the
+~Object.assign()~ method, which behaves the same way, accepting a receiver and
+any number of suppliers, and then returning the receiver.  The name change from
+~mixin()~ to ~assign()~ reflects the actual operation that occurs.  Since the
+~mixin()~ function uses the assignment operator (=), it cannot copy accessor
+properties to the receiver as accessor properties.  The name ~Object.assign()~
+was chosen to reflect this distinction.[fn:7]
+
+You can use Object.assign() anywhere the mixin() function would have been
+used. Here’s an example:
+
+#+name:Object.assign-example
+#+begin_src js
+function EventTarget() { /*...*/ }
+EventTarget.prototype = {
+    constructor: EventTarget,
+    emit: function() { /*...*/ },
+    on: function() { /*...*/ }
+}
+
+var myObject = {}
+Object.assign(myObject, EventTarget.prototype);
+
+myObject.emit("somethingChanged");
+#+end_src
+
+The ~Object.assign()~ method accepts any number of suppliers, and the receiver
+receives the properties in the order in which the suppliers are specified.
+That means the second supplier might overwrite a value from the first supplier
+on the receiver, which is what happens in this snippet:
+
+#+name:Object.assign-overwriting-example
+#+begin_src js
+var receiver = {};
+
+Object.assign(receiver,
+    {
+        type: "js",
+        name: "file.js"
+    },
+    {
+        type: "css"
+    }
+);
+
+console.log(receiver.type);     // "css"
+console.log(receiver.name);     // "file.js"
+#+end_src
 
 ** Destructuring Assignment
 
@@ -5840,7 +6091,7 @@ module-loading latency (network requests vs. file system).
 #+cindex:dependency management
 #+cindex:encapsulation
 As JavaScript development gets more and more common, namespaces and depedencies
-get much more difficult to handle.[fn:11]  Different solutions were developed to deal
+get much more difficult to handle.[fn:10]  Different solutions were developed to deal
 with this problem in the form of module systems.  Modules were developed around
 the concepts of /encapsulation/ and /dependency/.  At the moment that another
 piece of software is brought into a project, a /dependency/ is created between
@@ -6505,7 +6756,7 @@ unless such script has a =type="module"=.
 
 #+cindex:@code{import()} dynamic function
 There is also a function-like dynamic ~import()~, which does not require
-scripts of =type="module"=.[fn:10]
+scripts of =type="module"=.[fn:11]
 
 #+cindex:dynamic import
 #+cindex:static import
@@ -6726,7 +6977,7 @@ standard.
 #+cindex:version 3
 #+cindex:ECMAScript 3
 #+cindex:ES3
-For the last decade[fn:5], all web browsers have implemented version 3 of the
+For the last decade[fn:12], all web browsers have implemented version 3 of the
 ECMAScript standard and there has really been no need to think about version
 numbers: the language standard was stable and browser implementations of the
 language were, for the most part, interoperable.
@@ -8627,36 +8878,6 @@ a modern view that is as consistent as possible.
 :END:
 #+texinfo:@listoffloats Table
 
-* Footnotes
-
-[fn:11] See ``JavaScript Module Systems Showdown: CommonJS vs AMD vs ES2015''
-by Sebastian Peyrott at https://auth0.com/blog/javascript-module-systems-showdown/. 
-
-[fn:10] Dynamic import is an ECMAScript propsal due to be standardized in
-ES2020. 
-
-[fn:9] Now Stage 3 
-
-[fn:8] Now Stage 4 
-
-[fn:7] Note that we save this method as ~Function.prototype.bind~, so that all
-function objects inherit it. 
-
-[fn:6] The ECMAScript 5 spec says that ~undefined~ is (almost) always passed,
-but that the function being called should change its ~thisValue~ to the global
-object when /not/ in strict mode.  This allows strict mode callers to avoid
-breaking existing non-strict-mode libraries. 
-
-[fn:5] Roughly 2000--2010
-
-[fn:1] Except "use strict"
-
-[fn:2] Except leading zeroes in parseInt
-
-[fn:3] Partially supported by all browsers
-
-[fn:4] This page was last modified on 9 October 2011, at 19:22.
-
 * Macro Definitions
 #+macro:heading @@html:<h2>@@@@texinfo:@heading @@$1@@html:</h2>@@
 #+macro:subheading @@html:<h3>@@@@texinfo:@subheading @@$1@@html:</h3>@@
@@ -8702,6 +8923,44 @@ breaking existing non-strict-mode libraries.
 
 * Export Settings                                                  :noexport:
 * Local Variables                                                  :noexport:
+
+* Footnotes
+
+[fn:1] Except "use strict"
+
+[fn:2] Except leading zeroes in parseInt
+
+[fn:3] Partially supported by all browsers
+
+[fn:4] This page was last modified on 9 October 2011, at 19:22.
+
+[fn:5] The ECMAScript 5 spec says that ~undefined~ is (almost) always passed,
+but that the function being called should change its ~thisValue~ to the global
+object when /not/ in strict mode.  This allows strict mode callers to avoid
+breaking existing non-strict-mode libraries.
+
+[fn:6] Note that we save this method as ~Function.prototype.bind~, so that all
+function objects inherit it.
+
+[fn:7]Similar methods in various libraries may have other names for the same
+basic functionality; popular alternates include the extend() and mix()
+methods. There was also, briefly, an Object.mixin() method in ECMAScript 6 in
+addition to the Object.assign() method. The primary difference was that
+Object.mixin() also copied over accessor properties, but the method was removed
+due to concerns over the use of super (discussed in the “Easy Prototype Access
+with Super References” section of this chapter).
+
+[fn:8] Now Stage 4
+
+[fn:9] Now Stage 3
+
+[fn:10] See ``JavaScript Module Systems Showdown: CommonJS vs AMD vs ES2015''
+by Sebastian Peyrott at https://auth0.com/blog/javascript-module-systems-showdown/.
+
+[fn:11] Dynamic import is an ECMAScript propsal due to be standardized in
+ES2020.
+
+[fn:12] Roughly 2000--2010
 # Local Variables:
 # fill-column: 79
 # time-stamp-pattern: "8/^\\#\\+Date:%:y-%02m-%02d %02H:%02M$"

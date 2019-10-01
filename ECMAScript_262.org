@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-09-22 17:54
-#+macro:version 0.5.17
+#+Date:2019-09-30 22:39
+#+macro:version 0.5.18
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -7770,6 +7770,42 @@ well-formed UTF-16.
 **** Boolean Values
 
 **** Null and Undefined
+
+***** Null and Undefined Characteristics
+#+cindex:@code{null}
+- =null= :: keyword that evaluates to a special value used to indicate the
+            absence of a value (:(
+
+            =typeof null= == “object”, i.e., =null= is a special object value
+            that indicates “no object” (:-(
+
+            =null= is typically regarded as the sole member of its own type,
+            which is used to indicate “no value” for numbers, and strings, as
+            well as objects.
+
+#+cindex:@code{undefined}
+- =undefined= :: predefined global variable (not a language keyword); the
+                 =undefined= value represents a deeper kind of absence; it is
+                 the value of variables that have not been initialized, as well
+                 as the value you get when you query the value of an object
+                 property or array element that does not exist.
+
+                 =typeof undefined= == “undefined”, i.e., the sole member of a
+                 special type
+
+                 the =undefined= value is returned by functions that have no
+                 return value, and is the value of function parameters for
+                 which no argument is supplied.
+
+                 in ECMAScript 3, =undefined= is a read-write variable and can
+                 be set to any value; in ECMAScript 5, =undefined= is a
+                 read-only variable.
+
+***** Interchangeability of Null and Undefined
+Both indicate an absence of value.  The equality operator ~==~ considers them
+equal, whereas the strict equality operator ~===~ distinguishes them.  Both are
+=falsey=.  Neither have any properties or methods.  If you need to assign a
+value to a variable, =null= is almost always the right choice.
 
 **** The Global Object
 

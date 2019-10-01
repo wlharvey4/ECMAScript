@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-09-30 22:39
-#+macro:version 0.5.18
+#+Date:2019-09-30 23:45
+#+macro:version 0.5.19
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -7808,16 +7808,242 @@ equal, whereas the strict equality operator ~===~ distinguishes them.  Both are
 value to a variable, =null= is almost always the right choice.
 
 **** The Global Object
+#+cindex:global object
+The /global object/ is a regular JavaScript object that serves a very important
+purpose: the properties of this object are the globally defined symbols that
+are available to a JavaScript program.  When the JavaScript interpreter starts
+(or whenever a web browser loads a new page), it creates a new global object
+and gives it an initial set of properties that define:
+
+#+cindex:global properties
+- global properties like =undefined=, =Infinity=, and =NaN=
+
+#+cindex:global functions
+- global functions like ~isNaN()~, ~parseInt()~, and ~eval()~
+
+#+cindex:constructor functions
+- constructor functions like ~Date()~, ~RegExp()~, ~String()~, ~Object()~, and
+  ~Array()~
+
+#+cindex:global objects @code{Math}, @code{JSON}
+- global objects like ~Math~ and ~JSON~
+
+
+The initial properties of the global object are not reserved words, but should
+be treated as though they were.
+
+#+cindex:@code{this} for global object
+In top-level code---JavaScript code that is not part of a function---you can
+use the JavaScript keyword ~this~ to refer to the global object:
+
+: var global = this; // Define a global variable to refer to the global object
+
+#+cindex:Window object
+#+cindex:@code{window} property
+In client-side JavaScript, the Window object serves as the global object for
+all JavaScript code contained in the browser window it represents.  This global
+Window object has a self-referential ~window~ property that can be used instead
+of ~this~ to refer to the global object.  The Window object defines the core
+global properties, but it also defines quite a few other globals that are
+specific to web browsers and client-side JavaScript.
+
+{{{heading(The Global Object Properties)}}}
+
+- =arguments=
+- =Array=
+- =Boolean=
+- =Date=
+- =decodedURI=
+- =decodedURIComponent=
+- =encodedURI=
+- =encodedURIComponent=
+- =Error=
+- =eval=
+- =EvalError=
+- =Function=
+- =Infinity=
+- =isFinite=
+- =isNaN=
+- =JSON=
+- =Math=
+- =NaN=
+- =Number=
+- =Object=
+- =parseFloat=
+- =parseInt=
+- =RangeError=
+- =ReferenceError=
+- =RegExp=
+- =String=
+- =SyntaxError=
+- =TypeError=
+- =undefined=
+- =URIError=
+
+
+{{{heading(User-Defined Global Properties)}}}
+
+This special object also holds program-defined globals as well.  If your code
+declares a global variable, that variable is a property of the global object.
 
 **** Wrapper Objects
+#+cindex:composite values
+JavaScript objects are /composite values/: a collection of properties, or named
+values.  You can refer to the value of a property using the =dot= (=.=)
+notation.  When the value of a property is a function, it is called a
+/method/.  To invoke a method of an object, use the =dot= notation, followed by
+open and closed parentheses:
+
+: object.method()
+
+***** Strings
+Strings are not objects, but they behave as if they had properties.  Whenever
+you try to refer to a property of a string ~s~, JavaScript converts the string
+value to an object as if by calling ~new String(s)~.  This object inherits
+string methods and is used to resolve the property reference.  Once the
+property has been resolved, the newly created object is discarded.  Properties
+cannot be assigned.
+
+***** Numbers and Booleans
+Numbers and Booleans behave the same way when properties and methods are called
+upon them: a temporary object is created using the ~Number()~ or ~Boolean()~
+constructor, and the method is resolved using that temporary object.
+
+***** Null and Undefined
+The values =null= and =undefined= do not have wrappers associated with them,
+and any attempt to access a property of one of these values causes a
+=TypeError=.
+
+***** Wrappers
+The temporary objects created when you access a property of a string, number,
+or boolean are known as wrapper objects, and it may occasionally be necessary
+to distinguish a string value from a String object or a number or boolean value
+from a Number or Boolean object.  You just need to know that string, number,
+and boolean values differ from objects in that their properties are read-only
+and that you can’t define new properties on them.
+
+Note that it is possible (but almost never necessary or useful) to explicitly
+create wrapper objects, by invoking the ~String()~, ~Number()~, or ~Boolean()~
+constructors.
 
 **** Immutable Primitive Values and Mutable Object References
 
+{{{heading(Primitives are Immutable Value Types)}}}
+
+There is a fundamental difference in JavaScript between primitive values
+(=undefined=, =null=, booleans, numbers, and strings) and objects (including
+arrays and functions): Primitives are immutable: there is no way to change (or
+“mutate”) a primitive value (included strings); all string methods that appear
+to return a modified string are, in fact, returning a new string value.
+
+: str = "hello"; str.toUpperCase(); // Returns "HELLO", but doesn't alter str
+
+Primitives are compared /by value/.
+
+{{{heading(Objects are Mutable Reference Types)}}}
+
+Objects are mutable: their values can change.
+
+Objects are not compared by value: two objects are not equal even if they have
+the same properties and values.  And two arrays are not equal even if they have
+the same elements in the same order.  Objects are sometimes called /reference
+types/ to distinguish them from JavaScript’s primitive types.  Using this
+terminology, object values are references, and we say that objects are compared
+by reference: two object values are the same if and only if they refer to the
+same underlying object.  Assigning an object (or array) to a variable simply
+assigns the reference: it does not create a new copy of the object.
+
 **** Type Conversions
+JavaScript performs type conversions in many situations.
+
+***** JavaScript Type Conversions
+
+***** Conversions and Equality
+
+***** Explicit Conversions
+
+***** Object to Primitive Conversions
 
 **** Variable Declaration
+Before you use a variable in a JavaScript program, you should /declare/ it.
+Variables are declared with the =var= keyword.  You can combine variable
+declaration with variable initialization.  If you don’t specify an initial
+value for a variable with the var statement, the variable is declared, but its
+value is =undefined= until your code stores a value into it.
+
+It is legal and harmless to declare a variable more than once with the =var=
+statement.  If the repeated declaration has an initializer, it acts as if it
+were simply an assignment statement.
+
+If you attempt to read the value of an undeclared variable, JavaScript
+generates an error.  In ECMAScript 5 strict mode, it is also an error to assign
+a value to an undeclared variable.  Historically, however, and in non-strict
+mode, if you assign a value to an undeclared variable, JavaScript actually
+creates that variable as a property of the global object, and it works much
+like a properly declared global variable.
 
 **** Variable Scope
+#+cindex:scope
+#+cindex:global variable, scope
+#+cindex:local variable, scope
+The /scope/ of a variable is the region of your program source code in which it
+is defined.  A /global/ variable has global scope; it is defined everywhere in
+your JavaScript code.  Variables declared within a function are defined only
+within the body of the function.  They are /local/ variables and have /local/
+scope.  Function parameters also count as local variables and are defined only
+within the body of the function.  Within the body of a function, a local
+variable takes precedence over a global variable with the same name; If you
+declare a local variable or function parameter with the same name as a global
+variable, you effectively hide the global variable.  You must always use =var=
+to declare local variables.
+
+***** Function Scope and Hoisting
+JavaScript uses /function scope/ (rather than block scope).  Variables are
+visible within the function in which they are defined, and within any functions
+that are nested within that function.
+
+#+begin_src js
+  function test(o) {
+      var i = 0;
+      if (typeof o == "object") {
+          var j = 0; // j is defined everywhere
+          for (var k = 0; k < 10; k++) { // k is defined everywhere
+              console.log(k);
+          }
+          console.log(k); // k is still defined; has value 10
+      }
+      console.log(j); // j is defined, but may not be initialized
+  }
+#+end_src
+
+#+cindex:hoisting
+JavaScript’s function scope means that all variables declared within a function
+are visible throughout the body of the function.  This means that variables are
+even visible before they are declared.  This feature of JavaScript is
+informally known as /hoisting/: JavaScript code behaves as if all variable
+declarations in a function (but not any associated assignments) are “hoisted”
+to the top of the function.
+
+#+begin_src js
+  var scope = "global";
+  function f() {
+      console.log(scope); // Prints "undefined", not "global"
+      var scope = "local"; // Variable initialized here, but defined everywhere
+      console.log(scope); // Prints "local"
+  }
+#+end_src
+
+You might think that the first line of the function would print “global”,
+because the =var= statement declaring the local variable has not yet been
+executed.  Because of the rules of function scope, however, this is not what
+happens.  The local variable is defined throughout the body of the function,
+which means the global variable by the same name is hidden throughout the
+function.  Although the local variable is defined throughout, it is not
+actually initialized until the =var= statement is executed.
+
+***** Variables as Properties
+
+***** The Scope Chain
 
 *** Expressions and Operators
 #+cindex:Chapter 4 Expressions and Operators

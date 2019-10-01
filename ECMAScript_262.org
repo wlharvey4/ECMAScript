@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-09-30 23:45
-#+macro:version 0.5.19
+#+Date:2019-10-01 10:06
+#+macro:version 0.5.20
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2798,9 +2798,9 @@ prototype field of your object.  So, the question then becomes: what do we put
 in this field?
 
 #+cindex:@code{new} keyword
-#+cindex:@code{Object.create()~
-#+cindex:~command{util} module
-#+cindex:~code{util.inherits} method
+#+cindex:@code{Object.create()}
+#+cindex:@command{util} module
+#+cindex:@code{util.inherits} method
 Well, you want your object’s prototype to be an object that has a prototype
 which is the object you’re trying to extend the functionality of.  One of the
 ways we first learn to do something like this in JavaScript is with the ~new~
@@ -3912,6 +3912,149 @@ console.log(receiver.name);     // "file.js"
 ** Classes
 
 ** Symbol Type
+
+{{{heading(Specification at §6.1.5)}}}
+
+- [[https://tc39.es/ecma262/#sec-ecmascript-language-types-symbol-type][Symbol type]]
+
+  “The Symbol type is the set of all non-String values that may be used as the
+  key of an Object property.  Each possible Symbol value is unique and
+  immutable.  Each Symbol value immutably holds an associated value called
+  =[[Description]== that is either =undefined= or a String value.”
+
+- [[https://www.ecma-international.org/ecma-262/6.0/#sec-symbol-objects][Symbol Objects]]
+
+
+{{{heading(Symbol Type---Symbol Value---Description)}}}
+
+#+cindex:symbol type
+#+cindex:symbol value
+A =Symbol= is a primitive type first defined in ECMAScript 2015 (there is no
+ECMAScript 5 equivalent for symbol.).  A value having the data type =Symbol= is
+referred to as a “symbol value”.  A =Symbol= value represents a unique
+identifier (for object properties).
+
+In a JavaScript run-time environment, a symbol value is created by invoking the
+function =Symbol=, which dynamically produces an anonymous, unique value.  A
+symbol may be used as an object property.  =Symbol= can have an optional
+description, but for debugging purposes only.  Symbols do not auto-convert to
+strings.  To do so, you must explicitly call the symbol’s ~toString~ method.
+You can also reference a symbol’s ~description~ property.
+
+{{{heading(Symbols are Guaranteed to be Unique)}}}
+
+#+begin_src js
+// here are two symbols with the same description,
+let Sym1 = Symbol("Sym");
+let Sym2 = Symbol("Sym");
+  
+console.log(Sym1 == Sym2); // returns "false"
+// Symbols are guaranteed to be unique.
+// Even if we create many symbols with the same description,
+// they are different values.
+#+end_src
+
+{{{heading(Some Properties of Symbols)}}}
+
+#+begin_src js
+Symbol("foo") !== Symbol("foo");
+const foo = Symbol();
+const bar = Symbol();
+typeof foo === "symbol";
+typeof bar === "symbol";
+let obj = {};
+obj[foo] = "foo";
+obj[bar] = "bar";
+JSON.stringify(obj); // {}
+Object.keys(obj); // []
+Object.getOwnPropertyNames(obj); // []
+Object.getOwnPropertySymbols(obj); // [ foo, bar ]
+#+end_src
+
+*** Symbol Constants
+
+- [[https://tc39.es/ecma262/#table-1][Well-Known Symbols]]
+
+
+The Symbol class has constants for so-called well-known symbols.  These symbols
+let you configure how JS treats an object, by using them as property keys.
+
+{{{heading(=Symbol.iterator=)}}}
+
+=Symbol.iterator= is an example.  This symbol specifies the default iterator
+for an object, i.e., the iterator used by =for...of=:
+
+{{{heading(Description)}}}
+
+Whenever an object needs to be iterated (such as at the beginning of a
+=for..of= loop), its =@@iterator= method is called with no arguments, and the
+returned iterator is used to obtain the values to be iterated.
+
+#+caption:Demo of Well-Known Symbol Symbol.iterator
+#+name:demo-well-known-symbol-Symbol.iterator
+#+begin_src js -n
+const iterable1 = new Object();
+
+iterable1[Symbol.iterator] = function* () {
+  yield 1;
+  yield 2;
+  yield 3;
+};
+
+console.log([...iterable1]);
+// expected output: Array [1, 2, 3]
+#+end_src
+
+Some built-in types have a default iteration behavior, while other types (such
+as =Object=) do not.  The built-in types with a =@@iterator= method are:
+
+- ~Array.prototype[@@iterator]()~
+
+- ~TypedArray.prototype[@@iterator]()~
+
+- ~String.prototype[@@iterator]()~
+
+- ~Map.prototype[@@iterator]()~
+
+- ~Set.prototype[@@iterator]()~
+
+
+{{{heading(User-Defined Iterables)}}}
+
+We can make our own iterables like this:
+
+#+begin_src js -n
+var myIterable = {}
+myIterable[Symbol.iterator] = function* () {
+    yield 1;
+    yield 2;
+    yield 3;
+};
+[...myIterable] // [1, 2, 3]
+#+end_src
+
+Or iterables can be defined directly inside a class or object using a computed
+property:
+
+#+begin_src js -n
+class Foo {
+  *[Symbol.iterator] () {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+}
+
+const someObj = {
+  *[Symbol.iterator] () {
+    yield 'a';
+    yield 'b';
+  }
+}
+
+[...new Foo] // [ 1, 2, 3 ]
+[...someObj] // [ 'a', 'b' ]
+#+end_src
 
 ** Iterators
 

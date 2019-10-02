@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-02 10:25
-#+macro:version 0.5.22
+#+Date:2019-10-02 11:17
+#+macro:version 0.5.23
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -9594,6 +9594,12 @@ a modern view that is as consistent as possible.
   JavaScript, C#, etc.) will profit from ReasonML’s familiar syntax.
 - Required knowledge: You should know how to program, e.g. in a mainstream
   language such as Java, JavaScript, C#, Python, C/C++, PHP, Ruby, Go, etc.
+
+* JSON
+- [[http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf][Standard ECMA-404]] “The JSON Data Interchange Syntax”
+
+** Introducing JSON
+- https://json.org
 
 * Concept Index
 :PROPERTIES:

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-02 10:22
-#+macro:version 0.5.21
+#+Date:2019-10-02 10:25
+#+macro:version 0.5.22
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -6532,6 +6532,17 @@ options:
 
 ** ESTree
 - https://github.com/estree/estree
+* ECMAScript Static Code Analysis
+** JSHint
+“A Static Code Analysis Tool for JavaScript”
+
+JSHint is a community-driven tool that detects errors and potential problems in
+JavaScript code.  Since JSHint is so flexible, you can easily adjust it in the
+environment you expect your code to execute.  JSHint is open source and will
+always stay this way.
+
+- https://jshint.com/about/
+
 * Module Systems---CommonJS • AMD •  ES2015
 #+cindex:module systems
 JavaScript was originally designed to be read from top to bottom in a

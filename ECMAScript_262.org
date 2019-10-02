@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-01 10:06
-#+macro:version 0.5.20
+#+Date:2019-10-02 10:22
+#+macro:version 0.5.21
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -6322,6 +6322,216 @@ This can be useful to reveal "hidden" properties (properties in the prototype
 chain which are not accessible through the object, because another property has
 the same name earlier in the prototype chain).  Listing accessible properties
 only can easily be done by removing duplicates in the array.
+* ECMAScript Parsing
+** Esprima
+“ECMAScript parsing infrastructure for multipurpose analysis”
+
+Esprima is a high performance, standard-compliant ECMAScript parser written in
+ECMAScript (also popularly known as JavaScript).
+
+- https://esprima.org
+- https://github.com/jquery/esprima
+
+{{{heading(Features)}}}
+
+- Full support for ECMAScript 2016 ([[http://www.ecma-international.org/publications/standards/Ecma-262.htm][ECMA-262 7th Edition]])
+
+- Sensible syntax tree format, with optional node location info
+
+- Experimental support for JSX, a syntax extension for React
+
+- Heavily tested (~1500 tests with full code coverage)
+
+
+{{{heading(API)}}}
+
+Esprima can be used to perform lexical analysis (tokenization) or syntactic
+analysis (parsing) of a JavaScript program.
+
+Once the full syntax tree is obtained, various static code analysis can be
+applied to give an insight to the code: syntax visualization, code validation,
+editing autocomplete (with type inferencing) and many others.
+
+Regenerating the code from the syntax tree permits a few different types of
+code transformation, from a simple rewriting (with specific formatting) to a
+more complicated minification.
+
+Esprima runs on many popular web browsers, as well as other ECMAScript
+platforms such as Rhino, Nashorn, and Node.js. It is distributed under the BSD
+license.
+
+{{{heading(A simple example on Node.js REPL)}}}
+
+#+begin_example
+> var esprima = require('esprima');
+> var program = 'const answer = 42';
+
+> esprima.tokenize(program);
+[ { type: 'Keyword', value: 'const' },
+  { type: 'Identifier', value: 'answer' },
+  { type: 'Punctuator', value: '=' },
+  { type: 'Numeric', value: '42' } ]
+
+> esprima.parse(program);
+{ type: 'Program',
+  body:
+   [ { type: 'VariableDeclaration',
+       declarations: [Object],
+       kind: 'const' } ],
+  sourceType: 'script' }
+#+end_example
+
+*** Esprima Documentation
+- https://esprima.org/doc/index.html
+** Acorn
+“A small, fast, JavaScript-based JavaScript parser”
+
+- https://github.com/acornjs/acorn
+
+** Espree
+“An Esprima-compatible JavaScript parser”
+
+- https://github.com/eslint/espree
+
+
+Espree started out as a fork of Esprima v1.2.2, the last stable published
+released of Esprima before work on ECMAScript 6 began.  Espree is now built on
+top of [[https://github.com/ternjs/acorn][Acorn]], which has a modular architecture that allows extension of core
+functionality.  The goal of Espree is to produce output that is similar to
+Esprima with a similar API so that it can be used in place of Esprima.
+
+{{{heading(Espree’s primary goal)}}}
+
+The primary goal is to produce the exact same AST structure and tokens as
+Esprima, and that takes precedence over anything else.  (The AST structure
+being the [[https://github.com/estree/estree][ESTree]] API with JSX extensions.) Separate from that, Espree may
+deviate from what Esprima outputs in terms of where and how comments are
+attached, as well as what additional information is available on AST nodes.
+That is to say, Espree may add more things to the AST nodes than Esprima does
+but the overall AST structure produced will be the same.
+
+Espree may also deviate from Esprima in the interface it exposes.
+
+{{{heading(Why Another Parser?)}}}
+
+ESLint had been relying on Esprima as its parser from the beginning.  While that
+was fine when the JavaScript language was evolving slowly, the pace of
+development increased dramatically and Esprima had fallen behind.  ESLint, like
+many other tools reliant on Esprima, has been stuck in using new JavaScript
+language features until Esprima updates, and that caused our users frustration.
+
+We decided the only way for us to move forward was to create our own parser,
+bringing us inline with JSHint and JSLint, and allowing us to keep implementing
+new features as we need them.  We chose to fork Esprima instead of starting
+from scratch in order to move as quickly as possible with a compatible API.
+
+With Espree 2.0.0, we are no longer a fork of Esprima but rather a translation
+layer between Acorn and Esprima syntax.  This allows us to put work back into a
+community-supported parser (Acorn) that is continuing to grow and evolve while
+maintaining an Esprima-compatible parser for those utilities still built on
+Esprima.
+
+Acorn is a great JavaScript parser that produces an AST that is compatible with
+Esprima.  Unfortunately, ESLint relies on more than just the AST to do its job.
+It relies on Esprima's tokens and comment attachment features to get a complete
+picture of the source code.  We investigated switching to Acorn, but the
+inconsistencies between Esprima and Acorn created too much work for a project
+like ESLint.
+
+*** ECMAScript Feature Support
+
+{{{heading(ECMAScript 6)}}}
+
+All of them.
+
+{{{heading(ECMAScript 7/2016)}}}
+
+There is only one ECMAScript 2016 syntax change: the exponentiation
+operator. Espree supports this.
+
+{{{heading(ECMAScript 2017)}}}
+
+There are two ECMAScript 2017 syntax changes: async functions, and trailing
+commas in function declarations and calls.  Espree supports both of them.
+
+{{{heading(ECMAScript 2018)}}}
+
+There are seven ECMAScript 2018 syntax changes:
+
+- nvalid escape sequences in tagged template literals
+- Rest/spread properties
+- Async iteration
+- RegExp s flag
+- RegExp named capture groups
+- RegExp lookbehind assertions
+- RegExp Unicode property escapes
+
+
+Espree supports all of them.
+
+{{{heading(ECMAScript 2019)}}}
+
+Because ECMAScript 2019 is still under development, we are implementing
+features as they are finalized. Currently, Espree supports:
+
+- Optional catch binding
+- JSON superset (\u2028 and \u2029 in string literals)
+
+*** Espree Installation
+: npm i espree
+
+*** Espree Usage
+#+begin_src js -n
+const espree = require("espree");
+const ast = espree.parse(code);
+#+end_src
+
+There is a second argument to ~parse()~ that allows you to specify various
+options:
+
+#+begin_src js -n
+  const espree = require("espree");
+
+  // Optional second options argument with the following default settings
+  const ast = espree.parse(code, {
+
+      // attach range information to each node
+      range: false,
+
+      // attach line/column location information to each node
+      loc: false,
+
+      // create a top-level comments array containing all comments
+      comment: false,
+
+      // create a top-level tokens array containing all tokens
+      tokens: false,
+
+      // Set to 3, 5 (default), 6, 7, 8, 9, or 10 to specify the version of ECMAScript syntax you want to use.
+      // You can also set to 2015 (same as 6), 2016 (same as 7), 2017 (same as 8), 2018 (same as 9), 2019 (same as 10), or 2020 (same as 11) to use the year-based naming.
+      ecmaVersion: 5,
+
+      // specify which type of script you're parsing ("script" or "module")
+      sourceType: "script",
+
+      // specify additional language features
+      ecmaFeatures: {
+
+          // enable JSX parsing
+          jsx: false,
+
+          // enable return in global scope
+          globalReturn: false,
+
+          // enable implied strict mode (if ecmaVersion >= 5)
+          impliedStrict: false
+      }
+  });
+#+end_src
+
+
+** ESTree
+- https://github.com/estree/estree
 * Module Systems---CommonJS • AMD •  ES2015
 #+cindex:module systems
 JavaScript was originally designed to be read from top to bottom in a
@@ -9430,7 +9640,6 @@ a modern view that is as consistent as possible.
 #+texinfo_printed_title:Secrets of the JavaScript Ninja
 
 * Export Settings                                                  :noexport:
-* Local Variables                                                  :noexport:
 
 * Footnotes
 
@@ -9469,6 +9678,8 @@ by Sebastian Peyrott at https://auth0.com/blog/javascript-module-systems-showdow
 ES2020.
 
 [fn:12] Roughly 2000--2010
+
+* Local Variables                                                  :noexport:
 # Local Variables:
 # fill-column: 79
 # time-stamp-pattern: "8/^\\#\\+Date:%:y-%02m-%02d %02H:%02M$"

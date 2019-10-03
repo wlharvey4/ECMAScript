@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-02 11:17
-#+macro:version 0.5.23
+#+Date:2019-10-02 23:34
+#+macro:version 0.5.24
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1533,6 +1533,381 @@ Use a temporary variable with a short name, or an IIFE:
 *** Date Objects
 
 *** RegExp Objects
+RegExp methods:
+
+- ~exec~
+- ~test~
+
+String methods:
+
+- ~match~
+- ~matchAll~
+- ~replace~
+- ~search~
+- ~split~
+
+**** RegExp in the Specification
+
+[[https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%25203rd%2520edition,%2520December%25201999.pdf][15 Native ECMAScript Objects --> 15.10 RegExp Objects]]
+
+#+cindex:RegExp object
+#+cindex:regular expression
+#+cindex:flags, RegExp
+A RegExp object contains a regular expression and the associated flags.
+
+/The form and functionality of regular expressions is modelled after the
+regular expression facility in the Perl 5 programming language./
+
+{{{heading(15.10.1 Patterns)}}}
+
+#+cindex:regular expression patterns
+The =RegExp= constructor applies the following grammar to the input pattern
+string.  An error occurs if the grammar cannot interpret the string as an
+expansion of Pattern.
+
+{{{heading(15.10.2 Pattern Semantics)}}}
+
+A regular expression pattern is converted into an internal function using the
+process described below.  An implementation is encouraged to use more efficient
+algorithms than the ones listed below, as long as the results are the same.
+
+**** Creating a RegExp
+
+You construct a regular expression in one of two ways:
+
+{{{heading(Using a Literal)}}}
+
+#+cindex:literal regular expression
+Using a regular expression literal, which consists of a pattern enclosed
+between slashes, as follows:
+
+: var re = /ab+c/;
+
+Regular expression literals provide compilation of the regular expression when
+the script is loaded.  If the regular expression remains constant, using this
+can improve performance.
+
+{{{heading(Calling the RegExp Constructor)}}}
+
+#+cindex:RegExp constructor function
+Or calling the constructor function of the RegExp object:
+
+: var re = new RegExp('ab+c');
+
+Using the constructor function provides runtime compilation of the regular
+expression.  Use the constructor function when you know the regular expression
+pattern will be changing, or you don't know the pattern and are getting it from
+another source, such as user input.
+
+**** Creating a RegExp Pattern
+
+A regular expression pattern is composed of simple characters or a combination
+of simple and special characters
+
+***** Special Characters
+
+Following is a complete list and description of the special characters that can
+be used in regular expressions.
+
+****** Assertions
+Indicates in some way that a match is possible. Assertions include look-ahead,
+look-behind, and conditional expressions.
+
+****** Boundaries
+Indicate the beginnings and endings of lines and words.
+
+****** Character Classes
+Distinguishes kinds of characters such as, for example, distinguishing between
+letters and digits.
+
+****** Groups and Ranges
+Indicates groups and ranges of expression characters.
+
+****** Quantifiers
+Indicates numbers of characters or expressions to match.
+
+****** Unicode Property Classes
+Distinguishes based on unicode character properties, for example, upper and
+lower case letters, math symbols, and punctuation.
+
+***** List of Special Characters
+
+- \ :: A backslash that precedes a non-special character indicates that the
+       next character is special and is not to be interpreted literally.  A
+       backslash that precedes a special character indicates that the next
+       character is not special and should be interpreted literally.
+
+       #+cindex:multiline flag
+       #+cindex:flag, multiline
+- ^ :: Matches beginning of input.  If the multiline flag is set to true, also
+       matches immediately after a line break character.
+
+       #+cindex:multiline flag
+       #+cindex:flag, multiline
+- $ :: Matches end of input.  If the multiline flag is set to true, also
+       matches immediately before a line break character.
+
+- * :: Matches the preceding expression 0 or more times. Equivalent to {0,}.
+
+- + :: Matches the preceding expression 1 or more times. Equivalent to {1,}.
+
+- ? :: Matches the preceding expression 0 or 1 time. Equivalent to {0,1}.
+
+       #+cindex:dotAll flag
+       #+cindex:s flag
+       #+cindex:flag, multiline
+- . :: (The decimal point) matches any single character except the newline
+       character, by default.  If the =s= ("dotAll") flag is set to true, it
+       also matches newline characters.
+
+       #+cindex:capturing parentheses
+- (x) :: Matches 'x' and remembers the match.  The parentheses are called
+         /capturing parentheses/.
+
+         #+cindex:non-capturing parentheses
+- (?:x) :: Matches 'x' but does not remember the match. The parentheses are
+           called /non-capturing parentheses/, and let you define
+           subexpressions for regular expression operators to work with.
+
+           #+cindex:lookahead
+- x(?=y) :: Matches 'x' only if 'x' is followed by 'y'. This is called a
+            /lookahead/.
+
+            #+cindex:negated lookahead
+            #+cindex:lookahead, negated
+- x(?!y) :: Matches 'x' only if 'x' is not followed by 'y'. This is called a
+            /negated lookahead/.
+
+            #+cindex:lookbehind
+- (?<=y)x :: Matches x only if x is preceded by y. This is called a
+             /lookbehind/.[fn:13]
+
+             #+cindex:negated lookbehind
+             #+cindex:lookbehind, negated
+- (?<!y)x :: Matches x only if x is not preceded by y. This is called a
+             /negated lookbehind/.[fn:13]
+
+- x|y :: Matches 'x', or 'y' (if there is no match for 'x').
+
+- {n} :: Matches exactly n occurrences of the preceding expression.  N must be
+         a positive integer.
+
+- {n,} :: Matches at least n occurrences of the preceding expression.  N must
+          be a positive integer.
+
+- {n,m} :: Where n and m are positive integers and n <= m.  Matches at least n
+           and at most m occurrences of the preceding expression.  When m is
+           omitted, it's treated as ∞.
+
+           #+cindex:character set
+- [xyz] :: Character set.
+
+- [^xyz] :: Negated character set.
+
+- [\b] :: Matches a backspace (U+0008). You need to use square brackets if you
+          want to match a literal backspace character. (Not to be confused with
+          \b.)
+
+          #+cindex:word boundary
+- \b :: Matches a word boundary.
+
+        A word boundary matches the position between a word character followed
+        by a non-word character, or between a non-word character followed by a
+        word character, or the beginning of the string, or the end of the
+        string.
+
+        #+attr_texinfo: :tag Note
+        #+begin_quote
+        JavaScript's regular expression engine defines a specific set of
+        characters to be "word" characters. Any character not in that set is
+        considered a non-word character. This set of characters is fairly
+        limited: it consists solely of the Roman alphabet in both upper- and
+        lower-case, decimal digits, and the underscore character. Accented
+        characters, such as "é" or "ü" are, unfortunately, treated as non-word
+        characters for the purposes of word boundaries, as are ideographic
+        characters in general.
+        #+end_quote
+
+        #+cindex:non-word boundary
+- \B :: Matches a non-word boundary.  This matches the following cases:
+
+  - Before the first character of the string
+
+  - After the last character of the string
+
+  - Between two word characters
+
+  - Between two non-word characters
+
+  - The empty string
+
+    #+cindex:control character
+- \cX :: Where X is a character ranging from A to Z. Matches a control
+         character in a string, i.e., =/\cM/= matches control-M (U+00D).
+
+         #+cindex:digit
+- \d :: Matches a digit character. Equivalent to [0-9].
+
+        #+cindex:non-digit
+- \D :: Matches a non-digit character. Equivalent to [^0-9].
+
+        #+cindex:form feed
+        #+cindex:@code{\f}
+- \f :: Matches a form feed (U+000C).
+
+        #+cindex:line feed
+        #+cindex:new line
+        #+cindex:@code{\n}
+- \n :: Matches a line feed (U+000A).
+
+        #+cindex:carriage return
+        #+cindex:@code{\r}
+- \r :: Matches a carriage return (U+000D).
+
+        #+cindex:white space
+        #+cindex:@code{\s}
+- \s :: Matches a white space character, including space, tab, form feed, line
+        feed.
+
+        : [\f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]
+
+        #+cindex:non-white spacde
+        #+cindex:@code{\S}
+- \S :: Matches a character other than white space.
+
+        #+cindex:tab
+        #+cindex:@code{\t}
+- \t :: Matches a tab (U+0009).
+
+        #+cindex:vertical tab
+        #+cindex:@code{\v}
+- \v :: Matches a vertical tab (U+000B).
+
+        #+cindex:word character
+        #+cindex:@code{\w}
+- \w :: Matches any alphanumeric character including the underscore.  Equivalent
+        to [A-Za-z0-9_].
+
+        #+cindex:non-word character
+        #+cindex:@code{\W}
+- \W :: Matches any non-word character. Equivalent to [^A-Za-z0-9_].
+
+        #+cindex:back reference
+- \n :: Where n is a positive integer, a back reference to the last substring
+        matching the n parenthetical in the regular expression (counting left
+        parentheses).
+
+        #+cindex:@code{NULL} character
+- \0 :: Matches a =NULL= (U+0000) character.  Do not follow this with another
+        digit, because \0<digits> is an octal escape sequence.  Instead use
+        =\x00=.
+
+        #+cindex:hex
+- \xhh :: Matches the character with the code =hh= (two hexadecimal digits)
+
+          #+cindex:hex
+- \uhhhh :: Matches the character with the code =hhhh= (four hexadecimal
+            digits).
+
+            #+cindex:u flag
+            #+cindex:Unicode value
+- \u{hhhh} :: (only when u flag is set) Matches the character with the Unicode
+              value =hhhh= (hexadecimal digits).
+
+**** Working with Regular Expressions
+
+#+caption:Methods that use regular expressions
+#+name:methods-using-reg-exps
+| Method       | Description                                                                                              |
+|--------------+----------------------------------------------------------------------------------------------------------|
+| exec (RE)    | executes a search for a match in a string; returns an array of information or null on a mismatch         |
+| test (RE)    | tests for a match in a string;  returns true or false;                                                   |
+|--------------+----------------------------------------------------------------------------------------------------------|
+| match (S)    | returns an array containing all of the matches, including capturing groups, or null if no match is found |
+| matchAll (S) | returns an iterator containing all of the matches, including capturing groups                            |
+| search (S)   | tests for a match in a string; returns the index of the match, or -1 if the search fails                 |
+| replace (S)  | executes a search for a match in a string; replaces the matched substring with a replacement substring.  |
+| split (S)    | uses a regular expression or a fixed string to break a string into an array of substrings                |
+|--------------+----------------------------------------------------------------------------------------------------------|
+
+- When you want to know whether a pattern is found in a string, use the ~test~ or
+  ~search~ method;
+
+- for more information (but slower execution) use the ~exec~ or ~match~
+  methods.
+
+  - If you use ~exec~ or ~match~ and if the match succeeds, these methods
+    return an array and update properties of the associated regular expression
+    object and also of the predefined regular expression object, =RegExp=.
+
+  - If the match fails, the ~exec~ method returns =null= (which coerces to
+    =false=).
+
+#+caption:Example demonstrating results of regular expression match
+#+name:regexp-match-results
+#+begin_src js
+var myRe = /d(b+)d/g;
+var myArray = myRe.exec('cdbbdbsbz');
+#+end_src
+
+- ~myArray~ :: 
+  - The matched string and all remembered substrings.
+    : ['dbbd', 'bb', index: 1, input: 'cdbbdbsbz']
+
+  - ~index~ :: The 0-based index of the match in the input string.
+               : 1
+
+  - ~input~ :: The original string.
+               : "cdbbdbsbz"
+
+  - ~[0]~ :: The last matched characters.
+             : "dbbd"
+
+  - ~[1],...,[n]~ :: remembered parenthesized substring matches
+
+- ~myRe~ :: 
+  - ~lastIndex~ :: The index at which to start the next match. (This
+                   property is set only if the regular expression
+                   uses the =g= option)
+
+  - ~source~ :: The text of the pattern.  Updated at the time that the regular
+                expression is created, not executed.
+
+
+{{{heading(Using parenthesized substring matches)}}}
+
+#+cindex:parenthesized substring matches
+Including parentheses in a regular expression pattern causes the corresponding
+submatch to be remembered.  For example, =/a(b)c/= matches the characters 'abc'
+and remembers 'b'.  To recall these parenthesized substring matches, use the
+Array elements [1], ..., [n].  The number of possible parenthesized substrings
+is unlimited. The returned array holds all that were found.
+
+***** Searching with Flags
+#+cindex:flags
+Regular expressions have six optional flags that allow for functionality like
+global and case insensitive searching.  These flags can be used separately or
+together in any order, and are included as part of the regular expression.
+
+#+caption:Regular expression flags
+#+name:regular-expression-flags
+| Flag | Description                                                                                   |
+|------+-----------------------------------------------------------------------------------------------|
+| g    | Global search                                                                                 |
+| i    | Case-insensitive search                                                                       |
+| m    | Multi-line search                                                                             |
+| s    | Allows =.= to match newline characters [fn:13]                                                |
+| u    | "unicode"; treat a pattern as a sequence of unicode code points                               |
+| y    | Perform a "sticky" search that matches starting at the current position in the target string. |
+|------+-----------------------------------------------------------------------------------------------|
+
+The behavior associated with the 'g' flag is different when the ~.exec()~
+method is used.  (The roles of "class" and "argument" get reversed: In the case
+of ~.match()~, the string class (or data type) owns the method and the regular
+expression is just an argument, while in the case of ~.exec()~, it is the
+regular expression that owns the method, with the string being the argument.
+Contrast ~str.match(re)~ versus ~re.exec(str)~.)  The 'g' flag is used with the
+~.exec()~ method to get iterative progression.
 
 *** Error Objects
 
@@ -9659,6 +10034,8 @@ a modern view that is as consistent as possible.
 * Export Settings                                                  :noexport:
 
 * Footnotes
+
+[fn:13] Added in ES2018, not yet supported in Firefox. 
 
 [fn:1] Except "use strict"
 

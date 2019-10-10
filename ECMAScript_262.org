@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-02 23:34
-#+macro:version 0.5.24
+#+Date:2019-10-09 23:36
+#+macro:version 0.5.25
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1512,9 +1512,109 @@ Use a temporary variable with a short name, or an IIFE:
 
 ** Program
 
-** Native Objects
-
+** Native Objects or Standard Built-in Objects
 *** Global Objects
+#+cindex:global objects
+#+cindex:global scope
+/Global objects/ refer to objects in the global scope.  The global scope
+consists of the properties of the global object, including inherited
+properties, if any.
+
+{{{heading(Standard Objects by Category)}}}
+
+**** Value Properties
+These global properties return a simple value; they have no properties or
+methods.
+
+#+cindex:Infinity
+- =Infinity= :: The global =Infinity= property is a numeric value representing
+                infinity.  It is a variable in global scope.  The initial value
+                of Infinity is =Number.POSITIVE_INFINITY=.
+
+                The value =Infinity= (positive infinity) is greater than any
+                other number.  Mathematically, this value behaves the same as
+                infinity; for example, any positive number multiplied by
+                =Infinity= equals Infinity, and any number divided by
+                =Infinity= equals 0.
+
+  #+cindex:NaN
+  #+cindex:Number.NaN
+- =Nan= :: The global =NaN= property is a value representing =Not-A-Number=,
+           the same as the value of =Number.NaN=.  It is the returned value
+           when Math functions fail (~Math.sqrt(-1)~) or when a function trying
+           to parse a number fails (~parseInt("blabla")~).
+
+           #+cindex:Number.isNaN()
+           #+cindex:isNaN()
+           Use ~Number.isNaN()~ or ~isNaN()~ to most clearly determine whether
+           a value is =NaN=.  Note the difference between ~isNaN()~ and
+           ~Number.isNaN()~: the former will return =true= if the value is
+           currently =NaN=, or if it is going to be =NaN= after it is coerced
+           to a number, while the latter will return =true= only if the value
+           is currently =NaN=:
+
+           #+begin_src js
+           isNaN('hello world');        // true
+           Number.isNaN('hello world'); // false
+           #+end_src
+
+  #+cindex:undefined
+- =undefined= :: The global =undefined= property represents the primitive value
+                 =undefined=.  It is one of JavaScript's primitive types.
+
+                 A variable that has not been assigned a value is of type
+                 =undefined=.  A method or statement also returns =undefined=
+                 if the variable that is being evaluated does not have an
+                 assigned value.  A function returns =undefined= if a value was
+                 not returned.
+
+                 You can use =undefined= and the strict equality and inequality
+                 operators to determine whether a variable has a value.
+                 : if (x === undefined) {...} // returns true only if x is undefined
+                 : if (x == undefined)  {...} // returns true if x is undefined or null
+
+                 Alternatively, ~typeof~ can be used; one reason to use
+                 ~typeof~ is that it does not throw an error if the variable
+                 has not been declared.
+                 : if (typeof x === 'undefined') {...}
+
+  #+cindex:null
+- =null= literal :: The value =null= represents the intentional absence of any
+                    object value.  It is one of JavaScript's primitive values.
+
+                    The value =null= is written with a literal: 'null'.  =null=
+                    is not an identifier for a property of the global object,
+                    like =undefined= can be.  Instead, =null= expresses a lack
+                    of identification, indicating that a variable points to no
+                    object.
+                    : null === null        // true
+
+  #+cindex:globalThis
+- =globalThis= :: The global =globalThis= property contains the global =this=
+                  value, which is akin to the global object (currently at
+                  Stage 3).
+
+                  The =globalThis= property provides a standard way of
+                  accessing the global =this= value (and hence the global
+                  object itself) across environments.  Unlike similar
+                  properties such as =window= and =self=, it's guaranteed to
+                  work in window and non-window contexts.  In this way, you can
+                  access the global object in a consistent manner without
+                  having to know which environment the code is being run in.
+                  
+
+**** Function Properties
+**** Fundamental Objects
+**** Numbers and Dates
+**** Text Processing
+**** Indexed Collections
+**** Keyed Collections
+**** Structured Data
+**** Control Abstract Objects
+**** Reflection
+**** Internationalization
+**** WebAssembly
+**** Other
 
 *** Object Objects
 

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-09 23:36
-#+macro:version 0.5.25
+#+Date:2019-10-10 15:38
+#+macro:version 0.5.26
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1617,22 +1617,123 @@ methods.
 **** Other
 
 *** Object Objects
+These are the fundamental, basic objects upon which all other objects are
+based.  This includes objects that represent general objects, functions, and
+errors.
 
-*** Function Objects
+**** =Object=
 
-*** Array Objects
+**** =Function=
+
+**** =Boolean=
+
+**** =Symbol=
+
+**** =Error=
+
+**** =EvalError=
+
+**** =InternalError=
+
+**** =RangeError=
+
+**** =ReferenceError=
+
+**** =SyntaxError=
+
+**** =TypeError=
+
+*** Function Properties
+These global functions---functions which are called globally rather than on an
+object---directly return their results to the caller.
+
+**** ~eval()~
+
+**** ~uneval()~
+
+**** ~isFinite()~
+
+**** ~isNaN()~
+
+**** ~parseFloat()~
+
+**** ~parseInt()~
+
+**** ~decodeUR()~
+
+**** ~decodeURIComponent()~
+
+**** ~encodeURI()~
+
+**** ~encodeURIComponent()~
+
+**** ~escape()~
+
+**** ~unescape()~
+
+*** Array Objects---Indexed Collections
+These objects represent collections of data which are ordered by an index
+value.  This includes (typed) arrays and array-like constructs.
+
+**** Array
+
+**** Int8Array
+
+**** Uint8Array
+
+**** Uint8ClampedArray
+
+**** Int16Array
+
+**** Uint16Array
+
+**** Int32Array
+
+**** Uint32Array
+
+**** Float32Array
+
+**** Float64Array
+
+**** BigInt64Array
+
+**** BigUint64Array
+
+*** Keyed Collections
+These objects represent collections which use keys; the iterable ones such as
+=Map= and =Set= contain elements which are iterable in the order of insertion.
+
+**** =Map=
+
+**** =Set=
+
+**** =WeakMap=
+
+**** =WeakSet=
 
 *** String Objects
+
+**** =String=
 
 *** Boolean Objects
 
 *** Number Objects
 
+**** =Number=
+
+**** =BigInt=
+
 *** Math Objects
+
+**** =Math=
 
 *** Date Objects
 
+**** =Date=
+
 *** RegExp Objects
+
+**** =RegExp=
 RegExp methods:
 
 - ~exec~
@@ -2011,7 +2112,25 @@ Contrast ~str.match(re)~ versus ~re.exec(str)~.)  The 'g' flag is used with the
 
 *** Error Objects
 
-** Errors
+*** Structured Data
+
+**** ArrayBuffer
+
+**** Shared ArrayBuffer
+
+**** Atomics
+
+**** DataView
+
+**** JSON
+
+*** Control Abstraction Objects
+
+*** Reflection
+
+*** Internationalization
+*** WebAssembly
+*** Other
 
 ** About This
 *** this Keyword

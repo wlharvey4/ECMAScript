@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-13 19:29
-#+macro:version 0.5.27
+#+Date:2019-10-13 20:11
+#+macro:version 0.5.28
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3342,6 +3342,284 @@ function is an own property.
 #+end_src
 
 * ECMAScript 5 Features
+The ECMAScript 5 specification contains the following description of its scope:
+
+#+cindex:ECMA-262 5th edition
+{{{heading(The fifth edition of ECMAScript (published as ECMA-262 5th
+edition))}}}
+
+- codifies de facto interpretations of the language specification that have
+  become common among browser implementations and
+
+  #+cindex:ES5 new features
+- adds support for new features that have emerged since the publication of the
+  third edition.  Such features include:
+
+    #+cindex:accessor properties, ES5
+    #+cindex:ES5 accessor properties
+  - accessor properties,
+
+    - getters and 
+    - setters
+
+    #+cindex:reflective creation and inspection of objects, ES5
+    #+cindex:ES5 reflective creation and inspection of objects
+  - reflective creation and inspection of objects,
+
+    - Object.create()
+    - Object.getPrototypeOf()
+    - Object.getOwnPropertyDescriptor()
+    - Object.getOwnPropertyNames()
+    - Object.isExtensible()
+    - Object.isSealed()
+    - Object.isFrozen()
+
+    #+cindex:property attributes, program control, ES5
+    #+cindex:ES5 program control of property attributes
+  - program control of property attributes,
+
+    - Object.defineProperty()
+    - Object.defineProperties()
+    - Object.preventExtensions()
+    - Object.seal()
+    - Object.freeze()
+
+    #+cindex:array manipulation functions, ES5
+    #+cindex:ES5 array manipulation functions
+  - additional array manipulation functions,
+
+    - Array.isArray()
+    - Array.prototype.every()
+    - Array.prototype.filter()
+    - Array.prototype.forEach()
+    - Array.prototype.indexOf()
+    - Array.prototype.lastIndexOf()
+    - Array.prototype.map()
+    - Array.prototype.reduce()
+    - Array.prototype.some()
+
+    #+cindex:JSON object encoding format, ES5
+    #+cindex:ES5 JSON object encoding formation
+  - support for the JSON object encoding format, and
+
+    - JSON.parse()
+    - JSON.stringify() 
+
+    #+cindex:strict mode, ES5
+    #+cindex:ES5 strict mode
+  - a strict mode that provides enhanced error checking and program security.
+
+
+** New Features in ES5
+
+{{{heading(Strict Mode)}}}
+
+#+cindex:strict mode, ES5
+#+cindex:ES5 strict mode
+Putting the following line first in a file or a function switches on the
+so-called strict mode that makes JavaScript a cleaner language by forbidding
+some features, performing more checks, and throwing more exceptions:
+: 'use strict';
+
+{{{heading(Accessors)}}}
+
+#+cindex:getters, setters, ES5
+#+cindex:ES5 getters and setters
+Getters and setters allow you to implement the getting and setting of a
+property via methods.  For example, the following object =obj= contains a
+=getter= for the property =foo=:
+
+#+begin_src js
+var obj = {
+  get foo() { 
+    return 'abc'
+  }
+};
+#+end_src
+
+** Syntactic Changes in ES5
+#+cindex:ES5 syntactic changes
+ECMAScript 5 includes the following syntactic changes:
+
+{{{heading(Reserved words as property keys)}}}
+
+#+cindex:ES5 reserved words
+You can use reserved words (such as =new= and =function=) after the =dot=
+operator and as unquoted property keys in object literals:
+
+: var obj = { new: 'abc' };
+: obj.new // 'abc'
+
+{{{heading(Legal Trailing Commas)}}}
+
+#+cindex:ES5 trailing commas
+Trailing commas in object literals and array literals are legal.
+
+{{{heading(Multiline String Literals)}}}
+
+#+cindex:ES5 multiline string literals
+#+cindex:multiline string literals, ES5
+#+cindex:string literals, multiline, ES5
+String literals can span multiple lines if you escape the end of the line via a
+backslash.
+
+** New Functionality in the Standard Library in ES5
+
+#+cindex:standard library, new in ES5
+#+cindex:ES5 new standard library functionality
+ECMAScript 5 brought several additions to JavaScript’s standard library.  This
+section lists them by category.
+
+*** Metaprogramming
+
+#+cindex:metaprogramming
+#+cindex:prototpyes, get and set, new in ES5
+#+cindex:ES5 get and set prototypes
+{{{heading(Getting and setting prototypes)}}}
+
+  #+cindex:Object.create()
+- Object.create()
+
+  #+cindex:Object.getPrototypeOf()
+- Object.getPrototypeOf()
+
+
+{{{heading(Managing property attributes via property descriptors)}}}
+
+  #+cindex:property descriptors, property attributes
+  #+cindex:property attributes, property descriptors
+  #+cindex:Object.defineProperty()
+- Object.defineProperty()
+
+  #+cindex:Object.defineProperties()
+- Object.defineProperties()
+
+  #+cindex:Object.create()
+- Object.create()
+
+  #+cindex:Object.getOwnPropertyDescriptor()
+- Object.getOwnPropertyDescriptor()
+
+
+{{{heading(Listing properties)}}}
+
+  #+cindex:list properties, new in ES5
+  #+cindex:ES5 list properties
+  #+cindex:Object.keys
+- Object.keys()
+
+  #+cindex:Object.getOwnPropertyNames()
+- Object.getOwnPropertyNames()
+
+
+{{{heading(Protecting objects)}}}
+
+  #+cindex:protecting objects in ES5
+  #+cindex:ES5 protecting objects
+  #+cindex:Object.preventExtensions()
+- Object.preventExtensions()
+
+  #+cindex:Object.isExtensible()
+- Object.isExtensible()
+
+  #+cindex:Object.seal()
+- Object.seal()
+
+  #+cindex:Object.isSealed()
+- Object.isSealed()
+
+  #+cindex:Object.freeze()
+- Object.freeze()
+
+  #+cindex:Object.isFrozen()
+- Object.isFrozen()
+
+
+{{{heading(New Function method)}}}
+
+  #+cindex:Function.prototype.bind()
+- Function.prototype.bind()
+
+*** New Methods
+
+{{{heading(Strings)}}}
+
+  #+cindex:String.prototype.trim()
+- New method ~String.prototype.trim()~
+
+  #+cindex:bracket operator
+- Access characters via the bracket operator =[...]=
+
+
+{{{heading(New Array methods)}}}
+
+  #+cindex:Array methods, new in ES5
+  #+cindex:ES5 new array methods
+  #+cindex:Array.isArray()
+- Array.isArray()
+
+  #+cindex:Array.prototype.every()
+- Array.prototype.every()
+
+  #+cindex:Array.prototype.filter()
+- Array.prototype.filter()
+
+  #+cindex:Array.prototype.forEach()
+- Array.prototype.forEach()
+
+  #+cindex:Array.prototype.indexOf()
+- Array.prototype.indexOf()
+
+  #+cindex:Array.prototype.lastIndexOf()
+- Array.prototype.lastIndexOf()
+
+  #+cindex:Array.prototype.map()
+- Array.prototype.map()
+
+  #+cindex:Array.prototype.reduce()
+- Array.prototype.reduce()
+
+  #+cindex:Array.prototype.some()
+- Array.prototype.some()
+
+
+{{{heading(New Date methods)}}}
+
+  #+cindex:Date methods, new in ES5
+  #+cindex:ES5 new Date methods
+  #+cindex:Date.now()
+- Date.now()
+
+  #+cindex:Date.prototype.toISOString()
+- Date.prototype.toISOString()
+
+*** JSON
+
+{{{heading(Support for JSON)}}}
+
+  #+cindex:JSON support in ES5
+  #+cindex:ES5 JSON support
+  #+cindex:JSON.parse()
+- JSON.parse()
+
+  #+cindex:JSON.stringify()
+- JSON.stringify()
+
+- Some built-in objects have special ~toJSON()~ methods:
+
+    #+cindex:toJSON() methods, ES5
+    #+cindex:ES5 toJSON() methods
+    #+cindex:Boolean.prototype.toJSON()
+  - Boolean.prototype.toJSON()
+
+    #+cindex:Number.prototype.toJSON()
+  - Number.prototype.toJSON()
+
+    #+cindex:String.prototype.toJSON()
+  - String.prototype.toJSON()
+
+    #+cindex:Date.prototype.toJSON()
+  - Date.prototype.toJSON()
 
 ** Object Constructor Methods added by ES5
 
@@ -3590,7 +3868,6 @@ invokes these functions as methods of the object on which they are defined,
 which means that within the body of the function ~this~ refers to the =point=
 object.  So the getter method for the =r= property can refer to the ~x~ and ~y~
 properties as ~this.x~ and ~this.y~.
-
 * ECMAScript 2015 (ES6) Features
 
   - http://es6-features.org/

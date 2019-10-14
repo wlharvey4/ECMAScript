@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-10 15:38
-#+macro:version 0.5.26
+#+Date:2019-10-13 19:29
+#+macro:version 0.5.27
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1728,8 +1728,49 @@ These objects represent collections which use keys; the iterable ones such as
 **** =Math=
 
 *** Date Objects
-
 **** =Date=
+**** Article---Why you shouldn't use Moment.js...
+:PROPERTIES:
+:uri:      https://inventi.studio/en/blog/why-you-shouldnt-use-moment-js
+:author:   InventiStudio
+:date:     March 13, 2019
+:END:
+
+#+cindex:Moment.js
+Everyone of us, at some point realized that or has been warned by older
+friends, if lucky enough.  Whatever the reason was, at the end we all reached
+for external library and the choice was obvious - Moment.js.  The most popular
+JS DateTime library that gave us everything we wanted so much from native Date
+API.
+
+If it is much better than native API, why do we advise you not to use it?
+
+1. It's slow
+2. It's heavy
+3. It's mutable
+4. It's hard to debug
+
+
+{{{heading(Alternatives)}}}
+
+#+cindex:Day.js
+#+cindex:Luxon
+#+cindex:JS-Joda
+#+cindex:Date-Fns
+- Moment.js
+- Day.js
+- Luxon
+- JS-Joda
+- Date-Fns
+
+
+{{{heading(TL;DR)}}}
+
+Moment.js is heavy, slow, mutable and hard to debug, still yet it has some
+advantages.  However you should consider using different library, e.g JS-Joda,
+Luxon, Date-Fns or Day.js, depending on your needs.  And even if you decide to
+stick with Moment.js, be aware of few things, e.g moment(undefined) will give
+you valid date.
 
 *** RegExp Objects
 

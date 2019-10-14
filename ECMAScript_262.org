@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-13 20:11
-#+macro:version 0.5.28
+#+Date:2019-10-13 20:30
+#+macro:version 0.5.29
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3874,6 +3874,54 @@ properties as ~this.x~ and ~this.y~.
   - https://github.com/rse/es6-features
   - [[https://leanpub.com/understandinges6/read/][Understanding ECMAScript 6 by Nicholas Zakas]]
 
+
+#+cindex:ES2015 specification, new features
+The introduction of the ES6 specification lists all new features:
+
+#+begin_quote
+Some of [ECMAScript 6’s] major enhancements include modules, class
+declarations, lexical block scoping, iterators and generators, promises for
+asynchronous programming, destructuring patterns, and proper tail calls.  The
+ECMAScript library of built-ins has been expanded to support additional data
+abstractions including maps, sets, and arrays of binary numeric values as well
+as additional support for Unicode supplemental characters in strings and
+regular expressions.  The built-ins are now extensible via subclassing.
+#+end_quote
+
+** Three Categories of New ES 2015 Features
+
+#+cindex:ES2015 better syntax
+{{{heading(Better syntax for features that already exist)}}}
+
+- Classes
+- Modules
+
+
+#+cindex:ES2015 standard library functionality
+{{{heading(New functionality in the standard library)}}}
+
+- New methods for strings and Arrays
+
+- Promises
+
+- Maps, Sets
+
+
+#+cindex:ES2015 new features
+{{{heading(Completely new features)}}}
+
+  #+cindex:geneators, ES2015
+  #+cindex:ES2015 generators
+- Generators
+
+  #+cindex:proxies, ES2015
+  #+cindex:ES2015 proxies
+- Proxies
+
+  #+cindex:Weak maps, ES2015
+  #+cindex:ES2015 weak maps
+- Weak Maps
+
 ** Review of New Features in ECMAScript 2015
 - [[https://hacks.mozilla.org/category/es6-in-depth/][ES2015 In Depth Articles]] by Jason Orendorff
 
@@ -4485,6 +4533,44 @@ How else can we use the ability of generators to act as iterators?
 So are generators useful?  Sure.  They are an astonshingly easy way to
 implement custom iterators, and iterators are the new standard for data and
 loops throughout ES6.
+
+** Core ES2015 Features
+
+*** From ~var~ to ~let~ and ~const~
+
+*** From IIFEs to Blocks
+
+*** From Concatenating Strings to Tempalate Literals
+
+*** From Function Expressions to Arrow Functions
+
+*** Handling Multiple Return Values
+
+*** From ~for~ to ~forEach~ to ~for-of~
+
+*** Handling Parameter Default Values
+
+*** Handling Named Parameters
+
+*** From ~arguments~ to rest Parameters
+
+*** From ~apply~ to the Spread Operator =...=
+
+*** From ~concat~ to the Spread Operator
+
+*** From Function Expressions in Object Literals to Method Definitions
+
+*** From Constructors to Classes
+
+*** From Custom Error Constructors to Subclasses of =Error=
+
+*** From Objects to Maps
+
+*** New String Methods
+
+*** New Array Methods
+
+*** From CommonJS Modules to ES2015 Modules
 
 ** constants
 

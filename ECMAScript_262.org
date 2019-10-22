@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-13 20:46
-#+macro:version 0.5.30
+#+Date:2019-10-22 10:05
+#+macro:version 0.5.31
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -2174,14 +2174,56 @@ Contrast ~str.match(re)~ versus ~re.exec(str)~.)  The 'g' flag is used with the
 *** Other
 
 ** About This
+#+cindex:this, about
 *** this Keyword
+
+#+cindex:this, keyword
+=this= is a /keyword/, not a variable or property name.  JavaScript syntax does
+not allow it to be assigned to or given a dynamic value.
+
+=this= does *not* have a /dynamic scope/.  This means nested functions do *not*
+inherit the =this= value of their caller.  If a nested function is invoked as a
+/method/, its =this= value is the object it was invoked on.  If a nested
+function is invoked as a /function/ then its =this= value will be either the
+global object (non-strict mode) or =undefined= (strict mode).
+
+If you want to access the =this= value of the outer function, you need to store
+that value into a variable that is in scope for the inner function.  It is
+common to use the variable =self= for this purpose.  For example:
+
+#+caption:To allow a nested function access to 'this', save it as 'self'
+#+name:nested-function-access-to-this
+#+header: :results output :exports both
+#+begin_src js
+  var o = {				// Object o
+      m: function() {			// Method m of Object o
+          var self = this;		// save 'this' as 'self'
+          console.log(this === o);	// 'true'; 'this' is 'o'
+          f();				// Invoke helper function 'f'
+
+          function f() {			// Nested helper function 'f'
+              console.log(this === o);	// 'false'; 'this' is 'global' or 'undefined'
+              console.log(self === o);	// 'true'; 'self' is in f's scope'
+          }
+      }
+  }
+  o.m();					// Invoke the method m on the object o
+#+end_src
+
+#+RESULTS: nested-function-access-to-this
+: true
+: false
+: true
+*** this as Object Reference of Activation Object
+#+cindex:activation object
+#+cindex:this, keyword
 When a function is created, a keyword called ~this~ is created (behind the
 scenes), which links to the object in which the function operates.  ~this~ is
 available to the scope of its function, yet is a reference to the object of
 which that function is a property/method.  The keyword ~this~ looks and acts
 like any other variable, except you can't modify it.  As opposed to arguments
 and any parameters sent to the function, ~this~ is a keyword (not a property)
-in the call/activation object.
+in the *call/activation* object.
 
 #+begin_src js
 var cody = {

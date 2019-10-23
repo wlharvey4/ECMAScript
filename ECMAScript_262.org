@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-23 00:00
-#+macro:version 0.5.34
+#+Date:2019-10-23 00:28
+#+macro:version 0.5.35
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -470,6 +470,22 @@ and behaviour. In ECMAScript, the state and methods are carried by objects, and
 structure, behaviour, and state are all inherited.  All objects that do not
 directly contain a particular property that their prototype contains share that
 property and its value.
+
+** Programming Paradigms
+
+JavaScript is multi-paradigm, object-oriented, and prototype-based, and has
+dynamic typing; it treats functions as first-class citizens, and allows
+functional programming styles.  These characteristics make JavaScript a very
+versatile language, which gives tremendous power to the developer but at the
+same time it causes a fragmentation of programming styles, conventions,
+techniques, and ultimately the patterns of its ecosystem.
+
+There are so many ways to achieve the same result using JavaScript that
+everybody has their own opinion on what the best way is to approach a problem.
+A clear demonstration of this phenomenon is the abundance of frameworks and
+opinionated libraries in the JavaScript ecosystem; probably no other language
+has ever seen so many, especially now that Node.js has given new astonishing
+possibilities to JavaScript and has created so many new scenarios.
 * ECMAScript Specifications
 
   [[http://www.ecma-international.org/publications/standards/Ecma-262.htm][Current edition]].
@@ -8258,6 +8274,31 @@ specification.  Following are a few salient points of the module system:
   #+cindex:import a module
   #+cindex:module import
 - To import a module, use the globally available ~require~ function.
+
+
+*** Wiring Modules
+
+#+cindex:modules, wiring
+One of its biggest advantages is the ability to link these modules together
+using the ~require()~ function.  However, many developers new to Node.js might
+find this confusing; one of the most frequently asked questions is in fact:
+/what's the best way to pass an instance of component X into module Y?/
+
+It should not be surprising that the art of module wiring is one of the most
+controversial and opinionated topics in Node.js.  There are many schools of
+thought influencing this area, but none of them can be considered to possess
+the undisputed truth.  Every approach, in fact, has its pros and cons and they
+often end up mixed together in the same application, adapted, customized, or
+used in disguise under other names.
+
+#+cindex:CommonJS module system
+Node.js provides a great tool for organizing and wiring the components of an
+application together: it's the CommonJS module system.  However, the module
+system alone is not a guarantee of success; if on the one hand, it adds a
+convenient level of indirection between the client module and the dependency,
+then on the other, it might introduce a tighter coupling if not used properly.
+In this section, we will discuss some fundamental aspects of dependency wiring
+in Node.js.
 
 ** Asynchronous Module Definition (AMD)
 #+cindex:Asynchronous Module Definition (AMD)

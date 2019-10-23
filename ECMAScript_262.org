@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-22 13:11
-#+macro:version 0.5.32
+#+Date:2019-10-22 21:43
+#+macro:version 0.5.33
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -4039,6 +4039,8 @@ properties as ~this.x~ and ~this.y~.
   - http://es6-features.org/
   - https://github.com/rse/es6-features
   - [[https://leanpub.com/understandinges6/read/][Understanding ECMAScript 6 by Nicholas Zakas]]
+  - [[https://node.green/][node.green]] --- Node.js ES2015 Support
+  - [[https://kangax.github.io/compat-table/es6/][Kangax's compat-table]] and [[https://github.com/kangax/compat-table][kangax/compat-table on Github]]
 
 
 #+cindex:ES2015 specification, new features
@@ -4053,6 +4055,34 @@ abstractions including maps, sets, and arrays of binary numeric values as well
 as additional support for Unicode supplemental characters in strings and
 regular expressions.  The built-ins are now extensible via subclassing.
 #+end_quote
+
+{{{heading(The Three Groups in Node.js)}}}
+
+#+cindex:groups
+#+cindex:shipping
+#+cindex:staged
+#+cindex:in-progress
+All ECMAScript 2015 (ES6) features are split into three groups for:
+
+- Shipping :: All shipping features, which V8 considers stable, are turned on
+              by default on Node.js and do NOT require any kind of runtime
+              flag.
+
+- Staged :: Staged features, which are almost-completed features that are not
+            considered stable by the V8 team, require a runtime flag:
+            {{{option(--harmony)}}}.
+
+- In Progress :: In progress features can be activated individually by their
+                 respective harmony flag, although this is highly discouraged
+                 unless for testing purposes. Note: these flags are exposed by
+                 V8 and will potentially change without any deprecation notice.
+
+
+#+cindex:node.green
+#+cindex:kangax
+#+cindex:compat-table
+The website [[https://node.green/][node.green]] provides an excellent overview over supported ECMAScript
+features in various versions of Node.js, based on [[https://kangax.github.io/compat-table/es6/][kangax's compat-table]].
 
 ** Three Categories of New ES 2015 Features
 
@@ -10784,6 +10814,25 @@ ES5 via Babel 6.  It covers the following scenarios:
 - Deploying ES6 in browsers via Babel and webpack
 - Deploying ES6 in Node.js, by statically or dynamically compiling it via
   Babel.
+
+* Some JavaScript Quizzes
+
+** So, you think you know JavaScript?
+- http://dmitry.baranovskiy.com/post/91403200
+
+
+Quick test for real understanding of JavaScript core beyond closures and
+scopes. Here five small scripts.
+
+- [[https://humanwhocodes.com/blog/2010/01/26/answering-baranovskiys-javascript-quiz/][Answering Baranovskiy’s JavaScript quiz]]
+
+** Javascript quiz
+Perfection Kills by kangax
+- http://perfectionkills.com/javascript-quiz/
+
+** Javascript quiz ES6 edition
+Perfection Kills by kangax
+- http://perfectionkills.com/javascript-quiz-es6/
 
 * Exploring ES2016 and ES2017
 - https://exploringjs.com/es2016-es2017.html

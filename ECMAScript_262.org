@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-23 00:28
-#+macro:version 0.5.35
+#+Date:2019-10-23 22:42
+#+macro:version 0.5.36
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -533,7 +533,6 @@ Editorial changes ``to keep it fully aligned with ISO/IEC 16262.''
    - try/catch exception handling
    - tighter definition of errors
    - formatting for numeric output
-
 
 *** Brief History
 - https://www.ecma-international.org/publications/files/ECMA-ST-ARCH/ECMA-262,%203rd%20edition,%20December%201999.pdf
@@ -1618,7 +1617,6 @@ methods.
                   access the global object in a consistent manner without
                   having to know which environment the code is being run in.
                   
-
 **** Function Properties
 **** Fundamental Objects
 **** Numbers and Dates
@@ -10988,8 +10986,9 @@ a modern view that is as consistent as possible.
 #+texinfo_dir_desc:Training in the JavaScript language
 #+texinfo_printed_title:Secrets of the JavaScript Ninja
 
-* Export Settings                                                  :noexport:
-
+* Settings                                                         :noexport:
+#+startup: content 3
+#+options: H:4 ':t
 * Footnotes
 
 [fn:13] Added in ES2018, not yet supported in Firefox. 

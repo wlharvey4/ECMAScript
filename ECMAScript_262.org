@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-23 22:42
-#+macro:version 0.5.36
+#+Date:2019-10-24 04:07
+#+macro:version 0.5.37
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -3588,7 +3588,6 @@ edition))}}}
     #+cindex:strict mode, ES5
     #+cindex:ES5 strict mode
   - a strict mode that provides enhanced error checking and program security.
-
 
 ** New Features in ES5
 
@@ -7815,7 +7814,6 @@ options:
   });
 #+end_src
 
-
 ** ESTree
 - https://github.com/estree/estree
 * ECMAScript Static Code Analysis
@@ -8272,7 +8270,6 @@ specification.  Following are a few salient points of the module system:
   #+cindex:import a module
   #+cindex:module import
 - To import a module, use the globally available ~require~ function.
-
 
 *** Wiring Modules
 
@@ -9883,7 +9880,9 @@ JavaScript’s fundamental datatype is the /object/.
   - The /value/ may be any JavaScript value, or (in ECMAScript 5) it may be a
     getter or a setter function (or both).
 
-{{{heading(Property Attributes)}}}
+
+**** Attributes
+***** Property Attributes
 
   #+cindex:property attributes
 - In addition to its name and value, each property has associated values that
@@ -9907,7 +9906,7 @@ JavaScript’s fundamental datatype is the /object/.
   writable, enumerable, and configurable.  In ECMAScript 5, you can configure
   the attributes of your properties.
 
-{{{heading(Object Attributes)}}}
+***** Object Attributes
 
   #+cindex:object properties
 - In addition to its properties, every object has three associated /object
@@ -9925,6 +9924,7 @@ JavaScript’s fundamental datatype is the /object/.
   - An object’s /extensible flag/ specifies (in ECMAScript 5) whether new
     properties may be added to the object.
 
+**** Categories and Types
 
 Finally, here are some terms we’ll use to distinguish among three broad
 categories of JavaScript objects and two types of properties:
@@ -9951,12 +9951,189 @@ categories of JavaScript objects and two types of properties:
   #+cindex:inherited property
 - An /inherited property/ is a property defined by an object’s prototype
   object.
+
+**** Creating Objects
+
+Objects are created with:
+
+- object literals ::
+     a comma-separated list of colon-separated name:value pairs, enclosed
+     within curly braces
+
+  - property name :: a JavaScript identifier or a string literal (the empty
+                     string is allowed); property names that are reserved words
+                     must be quoted in ECMAScript 3, but reserved words may be
+                     used as property names without quoting in ECMAScript 5.
+
+  - property value :: any JavaScript expression; the value of the expression
+                      (it may be a primitive value or an object value) becomes
+                      the value of the property
+
+- ~new~ keyword :: ~new~ <Function-Constructor>()
+
+  - constructor :: A function used in this way; it serves to initialize a
+                   newly-created object
+
+  - prototype :: an object associated with another object and from which the
+                 other object inherits its properties
+
+- ~Object.create(<prototype>, [<properties>])~ ::
+     a method in ECMAScript 5 that creates a new object using its first
+     argument as the prototype of that object, and its optional second argument
+     to describe the properties of the new object.
+
+***** Object Literals
+#+cindex:object literal
+An object literal is an expression that creates and initializes a new and
+distinct object each time it is evaluated.  The value of each property is
+evaluated each time the literal is evaluated.  This means that a single object
+literal can create many new objects if it appears within the body of a loop in
+a function that is called repeatedly, and that the property values of these
+objects may differ from each other.
+
+***** Creating Objects with New
+#+cindex:@code{new} operator
+#+cindex:constructor, built-in
+#+cindex:built-in constructor
+The ~new~ operator creates and initializes a new object.  Core JavaScript
+includes built-in constructors for native types. For example:
+
+: new Object() // same as {}
+
+: new Array() // same as []
+
+: new Date()
+
+: new RegExp(<string>)
+
+It is common to define your own constructor functions to initialize newly
+created objects.
+
+****** Prototypes
+#+cindex:prototype
+#+cindex:@code{Object.prototype}
+Every JavaScript object has a second JavaScript object (or null, but this is
+rare) associated with it.  This second object is known as a /prototype/, and
+the first object inherits properties from the prototype.
+
+All objects created by /object literals/ have the same prototype object, and we
+can refer to this prototype object in JavaScript code as =Object.prototype=.
+=Object.prototype= is one of the rare objects that has no prototype: it does
+not inherit any properties.  Other prototype objects are normal objects that do
+have a prototype.  All of the built-in constructors (and most user-defined
+constructors) have a prototype that inherits from =Object.prototype=.
+
+Objects created using the ~new~ keyword and a constructor invocation use the
+value of the =prototype= property of the constructor function as their
+prototype.  So the object created by ~new Object()~ inherits from
+=Object.prototype= just as the object created by ={}= does.  Similarly, the
+object created by new ~Array()~ uses =Array.prototype= as its prototype, and
+the object created by ~new Date()~ uses =Date.prototype= as its prototype.
+Date.prototype inherits properties from =Object.prototype=,so a =Date= object
+created by ~new Date()~ inherits properties from both =Date.prototype= and
+=Object.prototype=.
+
+prototype chain :: linked series of prototype objects
+
+***** Object.create()
+
+#+cindex:@code{Object.create()}
+#+cindex:ECMAScript 5
+#+attr_texinfo: :options Object create (PROTOTYPE [,PROPERTIES])
+#+begin_defmethod
+A static method defined in ECMAScript 5 that is used to create a new object
+using PROTOTYPE as the prototype for the new object and optional PROPERTIES to
+describe the properties of the new object.
+
+~Object.create()~ is a /static function/, not a method invoked on individual
+objects.  To use it, simply pass the desired prototype object:
+
+: var o1 = Object.create({x:1, y:2}); // o1 inherits properties x and y.
+
+If you want to create an ordinary empty object (like the object returned by ={}=
+or ~new Object()~), pass =Object.prototype=:
+
+: var o3 = Object.create(Object.prototype); // o3 is like {} or new Object().
+#+end_defmethod
+
+{{{heading(The ~inherit~ Function)}}}
+
+#+cindex:ECMAScript 3
+The ability to create a new object with an arbitrary prototype (put another
+way: the ability to create an “heir” for any object) is a powerful one, and we
+can simulate it in ECMAScript 3 with a function like ~inherit()~.
+
+#+caption: Creating a new object that inherits from a prototype
+#+name:inherit-function
+#+begin_src js -n
+  // inherit() returns a newly created object that inherits properties from the
+  // prototype object p.  It uses the ECMAScript 5 function Object.create() if
+  // it is defined, and otherwise falls back to an older technique.
+
+  function inherit(p) {
+      if (p == null) throw TypeError();	// p must be a non-null object
+      if (Object.create)			// If Object.create() is defined...
+          return Object.create(p);	// then just use it.
+      var t = typeof p;			// Otherwise do some more type checking
+      if (t !== "object" && t !== "function")
+          throw TypeError();
+      function f() {};			// Define a dummy constructor function.
+      f.prototype = p;			// Set its prototype property to p.
+      return new f();			// Use f() to create an "heir" of p.
+  }
+#+end_src
+
+This ~inherit()~ function returns a new object that inherits the properties of
+the argument object.[fn::~inherit()~ is not a full replacement for
+~Object.create()~: it does not allow the creation of objects with null
+prototypes, and it does not accept the optional second argument that
+~Object.create()~ does.][fn::Douglas Crockford is generally credited as the
+first to propose a function that creates objects in this way. See [[http://crockford.com/javascript/prototypal.html][Prototypal
+Inheritance in JavaScript]]]
+
+One use for the ~inherit()~ function is when you want to guard against
+unintended (but nonmalicious) modification of an object by a library function
+that you don’t have control over.  Instead of passing the object directly to
+the function, you can pass an heir.  If the function reads properties of the
+heir, it will see the inherited values.  If it sets properties, however, those
+properties will only affect the heir, not your original object:
+
+#+begin_src js
+var o = { x: "don't change this value" };
+library_function(inherit(o)); // Guard against accidental modifications of o
+#+end_src
+
 *** Arrays
 
 *** Functions
 
 *** Classes and Modules
+#+cindex:prototypes
+**** Classes and Prototypes
+- class ::
+           a set of objects that inherit properties from the same prototype
+           object
 
+- prototype object ::
+     the central feature of a class.  In Example 6-1 we defined an inherit()
+     function that returns a newly created object that in- herits from a
+     specified prototype object. If we define a prototype object, and then use
+     inherit() to create objects that inherit from it, we have defined a
+     JavaScript class.
+
+- initialization ::
+                    Usually, the instances of a class require further
+                    initialization, and it is common to define a function that
+                    creates and initializes the new object.
+
+**** Classes and Constructors
+**** Java-Style Classes in JavaScript
+**** Augmenting Classes
+**** Classes and Types
+**** Object-Oriented Techniques
+**** Subclasses
+**** Classes in ES5
+**** Modules
 *** Regular Expressions
 
 *** JavaScript Subsets and Extensions
@@ -10943,6 +11120,11 @@ a modern view that is as consistent as possible.
 :END:
 #+texinfo:@listoffloats Table
 
+* List of Programs
+:PROPERTIES:
+:unnumbered: t
+:END:
+#+texinfo:@listoffloats Listing
 * Macro Definitions
 #+macro:heading @@html:<h2>@@@@texinfo:@heading @@$1@@html:</h2>@@
 #+macro:subheading @@html:<h3>@@@@texinfo:@subheading @@$1@@html:</h3>@@
@@ -10950,6 +11132,7 @@ a modern view that is as consistent as possible.
 #+macro:noindent @@texinfo:@noindent @@
 #+macro:var @@texinfo:@var{@@$1@@texinfo:}@@
 #+macro:command @@texinfo:@command{@@$1@@texinfo:}@@
+#+macro:option @@texinfo:@option{@@$1@@texinfo:}@@
 
 ** Export to HTML
 *** HTML Options

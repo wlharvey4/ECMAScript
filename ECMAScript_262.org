@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-28 09:48
-#+macro:version 0.5.41
+#+Date:2019-10-28 10:06
+#+macro:version 0.5.42
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1152,6 +1152,10 @@ chain of =o=, then =o= is not an instance of =f= and ~instanceof~ returns
 The =typeof= operator returns a string indicating the type of the unevaluated
 operand.
 
+~typeof~ is a unary operator that is placed before its single operand, which
+can be of any type.  Its value is a string that specifies the type of the
+operand.
+
 : typeof operand
 : typeof(operand)
 
@@ -1173,7 +1177,30 @@ operand.
 | Any other object | "object"    |
 |------------------+-------------|
 
+You might use the ~typeof~ operator in an expression like this:
+
+: (typeof value == "string") ? "'" + value + "'" : value
+
+The ~typeof~ operator is also useful when used with the ~switch~ statement.
+
 **** Notes on the typeof Operator
+
+{{{subheading(Null Returns “object”)}}}
+
+~typeof~ returns “object” if the operand value is null.  If you want to
+distinguish =null= from objects, you’ll have to explicitly test for this
+special-case value.
+
+{{{subheading(Difficultity with Objects)}}}
+
+Because ~typeof~ evaluates to “object” for all object and array values other
+than functions, it is useful only to distinguish objects from other, primitive
+types.  In order to distinguish one class of object from another, you must use
+other techniques, such as:
+
+- ~instanceof~ operator
+- ~class~ attribute
+- =constructor= property
 
 {{{subheading(new Operator)}}}
 

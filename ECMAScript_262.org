@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-28 10:06
-#+macro:version 0.5.42
+#+Date:2019-10-28 14:23
+#+macro:version 0.5.43
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -10317,6 +10317,16 @@ JavaScript’s fundamental datatype is the /object/.
     getter or a setter function (or both).
 
 
+**** Creating Object
+
+Objects can be created with:
+
+- object literals
+
+- ~new~ keyword
+
+- ~Objectx.create()~
+
 **** Attributes
 ***** Property Attributes
 
@@ -10344,8 +10354,16 @@ JavaScript’s fundamental datatype is the /object/.
 
 ***** Object Attributes
 
+#+cindex:object attributes
+#+cindex:attributes of objects
+Every object has the associated /attributes/:
+
+- prototype
+- class
+- extensible
+
   #+cindex:object properties
-- In addition to its properties, every object has three associated /object
+- In addition to its /properties/, every object has three associated /object
   attributes/:
 
   #+cindex:prototype reference
@@ -10356,9 +10374,95 @@ JavaScript’s fundamental datatype is the /object/.
   - An object’s /class/ is a string that categorizes the type of an object.
 
     #+cindex:extensible flag
-    #+cindex:ECMAScript 5 feature
+    #+cindex:ECMAScript 5 feature, extensible flag
   - An object’s /extensible flag/ specifies (in ECMAScript 5) whether new
     properties may be added to the object.
+
+****** Prototype Attribute
+
+#+cindex:prototype attribute
+An object’s /prototype/ attribute specifies the object from which it inherits
+properties. See Prototypes.
+
+{{{heading(Prototype Attribute of an Object)}}}
+
+#+cindex:prototype attribute of an object
+This is such an important attribute that we’ll usually simply say “the
+PROTOTYPE of =o=” rather than “the prototype attribute of =o=.”
+
+Also, it is important to understand that when =prototype= appears in =code=
+font, it refers to an ordinary object property, not to the PROTOTYPE ATTRIBUTE.
+
+: o.prototype // an ordinary object property
+
+{{{heading(The Prototype Attribvute is Set When an Object is Created)}}}
+
+#+cindex:prototype attribute
+#+cindex:attribute, prototype
+The /prototype/ ATTRIBUTE is set when an object is created.
+
+Objects created from object literals (={}=) use =Object.prototype= as their
+prototype.
+
+#+cindex:prototype property
+#+cindex:property, prototype
+#+cindex:@code{new} keyword
+Objects created with ~new~ use the value of the =prototype= PROPERTY of their
+constructor function as their prototype.  In ECMAScript 5, you can query the
+prototype of any object by passing that object to ~Object.getPrototypeOf()~
+function.  There is no equivalent function in ECMAScript 3, but it is often
+possible to determine the prototype of an object o using the expression
+~o.constructor.prototype~.  Objects created with a ~new~ expression usually
+inherit a =constructor= PROPERTY that refers to the constructor function used
+to create the object.  Constructor functions have a =prototype= PROPERTY that
+specifies the prototype for objects created using that constructor.
+
+: function A() {}
+: Object.getOwnPropertyNames(A) // ==> [ 'length', 'name', 'arguments', 'caller', 'prototype' ]
+:
+: var a = new A() // objects created with new inherit a 'constructor' PROPERTY
+:                 // that refers to the constructor function;
+:                 // constructor functions have a prototype PROPERTY
+:                 // that specifies the prototype for created objects
+:
+: a.constructor        // [Function: A]
+: typeof a.constructor // ==> 'function'
+: a.constructor === A  // ==> true
+
+: a.__proto__              === A.prototype // ==> true
+: a.constructor.prototype  === A.prototype // ==> true
+: Object.getPrototypeOf(a) === A.prototype // ==> true
+
+And objects created with ~Object.create()~ use the first argument to that
+function (which may be null) as their prototype.  Objects created by object
+literals or by ~Object.create()~ have a =constructor= property that refers to
+the ~Object()~ constructor.  Thus, ~constructor.prototype~ refers to the
+correct prototype for object literals.
+
+{{{heading(isPrototypeOf() Method)}}}
+
+#+cindex:@code{isPrototypeOf()} methodn
+To determine whether one object is the prototype of (or is part of the
+prototype chain of) another object, use the ~isPrototypeOf()~ method.  To find
+out if =p= is the prototype of =o= write:
+: p.isPrototypeOf(o)
+
+~isPrototypeOf()~ performs a function similar to the ~instanceof~ operator.
+
+{{{heading(__proto__ Property)}}}
+
+#+cindex:@code{__proto__} property
+Mozilla’s implementation of JavaScript has exposed the prototype attribute
+through the specially named =__proto__= property, and you can use this property
+to directly query or set the prototype of any object.
+
+****** class Attribute
+
+#+cindex:class attribute
+
+****** extensible Attribute
+
+#+cindex:extensible attribute
 
 **** Categories and Types
 
@@ -10447,11 +10551,12 @@ created objects.
 
 ****** Prototypes
 #+cindex:prototype
-#+cindex:@code{Object.prototype}
 Every JavaScript object has a second JavaScript object (or null, but this is
 rare) associated with it.  This second object is known as a /prototype/, and
 the first object inherits properties from the prototype.
 
+#+cindex:object literal
+#+cindex:@code{Object.prototype}
 All objects created by /object literals/ have the same prototype object, and we
 can refer to this prototype object in JavaScript code as =Object.prototype=.
 =Object.prototype= is one of the rare objects that has no prototype: it does
@@ -10459,6 +10564,9 @@ not inherit any properties.  Other prototype objects are normal objects that do
 have a prototype.  All of the built-in constructors (and most user-defined
 constructors) have a prototype that inherits from =Object.prototype=.
 
+#+cindex:@code{prototype} property
+#+cindex:constructor invocation
+#+cindex:@code{new} keyword
 Objects created using the ~new~ keyword and a constructor invocation use the
 value of the =prototype= property of the constructor function as their
 prototype.  So the object created by ~new Object()~ inherits from

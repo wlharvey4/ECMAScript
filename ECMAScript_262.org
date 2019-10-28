@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-28 09:18
-#+macro:version 0.5.40
+#+Date:2019-10-28 09:48
+#+macro:version 0.5.41
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1111,7 +1111,7 @@ constructor appears anywhere in the prototype chain of an object.  Said another
 way, the =instanceof= operator tests the presence of ~constructor.prototype~ in
 object's prototype chain.
 
-: <object> instanceof <constructor>
+: <object> instanceof <constructor-function>
 
 #+cindex:@code{Object.setPrototypeOf}
 #+pindex:@code{__proto__} property
@@ -1119,6 +1119,33 @@ Note that the value of an =instanceof= test can change based on changes to the
 =prototype= property of constructors, and it can also be changed by changing an
 object prototype using ~Object.setPrototypeOf~.  It is also possible using the
 non-standard =__proto__= pseudo-property.
+
+The ~instanceof~ operator expects a left-side operand that is an object and a
+right-side operand that identifies a class of objects.  The operator evaluates
+to =true= if the left-side object is an instance of the right-side class and
+evaluates to =false= otherwise.
+
+#+cindex:classes of objects
+#+cindex:object classes
+#+cindex:constructor function
+In JavaScript, classes of objects are defined by the constructor function that
+initializes them.  Thus, the right-side operand of ~instanceof~ should be a
+function.  If the left-side operand of ~instanceof~ is not an object,
+~instanceof~ returns =false=.  If the right-hand side is not a function, it
+throws a =TypeError=.
+
+{{{heading(instanceof and the Prototype Chain)}}}
+
+#+cindex:prototype chain
+#+cindex:inheritance mechanism
+In order to understand how the ~instanceof~ operator works, you must understand
+the “prototype chain.”  This is JavaScript’s inheritance mechanism.  To
+evaluate the expression ~o instanceof f~, JavaScript evaluates ~f.prototype~,
+and then looks for that value in the prototype chain of =o=.  If it finds it,
+then =o= is an instance of =f= (or of a superclass of =f=) and the operator
+returns =true=.  If ~f.prototype~ is not one of the values in the prototype
+chain of =o=, then =o= is not an instance of =f= and ~instanceof~ returns
+=false=.
 
 *** Typeof Operator
 #+cindex:@code{typeof} operator

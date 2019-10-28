@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-28 08:53
-#+macro:version 0.5.39
+#+Date:2019-10-28 09:18
+#+macro:version 0.5.40
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -891,6 +891,143 @@ This specification defines APIs for console debugging facilities.  Last Updated
 ** Execution Contexts
 
 ** Expressions
+An /expression/ is a phrase of JavaScript that a JavaScript interpreter can
+*evaluate* to produce a value.
+
+- A constant embedded literally in your program is a very simple kind of
+  expression.
+
+- A variable name is also a simple expression that evaluates to whatever value
+  has been assigned to that variable.
+
+- Complex expressions are built from simpler expressions.
+
+  - An array access expression, for example, consists of one expression that
+    evaluates to an array followed by an open square bracket, an expression
+    that evaluates to an integer, and a close square bracket.  This new, more
+    complex expression evaluates to the value stored at the specified index of
+    the specified array.
+
+  - A function invocation expression consists of one expression that evaluates
+    to a function object and zero or more additional expressions that are used
+    as the arguments to the function.
+
+
+The most common way to build a complex expression out of simpler expressions is
+with an /operator/.  An operator combines the values of its operands (usually two
+of them) in some way and evaluates to a new value.  Not all expressions require
+or use operators, however.
+
+*** Primary Expressions
+#+cindex:primary expressions
+The simplest expressions, known as /primary expressions/, are those that stand
+alone---they do not include any simpler expressions.  Primary expressions in
+JavaScript are
+
+- constant or literal values, ::
+  - number literals
+  - string literals
+  - regular expression literals
+
+- certain language keywords, ::
+     Some of JavaScript’s reserved words are primary expressions:
+
+  - =true=
+
+  - =false=
+
+  - =null=
+
+  - =this=
+
+- variable references ::
+     #+cindex:strict mode
+     #+cindex:ECMAScript 5
+     the third type of primary expression is the bare variable reference.  When
+     any identifier appears by itself in a program, JavaScript assumes it is a
+     variable and looks up its value.  If no variable with that name exists,
+     the expression evaluates to the =undefined= value.  In the strict mode of
+     ECMAScript 5, however, an attempt to eval- uate a nonexistent variable
+     throws a ReferenceError instead.
+
+*** Object and Array Initializers
+#+cindex:initializers
+#+cindex:object initializers
+#+cindex:array initializers
+Object and array initializers are expressions whose value is a newly created
+object or array.  These initializer expressions are sometimes called “object
+literals” and “array literals.”
+
+Unlike true literals, however, they are not primary expressions, because they
+include a number of subexpressions that specify property and element values.
+
+**** Array Initializers
+#+cindex:array initializer
+#+cindex:nested arrays
+#+cindex:arrays, nested
+An array initializer is a comma-separated list of expressions contained within
+square brackets.  The value of an array initializer is a newly created array.
+The elements of this new array are initialized to the values of the
+comma-separated expressions.  The element expressions in an array initializer
+can themselves be array initializers, which means that these expressions can
+create nested arrays.  Undefined elements can be included in an array literal
+by simply omitting a value between commas.
+
+**** Object Initializers
+#+cindex:object initializer
+Object initializer expressions are like array initializer expressions, but the
+square brackets are replaced by curly brackets, and each subexpression is
+prefixed with a property name and a colon.  Object literals can be nested.  The
+property names in object literals may be strings rather than identifiers (this
+is useful to specify property names that are reserved words or are otherwise
+not legal identifiers).
+
+**** Function Definition Expressions
+#+cindex:function definition expressions
+A function definition expression defines a JavaScript function, and the value
+of such an expression is the newly defined function.  A function definition
+expression typically consists of the keyword function followed by a
+comma-separated list of zero or more identifiers (the parameter names) in
+parentheses and a block of JavaScript code (the function body) in curly braces.
+A function definition expression can also include a name for the function.
+Functions can also be defined using a function statement rather than a function
+expression.
+
+**** Property Access Expressions
+
+**** Invocation Expressions
+
+**** Object Creation Expressions
+#+cindex:object creation expression
+#+cindex:constructor
+#+cindex:initialize object
+An object creation expression creates a new object and invokes a function
+(called a constructor) to initialize the properties of that object.  Object
+creation expressions are like invocation expressions except that they are
+prefixed with the keyword =new=:
+
+: new Point(2,3)
+
+If no arguments are passed to the constructor function in an object creation
+expression, the empty pair of parentheses can be omitted.
+
+When an object creation expression is evaluated, JavaScript:
+
+1. first creates a new empty object, just like the one created by the object
+   initializer ={}=.
+
+   #+cindex:@code{this} value, object creation
+2. Next, it invokes the specified function with the specified arguments,
+   passing the new object as the value of the ~this~ keyword.
+
+3. The function can then use ~this~ to initialize the properties of the newly
+   created object.
+
+4. Functions written for use as constructors do not return a value, and the
+   value of the object creation expression is the newly created and initialized
+   object.  If a constructor does return an object value, that value becomes
+   the value of the object creation expression and the newly created object is
+   discarded.
 
 ** Operators
 #+cindex:operators

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-28 10:06
-#+macro:version 0.5.42
+#+Date:2019-10-28 21:29
+#+macro:version 0.5.44
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -427,16 +427,16 @@ assigning initial values to their properties.
 #+cindex:protype-based inheritance
 #+cindex:inheritance, prototype-based
 #+cindex:properties, shared
-Each constructor has a /Prototype/ property that is used to implement
+Each constructor has a =prototype= property that is used to implement
 prototype-based inheritance and shared properties.
 
 {{{subheading(new Expressions)}}}
 
 #+cindex:@code{new} expressions
 Objects are created by using constructors in ~new~ expressions.  Invoking a
-constructor without using new has consequences that depend on the
-constructor. For example, =String("A String")= produces a primitive string, not
-an object.
+constructor without using ~new~ has consequences that depend on the
+constructor.  For example, =String("A String")= produces a primitive string,
+not an object.
 
 {{{heading(Prototype Chain)}}}
 
@@ -444,7 +444,7 @@ an object.
 #+cindex:prototype
 #+cindex:object
 Every constructor has an associated prototype, and every object created by that
-constructor has an implicit reference to the prototype (called the object’s
+constructor has an /implicit/ reference to the prototype (called the object’s
 prototype) associated with its constructor.  A prototype may have a non-null
 implicit reference to its prototype, and so on.  This is called the prototype
 chain.
@@ -470,6 +470,30 @@ and behaviour. In ECMAScript, the state and methods are carried by objects, and
 structure, behaviour, and state are all inherited.  All objects that do not
 directly contain a particular property that their prototype contains share that
 property and its value.
+
+** Brief History of [ [ Prototype ] ]
+
+#+cindex:@code{[[Prototype]]} history
+There are now many ways to manage =[ [Prototype] ]=.  Why? For historical
+reasons.
+
+- =prototype= :: The =prototype= property of a constructor function has worked
+               since very ancient times.
+
+- =Object.create()= :: in the year 2012, ~Object.create()~ appeared in the
+     standard.  It gave the ability to create objects with a given prototype,
+     but did not provide the ability to get/set it.
+
+- =__proto__= :: So browsers implemented the non-standard =__proto__= accessor
+                 that allowed the user to get/set a prototype at any time.
+
+- ~Object.getPrototypeOf()~ :: ECMAScript 5.1 (2012) defined the
+     ~Object.getPrototypeOf()~ function to return an object’s =[ [Prototype] ]=
+     property.
+
+- ~Object.setPrototypeOf()~ :: ECMAScript 2015 defined the
+     ~Object.setPrototypeOf()~ function to set an object’s =[ [Prototype] ]
+     property.
 
 ** Programming Paradigms
 
@@ -3710,8 +3734,15 @@ top of a prototypal model.
 - ~Object.setPrototypeOf(<object>)~ :: set a reference to an object's prototype
      object.
 
-- ~<object>.__proto__~ :: non-stanard JavaScript property referencing the
-     object's prototype.
+- ~<object>.__proto__~ :: non-stanard JavaScript pseudo-property referencing
+     the object's prototype.  =__proto__= is a way to access =[ [Prototype] ]=,
+     it is not =[ [Prototype] ]= itself.  That is, =__proto__= is not a
+     property of an object, but an accessor property of =Object.prototype=:
+
+     : Object.prototype == { get __proto__ : function() {}, set __proto__ : function() }
+
+     So if =obj.__proto__= is read or set, the corresponding getter/setter is
+     called from its prototype, and it gets/sets =[ [ Prototype ] ]=.
 
 - ~<func>.prototype~ :: property of functions which specifies the prototype to be
      assigned to all instances of objects created by the given function when
@@ -5312,11 +5343,11 @@ var chars = str.split(""); // [ "f", "o", "o" ]
 ** Enhanced Object Properties
 #+cindex:Object global
 One of the design goals of ECMAScript beginning with ECMAScript 5 was to avoid
-creating new global functions or methods on Object.prototype, and instead try
+creating new global functions or methods on =Object.prototype=, and instead try
 to find objects on which new methods should be available.  As a result, the
-Object global has received an increasing number of methods when no other
+=Object= global has received an increasing number of methods when no other
 objects are more appropriate.  ECMAScript 6 introduces a couple new methods on
-the Object global that are designed to make certain tasks easier.
+the =Object= global that are designed to make certain tasks easier.
 
 *** ~Object.assign~
 The ~Object.assign()~ method is used to copy the values of all =enumerable own

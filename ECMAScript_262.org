@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-28 21:34
-#+macro:version 0.5.44
+#+Date:2019-10-28 23:12
+#+macro:version 0.5.45
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -10347,189 +10347,14 @@ JavaScript’s fundamental datatype is the /object/.
   - The /value/ may be any JavaScript value, or (in ECMAScript 5) it may be a
     getter or a setter function (or both).
 
-
-**** Creating Object
-
-Objects can be created with:
-
-- object literals
-
-- ~new~ keyword
-
-- ~Objectx.create()~
-
-**** Attributes
-***** Property Attributes
-
-  #+cindex:property attributes
-- In addition to its name and value, each property has associated values that
-  we’ll call /property attributes/:
-
-    #+cindex:writable attribute
-  - The /writable attribute/ specifies whether the value of the property can be
-    set.
-
-    #+cindex:enumerable attribute
-  - The /enumerable attribute/ specifies whether the property name is returned
-    by a for/in loop.
-
-    #+cindex:configurable attribute
-  - The /configurable attribute/ specifies whether the property can be deleted
-    and whether its attributes can be altered.
-
-  #+cindex:ECMAScript 5 feature
-  #+cindex:configure attributes
-- Prior to ECMAScript 5, all properties in objects created by your code are
-  writable, enumerable, and configurable.  In ECMAScript 5, you can configure
-  the attributes of your properties.
-
-***** Object Attributes
-
-#+cindex:object attributes
-#+cindex:attributes of objects
-Every object has the associated /attributes/:
-
-- prototype
-- class
-- extensible
-
-  #+cindex:object properties
-- In addition to its /properties/, every object has three associated /object
-  attributes/:
-
-  #+cindex:prototype reference
-  - An object’s /prototype/ is a reference to another object from which
-    properties are inherited.
-
-    #+cindex:object class
-  - An object’s /class/ is a string that categorizes the type of an object.
-
-    #+cindex:extensible flag
-    #+cindex:ECMAScript 5 feature, extensible flag
-  - An object’s /extensible flag/ specifies (in ECMAScript 5) whether new
-    properties may be added to the object.
-
-****** Prototype Attribute
-
-#+cindex:prototype attribute
-An object’s /prototype/ attribute specifies the object from which it inherits
-properties. See Prototypes.
-
-{{{heading(Prototype Attribute of an Object)}}}
-
-#+cindex:prototype attribute of an object
-This is such an important attribute that we’ll usually simply say “the
-PROTOTYPE of =o=” rather than “the prototype attribute of =o=.”
-
-Also, it is important to understand that when =prototype= appears in =code=
-font, it refers to an ordinary object property, not to the PROTOTYPE ATTRIBUTE.
-
-: o.prototype // an ordinary object property
-
-{{{heading(The Prototype Attribvute is Set When an Object is Created)}}}
-
-#+cindex:prototype attribute
-#+cindex:attribute, prototype
-The /prototype/ ATTRIBUTE is set when an object is created.
-
-Objects created from object literals (={}=) use =Object.prototype= as their
-prototype.
-
-#+cindex:prototype property
-#+cindex:property, prototype
-#+cindex:@code{new} keyword
-Objects created with ~new~ use the value of the =prototype= PROPERTY of their
-constructor function as their prototype.  In ECMAScript 5, you can query the
-prototype of any object by passing that object to ~Object.getPrototypeOf()~
-function.  There is no equivalent function in ECMAScript 3, but it is often
-possible to determine the prototype of an object o using the expression
-~o.constructor.prototype~.  Objects created with a ~new~ expression usually
-inherit a =constructor= PROPERTY that refers to the constructor function used
-to create the object.  Constructor functions have a =prototype= PROPERTY that
-specifies the prototype for objects created using that constructor.
-
-: function A() {}
-: Object.getOwnPropertyNames(A) // ==> [ 'length', 'name', 'arguments', 'caller', 'prototype' ]
-:
-: var a = new A() // objects created with new inherit a 'constructor' PROPERTY
-:                 // that refers to the constructor function;
-:                 // constructor functions have a prototype PROPERTY
-:                 // that specifies the prototype for created objects
-:
-: a.constructor        // [Function: A]
-: typeof a.constructor // ==> 'function'
-: a.constructor === A  // ==> true
-
-: a.__proto__              === A.prototype // ==> true
-: a.constructor.prototype  === A.prototype // ==> true
-: Object.getPrototypeOf(a) === A.prototype // ==> true
-
-And objects created with ~Object.create()~ use the first argument to that
-function (which may be null) as their prototype.  Objects created by object
-literals or by ~Object.create()~ have a =constructor= property that refers to
-the ~Object()~ constructor.  Thus, ~constructor.prototype~ refers to the
-correct prototype for object literals.
-
-{{{heading(isPrototypeOf() Method)}}}
-
-#+cindex:@code{isPrototypeOf()} methodn
-To determine whether one object is the prototype of (or is part of the
-prototype chain of) another object, use the ~isPrototypeOf()~ method.  To find
-out if =p= is the prototype of =o= write:
-: p.isPrototypeOf(o)
-
-~isPrototypeOf()~ performs a function similar to the ~instanceof~ operator.
-
-{{{heading(__proto__ Property)}}}
-
-#+cindex:@code{__proto__} property
-Mozilla’s implementation of JavaScript has exposed the prototype attribute
-through the specially named =__proto__= property, and you can use this property
-to directly query or set the prototype of any object.
-
-****** class Attribute
-
-#+cindex:class attribute
-
-****** extensible Attribute
-
-#+cindex:extensible attribute
-
-**** Categories and Types
-
-Finally, here are some terms we’ll use to distinguish among three broad
-categories of JavaScript objects and two types of properties:
-
- #+cindex:native object 
-- A /native object/ is an object or class of objects defined by the ECMAScript
-  specifi- cation. Arrays, functions, dates, and regular expressions (for
-  example) are native objects.
-
-  #+cindex:host object
-- A /host object/ is an object defined by the host environment (such as a web
-  browser) within which the JavaScript interpreter is embedded. The HTMLElement
-  objects that represent the structure of a web page in client-side JavaScript
-  are host objects. Host objects may also be native objects, as when the host
-  environment defines methods that are normal JavaScript Function objects.
-
-  #+cindex:user-defined object
-- A /user-defined/ object is any object created by the execution of JavaScript
-  code.
-
-  #+cindex:own property
-- An /own property/ is a property defined directly on an object.
-
-  #+cindex:inherited property
-- An /inherited property/ is a property defined by an object’s prototype
-  object.
-
 **** Creating Objects
-
 Objects are created with:
 
 - object literals ::
      a comma-separated list of colon-separated name:value pairs, enclosed
-     within curly braces
+     within curly braces:
+
+     : {a: 'a', b: 1}
 
   - property name :: a JavaScript identifier or a string literal (the empty
                      string is allowed); property names that are reserved words
@@ -10677,6 +10502,190 @@ properties will only affect the heir, not your original object:
 var o = { x: "don't change this value" };
 library_function(inherit(o)); // Guard against accidental modifications of o
 #+end_src
+**** Querying and Setting Properties
+To obtain the value of a property, use the dot (.) or square bracket ([])
+operators.  The left-hand side should be an expression whose value is an
+object.  If using the dot operator, the right-hand must be a simple identifier
+that names the property. If using square brackets, the value within the
+brackets must be an expression that evaluates to a string that contains the
+desired property name.
+
+To create or set a property, use a dot or square brackets as you would to query
+the property, but put them on the left-hand side of an assignment expression.
+
+In ECMAScript 3, the identifier that follows the dot operator cannot be a
+reserved word.  If an object has properties whose name is a reserved word, you
+must use square bracket notation to access them.  ECMAScript 5 relaxes this
+restriction and allows reserved words to follow the dot.
+
+When using square bracket notation, the expression must evaluate to a string or
+a value that can be converted to a string.
+
+**** Attributes
+***** Property Attributes
+
+  #+cindex:property attributes
+- In addition to its name and value, each property has associated values that
+  we’ll call /property attributes/:
+
+    #+cindex:writable attribute
+  - The /writable attribute/ specifies whether the value of the property can be
+    set.
+
+    #+cindex:enumerable attribute
+  - The /enumerable attribute/ specifies whether the property name is returned
+    by a for/in loop.
+
+    #+cindex:configurable attribute
+  - The /configurable attribute/ specifies whether the property can be deleted
+    and whether its attributes can be altered.
+
+  #+cindex:ECMAScript 5 feature
+  #+cindex:configure attributes
+- Prior to ECMAScript 5, all properties in objects created by your code are
+  writable, enumerable, and configurable.  In ECMAScript 5, you can configure
+  the attributes of your properties.
+
+***** Object Attributes
+
+#+cindex:object attributes
+#+cindex:attributes of objects
+Every object has the associated /attributes/:
+
+- prototype
+- class
+- extensible
+
+  #+cindex:object properties
+- In addition to its /properties/, every object has three associated /object
+  attributes/:
+
+  #+cindex:prototype reference
+  - An object’s /prototype/ is a reference to another object from which
+    properties are inherited.
+
+    #+cindex:object class
+  - An object’s /class/ is a string that categorizes the type of an object.
+
+    #+cindex:extensible flag
+    #+cindex:ECMAScript 5 feature, extensible flag
+  - An object’s /extensible flag/ specifies (in ECMAScript 5) whether new
+    properties may be added to the object.
+
+****** Prototype Attribute
+
+#+cindex:prototype attribute
+An object’s /prototype/ attribute specifies the object from which it inherits
+properties. See Prototypes.
+
+{{{heading(Prototype Attribute of an Object)}}}
+
+#+cindex:prototype attribute of an object
+This is such an important attribute that we’ll usually simply say “the
+PROTOTYPE of =o=” rather than “the prototype attribute of =o=.”
+
+Also, it is important to understand that when =prototype= appears in =code=
+font, it refers to an ordinary object property, not to the PROTOTYPE ATTRIBUTE.
+
+: o.prototype // an ordinary object property
+
+{{{heading(The Prototype Attribvute is Set When an Object is Created)}}}
+
+#+cindex:prototype attribute
+#+cindex:attribute, prototype
+The /prototype/ ATTRIBUTE is set when an object is created.
+
+Objects created from object literals (={}=) use =Object.prototype= as their
+prototype.
+
+#+cindex:prototype property
+#+cindex:property, prototype
+#+cindex:@code{new} keyword
+#+cindex:ECMAScript 5
+Objects created with ~new~ use the value of the =prototype= PROPERTY of their
+constructor function as their prototype.  In ECMAScript 5, you can query the
+prototype of any object by passing that object to ~Object.getPrototypeOf()~
+function.  There is no equivalent function in ECMAScript 3, but it is often
+possible to determine the prototype of an object =o= using the expression
+~o.constructor.prototype~.  Objects created with a ~new~ expression usually
+inherit a =constructor= PROPERTY that refers to the constructor function used
+to create the object.  Constructor functions have a =prototype= PROPERTY that
+specifies the prototype for objects created using that constructor.
+
+: function A() {}
+: Object.getOwnPropertyNames(A) // ==> [ 'length', 'name', 'arguments', 'caller', 'prototype' ]
+:
+: var a = new A() // objects created with new inherit a 'constructor' PROPERTY
+:                 // that refers to the constructor function;
+:                 // constructor functions have a prototype PROPERTY
+:                 // that specifies the prototype for created objects
+:
+: a.constructor        // [Function: A]
+: typeof a.constructor // ==> 'function'
+: a.constructor === A  // ==> true
+
+: a.__proto__              === A.prototype // ==> true
+: a.constructor.prototype  === A.prototype // ==> true
+: Object.getPrototypeOf(a) === A.prototype // ==> true
+
+And objects created with ~Object.create()~ use the first argument to that
+function (which may be null) as their prototype.  Objects created by object
+literals or by ~Object.create()~ have a =constructor= property that refers to
+the ~Object()~ constructor.  Thus, ~constructor.prototype~ refers to the
+correct prototype for object literals.
+
+{{{heading(isPrototypeOf() Method)}}}
+
+#+cindex:@code{isPrototypeOf()} methodn
+To determine whether one object is the prototype of (or is part of the
+prototype chain of) another object, use the ~isPrototypeOf()~ method.  To find
+out if =p= is the prototype of =o= write:
+: p.isPrototypeOf(o)
+
+~isPrototypeOf()~ performs a function similar to the ~instanceof~ operator.
+
+{{{heading(__proto__ Property)}}}
+
+#+cindex:@code{__proto__} property
+Mozilla’s implementation of JavaScript has exposed the prototype ATTRIBUTE
+through the specially named =__proto__= accessor property, and you can use this
+accessor property to directly query or set the prototype of any object.
+
+****** class Attribute
+
+#+cindex:class attribute
+
+****** extensible Attribute
+
+#+cindex:extensible attribute
+
+**** Categories and Types
+
+Finally, here are some terms we’ll use to distinguish among three broad
+categories of JavaScript objects and two types of properties:
+
+ #+cindex:native object 
+- A /native object/ is an object or class of objects defined by the ECMAScript
+  specifi- cation. Arrays, functions, dates, and regular expressions (for
+  example) are native objects.
+
+  #+cindex:host object
+- A /host object/ is an object defined by the host environment (such as a web
+  browser) within which the JavaScript interpreter is embedded. The HTMLElement
+  objects that represent the structure of a web page in client-side JavaScript
+  are host objects. Host objects may also be native objects, as when the host
+  environment defines methods that are normal JavaScript Function objects.
+
+  #+cindex:user-defined object
+- A /user-defined/ object is any object created by the execution of JavaScript
+  code.
+
+  #+cindex:own property
+- An /own property/ is a property defined directly on an object.
+
+  #+cindex:inherited property
+- An /inherited property/ is a property defined by an object’s prototype
+  object.
 
 *** Arrays
 

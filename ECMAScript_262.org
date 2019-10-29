@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-29 06:29
-#+macro:version 0.5.46
+#+Date:2019-10-29 07:03
+#+macro:version 0.5.47
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -10540,7 +10540,7 @@ access a property of an object with the =[]= array notation, the name of the
 property is expressed as a string.  Strings are JavaScript datatypes, so they
 can be manipulated and created while a program is running.
 
-***** Inheritance
+***** Inheritance and Property Access
 #+cindex:own properties
 JavaScript objects have a set of “own properties,” and they also inherit a set
 of properties from their prototype object.
@@ -10639,8 +10639,104 @@ An attempt to set a property =p= of an object =o= fails in these circumstances:
   does not already exist on =o=, and if there is no setter method to call, then
   =p= must be added to =o=.  But if =o= is not extensible, then no new
   properties can be defined on it.
+**** Deleting Properties
+The ~delete~ operator removes a property from an object.  Its single operand
+should be a property access expression.  ~delete~ operates to remove the
+property itself, not just its value.  The ~delete~ operator only deletes own
+properties, not inherited ones.  To delete an inherited property, you must
+delete it from the prototype object in which it is defined.  Doing this affects
+every object that inherits from that prototype.
 
-*** Deleting Properties
+A ~delete~ expression evaluates to =true= if the delete succeeded or if the
+delete had no effect (such as deleting a nonexistent property).  ~delete~ also
+evaluates to =true= when used (meaninglessly) with an expression that is not a
+property access expression.
+
+~delete~ does not remove properties that have a configurable attribute of
+false.  (Though it will remove configurable properties of nonextensible
+objects.)  In strict mode, attempting to delete a nonconfigurable property
+causes a TypeError.  In non-strict mode (and in ECMAScript 3), ~delete~ simply
+evaluates to =false= in this case.
+
+**** Testing Properties
+JavaScript objects can be thought of as sets of properties, and it is often
+useful to be able to test for membership in the set—to check whether an object
+has a property with a given name. You can do this with the:
+
+- ~in~ operator
+- ~hasOwnProperty()~ method
+- ~propertyIsEnumerable()~ method
+- query the property
+
+{{{heading(The ~in Operator)}}}
+
+#+cindex:@code{in} operator
+The ~in~ operator expects a property name (as a string) on its left side and an
+object on its right.  It returns =true= if the object has an own property or an
+inherited property by that name.
+
+{{{heading(hasOwnProperty() Method)}}}
+
+#+cindex:@code{hasOwnProperty()} method
+The ~hasOwnProperty()~ method of an object tests whether that object has an own
+property with the given name.  It returns =false= for inherited properties.
+
+{{{heading(propertyIsEnumerable() Method)}}}
+
+#+cindex:@code{propertyIsEnumerable()} method
+The ~propertyIsEnumerable()~ refines the ~hasOwnProperty()~ test.  It returns
+true only if the named property is an own property and its enumerable attribute
+is true.
+
+{{{heading(Query the Property)}}}
+
+Instead of using the ~in~ operator it is often sufficient to simply query the
+property and use ~!==~ to make sure it is not =undefined=.
+
+There is one thing the ~in~ operator can do that the simple property access
+technique shown above cannot do.  ~in~ can distinguish between properties that
+do not exist and properties that exist but have been set to =undefined=.
+
+Further, to determine simply whether a property is not =falsey= or converts to
+a =falsey= (=null= or =undefined= or =false= or "" or 0 or =NaN=), use ~!=~
+instead of ~!==~.
+
+**** Enumerating Properties
+#+cindex:iterate through properties
+Instead of testing for the existence of individual properties, we sometimes
+want to iterate through or obtain a list of all the properties of an object.
+This is usually done with the =for/in= loop, although ECMAScript 5 provides two
+handy alternatives.
+
+{{{heading(Iterating Using the =for/in= Loop)}}}
+
+The =for/in= loop runs the body of the loop once for each enumerable property
+(own or inherited) of the specified object, assigning the name of the property
+to the loop variable.  Built-in methods that objects inherit are not
+enumerable, but the properties that your code adds to objects are enumerable
+(unless you use one of the functions described later to make them
+nonenumerable).
+
+To guard against enumerating inherited properties, you might want to filter the
+properties returned by =for/in=.  Here are two ways you might do so:
+
+#+begin_src js -n
+  for(p in o) {
+      if (!o.hasOwnProperty(p)) continue; // Skip inherited properties
+  }
+
+  for(p in o) {
+      if (typeof o[p] === "function") continue; // Skip methods
+  }
+#+end_src
+
+***** Utility Functions that use =for/in= Loops
+
+The following examples define utility functions that use =for/in= loops to
+manipulate object properties in helpful ways.
+
+**** Property Getters and Setters
+
 **** Attributes
 ***** Property Attributes
 

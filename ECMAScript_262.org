@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-29 07:03
-#+macro:version 0.5.47
+#+Date:2019-10-31 08:15
+#+macro:version 0.5.48
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -10736,6 +10736,67 @@ The following examples define utility functions that use =for/in= loops to
 manipulate object properties in helpful ways.
 
 **** Property Getters and Setters
+Fundamentally, an object property is a name, a value, and a set of attributes.
+
+#+cindex:getter method
+#+cindex:setter method
+#+cindex:ECMAScript 5
+#+cindex:accessor properties
+#+cindex:data properties
+In ECMAScript 5, the value may be replaced by one or two methods, known as a
+/getter/ and a /setter/.  These are both also known as /accessor properties/,
+to distinguish then from /data properties/, which have a simple value.
+
+/Accessor properties/ are defined as one or two functions whose name is the
+same as the property name, and with the =function= keyword replaced with =get=
+and/or =set=.  Accessor properties are inherited, just as data properties are.
+Reasons to use accessor properties include sanity checking of property writes
+and returning different values on each property read, and providing an
+alternative model of a single version of state.
+
+{{{heading(Querying an Accessor Property)}}}
+
+#+cindex:accessor query
+When a program queries the value of an accessor property, JavaScript invokes
+the getter method (passing no arguments).  The return value of this method
+becomes the value of the property access expression.
+
+{{{heading(Setting an Accessor Property)}}}
+
+#+cindex:accessor set
+When a program sets the value of an accessor property, JavaScript invokes the
+setter method, passing the value of the right-hand side of the assignment.
+This method is responsible for “setting,” in some sense, the property value.
+The return value of the setter method is ignored.
+
+{{{heading(No Writable Attribute)}}}
+
+#+cindex:writable attribute
+Accessor properties do not have a writable attribute as data properties do.  If
+a property has both a getter and a setter method, it is a read/write property.
+If it has only a getter method, it is a read-only property.  And if it has only
+a setter method, it is a write-only property (something that is not possible
+with data properties) and attempts to read it always evaluate to =undefined=.
+
+{{{heading(Define an Accessor Property)}}}
+
+#+cindex:accessor property, define
+The easiest way to define accessor properties is with an extension to the
+object literal syntax:
+
+#+begin_src js -n
+  var o = {
+      // An ordinary data property
+      data_prop: value,
+      // An accessor property defined as a pair of functions
+      get accessor_prop() { /* function body here */ },
+      set accessor_prop(value) { /* function body here */ }
+  };
+#+end_src
+
+Note that no colon is used to separate the name of the property from the
+functions that access that property, but that a comma is still required after
+the function body to separate the method from the next method or data property.
 
 **** Attributes
 ***** Property Attributes

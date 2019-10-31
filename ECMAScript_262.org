@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-31 09:40
-#+macro:version 0.5.49
+#+Date:2019-10-31 13:23
+#+macro:version 0.5.50
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -10915,6 +10915,26 @@ method returns =undefined= for inherited properties and properties that don't
 exist.  To query the attributes of inherited properties, you must explicitly
 traverse the prototype chain
 
+#+cindex:@code{Object.getOwnPropertyDescriptors()}
+To obtain the property descriptors for all properties of an object, use
+~Object.getOwnPropertyDescriptors()~.  This will return an object containing
+all own property descriptors of an object, or an empty object if there are no
+properties.
+
+{{{heading(Create a Shallow Clone)}}}
+
+To create a shallow copy of an object, use this method along with
+~Object.getPrototypeOf()~ and ~Object.create()~:
+
+#+caption:Create a Shallow Clone of an object
+#+name:create-shallow-clone-of-object
+#+begin_src js
+Object.create(
+  Object.getPrototypeOf(obj), 
+  Object.getOwnPropertyDescriptors(obj) 
+);
+#+end_src
+
 ****** Object.defineProperty()
 #+cindex:@code{Object.defineProperty()}
 To set the attributes of a property, or to create a new property with the
@@ -11152,7 +11172,6 @@ accessor property to directly query or set the prototype of any object.
 ***** extensible Attribute
 
 #+cindex:extensible attribute
-
 
 *** Arrays
 

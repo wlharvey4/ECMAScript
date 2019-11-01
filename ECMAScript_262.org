@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-31 13:23
-#+macro:version 0.5.50
+#+Date:2019-10-31 23:08
+#+macro:version 0.5.51
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -11173,6 +11173,82 @@ accessor property to directly query or set the prototype of any object.
 
 #+cindex:extensible attribute
 
+**** Serializing Objects
+#+cindex:serialization
+Object /serialization/ is the process of converting an object’s state to a
+string from which it can later be restored.
+
+***** JSON Functions
+#+cindex:ECMAScript 5
+#+cindex:@code{JSON.stringify()}
+#+cindex:@code{JSON.parse()}
+#+cindex:JSON data interchange format
+#+cindex:Javascript Object Notation, JSON
+ECMAScript 5 provides native functions ~JSON.stringify()~ and ~JSON.parse()~ to
+serialize and restore JavaScript objects.  These functions use the JSON data
+interchange format.  JSON stands for “JavaScript Object Notation.”
+
+The native implementation of these functions in ECMAScript 5 was modeled very
+closely after the public-domain ECMAScript 3 implementation available at
+http://json.org/json2.js.
+
+***** JSON Syntax
+JSON syntax is a subset of JavaScript syntax, and it cannot represent all
+JavaScript values.  Objects, arrays, strings, finite numbers, true, false, and
+null are supported and can be serialized and restored.
+
+- NaN, Infinity, and -Infinity are serialized to null. 
+
+- =Date= objects are serialized to ISO-formatted date strings (see the
+  ~Date.toJSON()~ function), but ~JSON.parse()~ leaves these in string form and
+  does not restore the original =Date= object.
+
+- =Function=, =RegExp=, and =Error= objects and the =undefined= value cannot be
+  serialized or restored.
+
+- ~JSON.stringify()~ serializes only the enumerable own properties of an
+  object.  If a property value cannot be serialized, that property is simply
+  omitted from the stringified output.
+
+- Both ~JSON.stringify()~ and ~JSON.parse()~ accept optional second arguments
+  that can be used to customize the serialization and/or restoration process by
+  specifying a list of properties to be serialized.
+
+**** Object Methods
+There are a handful of universal object methods that are defined on
+=Object.prototype=, but which are intended to be overridden by other, more
+specialized classes.
+
+***** toString() Method
+#+cindex:@code{toString()} method
+The ~toString()~ method takes no arguments; it returns a string that somehow
+represents the value of the object on which it is invoked.  JavaScript invokes
+this method of an object whenever it needs to convert the object to a string.
+
+The default ~toString()~ method is not very informative (though it is useful
+for determining the class of an object.  Because this default method does not
+display much useful information, many classes define their own versions of
+~toString()~.
+
+***** toLocaleString() Method
+#+cindex:@code{toLocaleString()} method
+In addition to the basic ~toString()~ method, objects all have a
+~toLocaleString()~.  The purpose of this method is to return a localized string
+representation of the object.
+
+***** toJSON() Method
+#+cindex:Code{toJSON()} method
+=Object.prototype= does not actually define a ~toJSON()~ method, but the
+~JSON.stringify()~ method looks for a ~toJSON()~ method on any object it is
+asked to serialize.  If this method exists on the object to be serialized, it
+is invoked, and the return value is serialized, instead of the original object.
+
+***** valueOf Method
+#+cindex:@code{valueOf()} method
+The ~valueOf()~ method is much like the ~toString()~ method, but it is called
+when JavaScript needs to convert an object to some primitive type other than a
+string---typically, a number.  JavaScript calls this method automatically if an
+object is used in a context where a primitive value is required.
 *** Arrays
 
 *** Functions

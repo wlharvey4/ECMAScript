@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-31 23:21
-#+macro:version 0.5.52
+#+Date:2019-11-01 06:53
+#+macro:version 0.5.53
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -1388,17 +1388,69 @@ Statement :
    WithStatement
 #+end_example
 
-*** Block
+*** Control Flow Statements
+#+cindex:control flow statements
+#+cindex:statements, control flow
 
-*** Variable
+**** Block
+#+cindex:block statement
+#+cindex:statement, block
+A block statement is used to group zero or more statements. The block is
+delimited by a pair of curly brackets.
 
-*** Empty
+**** =break= Statement
+#+cindex:@code{break} statement
+#+cindex:statement, @code{break}
+Terminates the current loop, switch, or label statement and transfers program
+control to the statement following the terminated statement.
 
-*** Expression
+**** =continue= Statement
+#+cindex:@code{continue} statement
+#+cindex:statement, @code{continue}
+Terminates execution of the statements in the current iteration of the current
+or labeled loop, and continues execution of the loop with the next iteration.
 
-*** =if=
+**** =Empty= Statement
+#+cindex:@code{Empty} statement
+An empty statement is used to provide no statement, although the JavaScript
+syntax would expect one.
 
-*** Iteration
+**** =if/else= Statement
+#+cindex:@code{if} / @code{else}
+Executes a statement if a specified condition is true.  If the condition is
+false, another statement can be executed.
+
+**** =switch= Statement
+#+cindex:@code{switch} statement
+Evaluates an expression, matching the expression's value to a case clause, and
+executes statements associated with that case.
+
+**** =throw= Statement
+#+cindex:@code{throw} statement
+Throws a user-defined exception.
+
+**** =try/catch= Statement
+#+cindex:@code{try} / @code{catch} statement
+Marks a block of statements to try, and specifies a response, should an
+exception be thrown.
+
+*** Variable Declarations
+
+**** =var= Declaration
+#+cindex:@code{var} declaration
+Declares a variable, optionally initializing it to a value.
+
+*** Function Declarations
+
+**** =function= Declaration
+#+cindex:@code{function} declaration
+Declares a function with the specified parameters.
+
+**** =return= Statement
+#+cindex:@code{return} statement
+Specifies the value to be returned by a function.
+
+*** Iteration Statements
 
 #+cindex:iteration statement
 #+cindex:@code{while} statement
@@ -1412,11 +1464,24 @@ IterationStatement :
      for ( var Identifier Initializeropt in Expression ) Statement
 #+end_example
 
-**** =while=
+**** =do...while=
+#+cindex:@code{do...while}
+Creates a loop that executes a specified statement until the test condition
+evaluates to false.  The condition is evaluated after executing the statement,
+resulting in the specified statement executing at least once.
 
-**** =for=
+**** =for= Statement
+#+cindex:@code{for} Statement
+Creates a loop that consists of three optional expressions, enclosed in
+parentheses and separated by semicolons, followed by a statement executed in
+the loop.
 
-**** =for..in=
+**** =for each...in= Statement
+#+cindex:@code{for each...in} statement
+Iterates a specified variable over all values of object's properties.  For each
+distinct property, a specified statement is executed.
+
+**** =for..in= Statement
 
 #+cindex:@code{for...in} statement
 #+cindex:non-Symbol
@@ -1549,13 +1614,25 @@ for (const prop in obj) {
 // "obj.color = red"
 #+end_src
 
-*** =continue=
 
-*** =break=
+**** =while= Statement
+#+cindex:@code{while} statement
+Creates a loop that executes a specified statement as long as the test
+condition evaluates to true.  The condition is evaluated before executing the
+statement.
 
-*** =return=
+*** Miscellaneous Statements and Expressions
 
-*** =with=
+**** =debugger= Statement
+Invokes any available debugging functionality.  If no debugging functionality
+is available, this statement has no effect.
+
+**** =label= Statement
+#+cindex:@code{label} statement
+Provides a statement with an identifier that you can refer to using a =break=
+or =continue= statement.
+
+**** =with=
 #+cindex:@code{with} statement
 #+cindex:deprecated, @code{with} statement
 #+begin_example
@@ -2619,6 +2696,8 @@ Contrast ~str.match(re)~ versus ~re.exec(str)~.)  The 'g' flag is used with the
 =this= is a /keyword/, not a variable or property name.  JavaScript syntax does
 not allow it to be assigned to or given a dynamic value.
 
+#+cindex:scope, this
+#+cindex:this scope
 =this= does *not* have a /dynamic scope/.  This means nested functions do *not*
 inherit the =this= value of their caller.  If a nested function is invoked as a
 /method/, its =this= value is the object it was invoked on.  If a nested
@@ -2652,6 +2731,25 @@ common to use the variable =self= for this purpose.  For example:
 : true
 : false
 : true
+*** this and the Call Site
+
+#+cindex:call site
+#+cindex:call stack
+- call site ::  the location in code where a function is called (not where it’s
+               declared).  Inspect the call-site to answer the question: what
+               is this /this/ a reference to?
+
+- call stack :: the stack of functions that have been called to get us to the
+                current moment in execution.  The call-site we care about is in
+                the invocation before the currently executing function.
+
+
+Take care when analyzing code to find the actual call-site (from the
+call-stack), because it’s the only thing that matters for ~this~ binding.  If
+you’re trying to diagnose ~this~ binding, use the developer tools to get the
+call-stack, then find the second item from the top, and that will show you the
+real call-site.
+
 *** this as Object Reference of Activation Object
 #+cindex:activation object
 #+cindex:this, keyword
@@ -3829,6 +3927,7 @@ function is an own property.
 #+end_src
 
 * ECMAScript 5 Features
+** ECMAScript 5 Specification Scope
 The ECMAScript 5 specification contains the following description of its scope:
 
 #+cindex:ECMA-262 5th edition
@@ -4108,6 +4207,27 @@ Trailing commas in object literals and array literals are legal.
 #+cindex:string literals, multiline, ES5
 String literals can span multiple lines if you escape the end of the line via a
 backslash.
+
+** ES5 Statements and Declarations
+#+cindex:statements, ECMAScript 5
+#+begin_example
+Statement :
+  Block
+  VariableStatement
+  EmptyStatement
+  ExpressionStatement
+  IfStatement
+  IterationStatement
+  ContinueStatement
+  BreakStatement
+  ReturnStatement
+  WithStatement
+  LabelledStatement
+  SwitchStatement
+  ThrowStatement
+  TryStatement
+  DebuggerStatement
+#+end_example
 
 ** New Functionality in the Standard Library in ES5
 
@@ -5247,6 +5367,57 @@ loops throughout ES6.
 *** New Array Methods
 
 *** From CommonJS Modules to ES2015 Modules
+
+** ECMAScript 2015 Statements and Declarations
+#+begin_example
+Statement[Yield, Return] :
+   BlockStatement[?Yield, ?Return]
+   VariableStatement[?Yield]
+   EmptyStatement
+   ExpressionStatement[?Yield]
+   IfStatement[?Yield, ?Return]
+   BreakableStatement[?Yield, ?Return]
+   ContinueStatement[?Yield]
+   BreakStatement[?Yield]
+   [+Return] ReturnStatement[?Yield]
+   WithStatement[?Yield, ?Return]
+   LabelledStatement[?Yield, ?Return]
+   ThrowStatement[?Yield]
+   TryStatement[?Yield, ?Return]
+   DebuggerStatement
+
+Declaration[Yield] :
+   HoistableDeclaration[?Yield]
+   ClassDeclaration[?Yield]
+   LexicalDeclaration[In, ?Yield]
+
+HoistableDeclaration[Yield, Default] :
+   FunctionDeclaration[?Yield,?Default]
+   GeneratorDeclaration[?Yield, ?Default]
+
+BreakableStatement[Yield, Return] :
+   IterationStatement[?Yield, ?Return]
+   SwitchStatement[?Yield, ?Return]
+#+end_example
+
+*** =let= and =const= Declarations
+=let= declares a block scope local variable, optionally initializing it to a
+value.
+
+=const= declares a read-only named constant.
+
+*** =for...of= Statement
+
+*** =function*= Declaration
+=function*= declaration defines a generator Function, which returns a
+=generator= object, enabling the writing of iterators more easily.
+
+*** =yield= Keyword
+Used to pause and resume a generator function; it can be thought of as a
+generator-based version of the =return= keyword.
+
+*** =class= Declaration
+Declares a class.
 
 ** constants
 

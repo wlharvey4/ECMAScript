@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-10-31 23:08
-#+macro:version 0.5.51
+#+Date:2019-10-31 23:21
+#+macro:version 0.5.52
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -11250,7 +11250,65 @@ when JavaScript needs to convert an object to some primitive type other than a
 string---typically, a number.  JavaScript calls this method automatically if an
 object is used in a context where a primitive value is required.
 *** Arrays
+#+cindex:element, array
+#+cindex:index, array
+An array is an ordered collection of values.  Each value is called an element,
+and each element has a numeric position in the array, known as its index.
 
+#+cindex:untyped, arrays
+JavaScript arrays are /untyped/: an array element may be of any type, and
+different elements of the same array may be of different types.  Array elements
+may even be objects or other arrays, which allows you to create complex data
+structures, such as arrays of objects and arrays of arrays.
+
+JavaScript arrays are /zero-based/ and use 32-bit indexes: the index of the
+first element is 0, and the highest possible index is 4294967294 (2^32−2), for
+a maximum array size of 4,294,967,295 elements.
+
+#+cindex:sparse arrays
+JavaScript arrays are /dynamic/: they grow or shrink as needed and there is no
+need to declare a fixed size for the array when you create it or to reallocate
+it when the size changes.  JavaScript arrays may be /sparse/: the elements need
+not have contiguous indexes and there may be gaps.
+
+#+cindex:length property
+Every JavaScript array has a length property.  For nonsparse arrays, this
+property specifies the number of elements in the array.  For sparse arrays,
+length is larger than the index of all elements.
+
+JavaScript arrays are a specialized form of JavaScript object, and array
+indexes are really little more than property names that happen to be integers.
+
+Arrays inherit properties from =Array.prototype=, which defines a rich set of
+array manipulation methods
+
+**** Creating Arrays
+**** Reading and Writing Array Elements
+**** Sparse Arrays
+**** Array Length
+**** Adding and Deleting Array Elements
+**** Iterating Arrays
+**** Multidimensional Arrays
+**** Array Methods
+***** join()
+***** reverse()
+***** sort()
+***** concat()
+***** slice()
+***** splice()
+***** push() and pop()
+***** unshift() and shift()
+***** toString() and toLocaleString()
+**** ECMAScript 5 Array Methods
+***** forEach()
+***** map()
+***** filter()
+***** every() and some()
+***** reduce() and reduceRight()
+***** indexOf() and lastIndex()
+**** Array Type
+**** Array-Like Objects
+**** Strings as Arrays
 *** Functions
 
 **** Function Properties---Methods---Constructor

@@ -1,8 +1,55 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-04 21:20
-#+macro:version 0.5.54
+#+Date:2019-11-04 23:46
+#+macro:version 0.5.55
 
+* JavaScript Versions
+** JavaScript 1.0
+#+cindex:JavaScript 1.0
+JavaScript was released as version 1.0 in March 1996 in Netscape Navigator 2.0
+and Internet Explorer 2.0.
+
+** JavaScript 1.1
+Version shipped in Netscape Navigator 3.0. Released on August 19, 1996.
+
+** JavaScript 1.2
+Version shipped in Netscape Navigator 4.0-4.05. Released on June 11, 1997.
+
+** JavaScript 1.3
+Version shipped in Netscape Navigator 4.06-4.7x. Released on October 19, 1998.
+Standardization work to be compliant with ECMA-262 1st and 2nd Edition.
+
+** JavaScript 1.4
+Version shipped with Netscape's server-side JavaScript. Released in 1999.
+
+** JavaScript 1.5
+Version shipped in Netscape Navigator 6.0 and Firefox 1.0. Release on November
+14, 2000.  Standardization work to be compliant with ECMA-262 3rd Edition.
+
+** JavaScript 1.6
+Version shipped in Firefox 1.5. Released in November 2005.  Includes ECMAScript
+for XML (E4X), new Array methods plus String and Array generics.
+
+** JavaScript 1.7
+Version shipped in Firefox 2. Released in October 2006.  Includes generators,
+iterators, array comprehensions, let expressions, and destructuring assignment.
+
+** JavaScript 1.8
+Version shipped in Firefox 3. Released in June 2008.  Includes expression
+closures, generator expressions and Array.reduce()
+
+** JavaScript 1.8.1
+Version shipped in Firefox 3.5. Released on June 30, 2009.  Includes the
+TraceMonkey JIT and supports native JSON.
+
+** JavaScript 1.8.2
+Version shipped in Firefox 3.6. Released June 22, 2009.  Includes only minor
+changes.
+
+** JavaScript 1.8.5
+Version shipped in Firefox 4. Released July 27, 2010.  Includes many new
+features for ECMA-262 Edition 5 compliance.  This is the last JavaScript
+version.
 * ECMAScript Description
 #+cindex:Eich, Brendan
 #+cindex:specification, ECMAScript

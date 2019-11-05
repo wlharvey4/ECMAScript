@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-04 23:46
-#+macro:version 0.5.55
+#+Date:2019-11-05 07:37
+#+macro:version 0.5.56
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -11865,6 +11865,105 @@ Notice that the function returned by this bind() method:
 ** Core API Reference
 
 ** Client-Side JavaScript Reference
+* Professional JavaScript for Web Developers
+- by Nicholas Zakas
+- 3rd Edition 2012
+
+** Object-Oriented Programming
+#+cindex:object-oriented programming
+#+cindex:classes
+#+cindex:object
+#+cindex:hash tables
+#+cindex:reference type
+ECMAScript has no concept of classes, and therefore objects are different than
+in class-based languages.  An object in ECMAScript is an array of values in no
+particular order.  Each property or method is identified by a name that is
+mapped to a value.  ECMAScript objects can therefore be thought of as hash
+tables: nothing more than a grouping of name-value pairs where the value may be
+data or a function.  Each object is created based on a reference type, either
+one of the native types or a developer-defined type.
+
+*** Understanding Objects
+#+cindex:object, create, new @code{Object}
+#+cindex:@code{new Object}
+The simplest way to create a custom object is to create a new instance of
+=Object= and add properties and methods to it.
+
+#+begin_src js -n
+var person = new Object();
+person.nam = "John";
+person.age = 29;
+person.job = "Engineer";
+person.sayName = function() {
+    console.log(this.name);
+}
+#+end_src
+
+This example creates an object called =person= that has three properties
+(=name=, =age=, and =job=) and one method (~sayName()~).  Early JavaScript
+developers used this pattern frequently to create new objects.
+
+#+cindex:object literals
+#+cindex:object, create, object literal
+A few years later, object literals became the preferred pattern for creating
+such objects. The previous example can be rewritten using object literal
+notation as follows:
+
+#+begin_src js -n
+  var person = {
+      name: "John",
+      age: 29,
+      job: "Engineer",
+      sayName: function() {
+          console.log(this.name);
+      }
+  }
+#+end_src
+
+The =person= object in this example is equivalent to the =person= object in the
+prior example, with all the same properties and methods.  These properties are
+all created with certain characteristics that define their behavior in
+JavaScript.
+
+**** Types of Properties
+
+**** Defining Multiple Properties
+
+**** Reading Property Attributes
+
+*** Object Creation
+
+**** The Factory Pattern
+
+**** The Constructor Pattern
+
+**** The Prototype Pattern
+
+**** Combination Constructor-Prototype Pattern
+
+**** Dynamic Prototype Pattern
+
+**** Parasitic Prototype Pattern
+
+**** Durable Constructor Pattern
+
+*** Inheritance
+
+**** Prototype Chaining
+
+**** Constructor Stealing
+
+**** Combination Inheritance
+
+**** Prototypal Inheritance
+
+**** Parasitic Inheritance
+
+**** Parasitic Combination Inheritance
+
+*** Summary of OO Programming
+
+
 * Secrets of the JavaScript Ninja
 :PROPERTIES:
 :Author:   John Resig

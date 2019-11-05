@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-05 09:04
-#+macro:version 0.5.57
+#+Date:2019-11-05 12:43
+#+macro:version 0.5.58
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -12040,14 +12040,137 @@ It is not possible to define an accessor property explicitly; you must use
 ~Object.defineProperty()~.
 
 **** Defining Multiple Properties
+#+cindex:@code{Object.defineProperties()} method
+ECMAScript 5 provides the ~Object.defineProperties()~ method to define multiple
+properties using multiple descriptors at once.  There are two arguments: 
+
+- the object on which to add or modify the properties and
+
+- an object whose property names correspond to the properties’ names to add or
+  modify.
 
 **** Reading Property Attributes
+#+cindex:@code{Object.getOwnPropertyDescriptor()} method
+It’s also possible to retrieve the property descriptor for a given property by
+using the ECMAScript 5 ~Object.getOwnPropertyDescriptor()~ method.  This method
+accepts two arguments: 
+
+- the object on which the property resides and
+
+- the name of the property whose descriptor should be retrieved.
+
+
+The return value is an object with properties for the attributes.
 
 *** Object Creation
+#+cindex:object creation patterns
 
 **** The Factory Pattern
+#+cindex:factory pattern
+The factory pattern is a well-known design pattern used in software engineering
+to abstract away the process of creating specific objects.  With no way to
+define classes in ECMAScript, developers created functions to encapsulate the
+creation of objects with specific interfaces.
+
+#+caption:Factory Pattern
+#+name:factory-pattern
+#+begin_src js -n
+  function createPerson(name, age, job){
+      var o = new Object();
+      o.name = name;
+      o.age = age;
+      o.job = job;
+      o.sayName = function(){
+          alert(this.name);
+      };
+      return o;
+  }
+#+end_src
+
+Here, the function ~createPerson()~ accepts arguments with which to build an
+object with all of the necessary information to represent a Person object.  The
+function can be called any number of times with different arguments and will
+still return an object that has three properties and one method.
+
+Though this solved the problem of creating multiple similar objects, the
+factory pattern didn’t address the issue of object identification (what type of
+object an object is).  As JavaScript continued to evolve, a new pattern
+emerged.
 
 **** The Constructor Pattern
+#+cindex:constructor pattern
+Constructors are simply functions that create objects.  Constructors in
+ECMAScript are used to create specific types of objects.  There are native
+constructors, such as =Object= and =Array=, which are available automatically
+in the execution environment at runtime.
+
+It is also possible to define custom constructors that define properties and
+methods for your own type of object.  The previous example can be rewritten
+using the constructor pattern as the following:
+
+#+caption:Constructor Pattern
+#+name:constructor pattern
+#+begin_src js -n
+  function Person(name, age, job) {
+      this.name = name;
+      this.age = age;
+      this.job = job;
+      this.sayName = function(){
+          alert(this.name);
+      };
+  }
+#+end_src
+
+In this example, the ~Person()~ function takes the place of the factory
+~createPerson()~ function.  Here,
+
+- There is no object being created explicitly.
+
+- The properties and method are assigned directly onto the ~this~ object.
+
+- There is no ~return~ statement.
+
+- By convention, constructor functions always begin with an uppercase letter,
+  whereas nonconstructor functions begin with a lowercase letter.
+
+
+#+cindex:@code{new} operator
+To create a new instance of Person, use the ~new~ operator.  Calling a
+constructor in this manner essentially causes the following four steps to be
+taken:
+
+1. Create a new object.
+
+2. Assign the ~this~ value of the constructor to the new object (so this points
+   to the new object).
+
+3. Execute the code inside the constructor (adds properties to the new object).
+
+4. Return the new object.  Each of these new objects has a =constructor=
+   property that points back to the constructor function.
+
+   : new_object.constructor == New_Object_Constructor_Function
+
+
+#+cindex:constructor property
+#+cindex:@code{instanceof} operator
+The constructor property was originally intended for use in identifying the
+object type.  However, the ~instanceof~ operator is considered to be a safer way
+of determining type.
+
+: new_object instanceof New_Object_Constructor_Function // true
+: new_object instanceof Object // true
+
+Defining your own constructors ensures that instances can be identified as a
+particular type later on, which is a great advantage over the factory pattern.
+
+***** Constructors as Functions
+The only difference between constructor functions and other functions is the
+way in which they are called.  Any function that is called with the ~new~
+operator acts as a constructor, whereas any function called without it acts
+just as you would expect a normal function call to act.
+
+***** Problems with Constructors
 
 **** The Prototype Pattern
 

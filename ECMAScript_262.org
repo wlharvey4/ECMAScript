@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-01 06:53
-#+macro:version 0.5.53
+#+Date:2019-11-04 21:20
+#+macro:version 0.5.54
 
 * ECMAScript Description
 #+cindex:Eich, Brendan
@@ -10387,9 +10387,74 @@ operators.
 **** Property Access Expressions
 
 **** Invocation Expressions
+#+cindex:invocation expression
+#+cindex:function expression
+An /invocation expression/ is JavaScript’s syntax for calling (or executing) a
+function or method.  It starts with a /function expression/ that identifies the
+function to be called.  The function expression is followed by an open
+parenthesis, a comma-separated list of zero or more argument expressions, and a
+close parenthesis.
+
+#+cindex:invocation expression
+#+cindex:function expression
+When an invocation expression is evaluated, the function expression is
+evaluated first, and then the argument expressions are evaluated to produce a
+list of argument values.
+
+Next, the argument values are assigned, in order, to the parameter names
+specified when the function was defined.
+
+And then the body of the function is executed.
+
+If the function uses a ~return~ statement to return a value, then that value
+becomes the value of the invocation expression.  Otherwise, the value of the
+invocation expression is =undefined=.
+
+#+cindex:method invocation
+#+cindex:this parameter
+#+cindex:object-oriented programming paradigm
+#+cindex:methods
+Every invocation expression includes a pair of parentheses and an expression
+before the open parenthesis.  If that expression is a property access
+expression, then the invocation is known as a /method invocation/.  In method
+invocations, the object or array that is the subject of the property access
+becomes the value of the ~this~ parameter while the body of the function is
+being executed.  This enables an object-oriented programming paradigm in which
+functions (known by their OO name, “methods”) operate on the object of which
+they are part.
+
+#+cindex:global object
+#+cindex:ECMAScript 5
+#+cindex:strict mode
+Invocation expressions that are not method invocations normally use the global
+object as the value of the ~this~ keyword.  In ECMAScript 5, however, functions
+that are defined in strict mode are invoked with =undefined= as their ~this~
+value rather than the global object.
 
 **** Object Creation Expressions
 
+#+cindex:object creation expression
+#+cindex:constructor function
+#+cindex:initialize properties
+#+cindex:@code{new} keyword
+An /object creation expression/
+- creates a new object using the keyword /new/; and
+- invokes a constructor function to initialize the properties of the object.
+
+
+When an object creation expression is evaluated:
+- JavaScript first creates a new empty object, just like the one created by the
+  object initializer ={}=;
+  #+cindex:@codw{this} keyword
+- Next, it invokes the specified function with the specified arguments, passing
+  the new object as the value of the ~this~ keyword.
+- The function can then use ~this~ to initialize the properties of the newly
+  created object.
+- Functions written for use as constructors do not return a value, and the
+  value of the object creation expression is the newly created and initialized
+  object.
+- If a constructor does return an object value, that value becomes the value of
+  the object creation expression and the newly created object is discarded.
 **** Operator Overview
 
 **** Arithmetic Expressions

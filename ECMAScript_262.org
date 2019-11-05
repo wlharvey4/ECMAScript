@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-05 07:37
-#+macro:version 0.5.56
+#+Date:2019-11-05 09:04
+#+macro:version 0.5.57
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -11926,6 +11926,118 @@ all created with certain characteristics that define their behavior in
 JavaScript.
 
 **** Types of Properties
+#+cindex:ECMAScript 5
+#+cindex:ECMAScript 3
+ECMAScript 5 describes characteristics of properties through the use of
+internal-only attributes.  Note that ECMASript 3 uses different definitions.
+These attributes are defined by the specification for implementation in
+JavaScript engines, and as such, these attributes are not directly accessible
+in JavaScript.
+
+To indicate that an attribute is internal, surround the attribute name with two
+pairs of square brackets, such as =[ [Enumerable] ]=
+
+There are two types of properties:
+
+- data properties
+
+- accessor properties
+
+***** Data Properties
+#+cindex:data properties
+Data properties contain a single location for a data value.  Values are read
+from and written to this location.
+
+Data properties have four attributes describing their behavior:
+#+cindex:attributes
+#+cindex:configurable
+#+cindex:enumerable
+#+cindex:writable
+#+cindex:value
+
+- =[ [Configurable] ]= :: Indicates if the property may be redefined by
+     removing the property via delete, changing the property’s attributes, or
+     changing the property into an accessor property.  By default, this is true
+     for all properties defined directly on an object.  Once a property has
+     been defined as nonconfigurable, it cannot become configurable again.
+
+- =[ [Enumerable] ]= :: Indicates if the property will be returned in a
+     =for-in= loop.  By default, this is true for all properties defined
+     directly on an object,
+
+- =[ [Writable] ]= :: Indicates if the property’s value can be changed.  By
+     default, this is true for all properties defined directly on an object.
+
+- =[ [Value] ]= :: Contains the actual data value for the property.  This is
+                   the location from which the property’s value is read and the
+                   location to which new values are saved.  The default value
+                   for this attribute is =undefined=.
+
+
+When a property is explicitly added to an object, the attributes are all set to
+true while the value attribute is set to the assigned value.
+
+{{{heading(Object.defineProperty())}}
+
+#+cindex:@code{Object.defineProperty()} method
+To change any of the default property attributes, you must use the ECMAScript 5
+~Object.defineProperty()~ method.  This method accepts three arguments:
+
+1. the object on which the property should be added or modified,
+
+2. the name of the property, and
+
+3. a descriptor object.
+
+
+When you are using ~Object.defineProperty()~, the values for =configurable=,
+=enumerable=, and =writable= default to =false= unless otherwise specified.
+
+{{{heading(Descriptor Object)}}}
+
+#+cindex:descriptor object
+The properties on the descriptor object match the attribute names:
+
+- =configurable=
+
+- =enumerable=
+
+- =writable=
+
+- =value=
+
+***** Accessor Properties
+#+cindex:accessor properties
+#+cindex:getter function
+#+cindex:setter function
+Accessor properties do not contain a data value.  Instead, they contain a
+combination of a getter function and a setter function.  When an accessor
+property is read from, the getter function is called, and it’s the function’s
+responsibility to return a valid value; when an accessor property is written
+to, a function is called with the new value, and that function must decide how
+to react to the data.
+
+Accessor properties have four attributes:
+
+1. =[ [Configurable] ]= :: same
+
+2. =[ [Enumerable] ]= :: same
+
+3. =[ [Get] ]= :: The function to call when the property is read from. The
+                  default value is =undefined=.  Assigning just a getter means
+                  that the property cannot be written to and attempts to do so
+                  will be ignored.  In strict mode, trying to write to a
+                  property with only a getter throws an error.
+
+4. =[ [Set] ]= :: The function to call when the property is written to. The
+                  default value is =undefined=.  Likewise, a property with only
+                  a setter cannot be read and will return the value undefined
+                  in nonstrict mode, while doing so throws an error in strict
+                  mode.
+
+
+It is not possible to define an accessor property explicitly; you must use
+~Object.defineProperty()~.
 
 **** Defining Multiple Properties
 
@@ -11962,8 +12074,6 @@ JavaScript.
 **** Parasitic Combination Inheritance
 
 *** Summary of OO Programming
-
-
 * Secrets of the JavaScript Ninja
 :PROPERTIES:
 :Author:   John Resig

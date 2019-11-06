@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-05 12:43
-#+macro:version 0.5.58
+#+Date:2019-11-06 07:06
+#+macro:version 0.5.59
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -557,7 +557,25 @@ A clear demonstration of this phenomenon is the abundance of frameworks and
 opinionated libraries in the JavaScript ecosystem; probably no other language
 has ever seen so many, especially now that Node.js has given new astonishing
 possibilities to JavaScript and has created so many new scenarios.
+
 * ECMAScript Specifications
+For JavaScript to be considered a valid version of ECMAScript, it must provide
+mechanisms to support the syntax and semantics defined in the spec.  Once a
+version of JavaScript conforms to ECMAScript, language designers are free to
+embellish their version with extra features and methods as they see fit.
+
+#+ATTR_TEXINFO: :options Note
+#+begin_quotation
+A conforming implementation of ECMAScript is permitted to provide additional
+types, values, objects, properties, and functions beyond those described in
+this specification. In particular, a conforming implementation of ECMAScript is
+permitted to provide properties not described in this specification, and values
+for those properties, for objects that are described in this specification. A
+conforming implementation of ECMAScript is permitted to support program and
+regular expression syntax not described in this specification.
+
+#+TEXINFO: @author ECMAScript Specification
+#+end_quotation
 
   [[http://www.ecma-international.org/publications/standards/Ecma-262.htm][Current edition]].
 
@@ -4115,7 +4133,7 @@ Strict code is executed in /strict mode/.
 **** Features of Strict Mode
 
 #+cindex:@code{with} statement, strict mode
-#+cindex:strict mode, @code[with} sttement
+#+cindex:strict mode, @code{with} sttement
 - The =with= statement is not allowed in strict mode.
 
   #+cindex:@code{ReferenceError}
@@ -10492,7 +10510,7 @@ An /object creation expression/
 When an object creation expression is evaluated:
 - JavaScript first creates a new empty object, just like the one created by the
   object initializer ={}=;
-  #+cindex:@codw{this} keyword
+  #+cindex:@code{this} keyword
 - Next, it invokes the specified function with the specified arguments, passing
   the new object as the value of the ~this~ keyword.
 - The function can then use ~this~ to initialize the properties of the newly
@@ -11269,7 +11287,7 @@ to the newly created object.
 ***** Property Attributes and TypeError
 ~Object.defineProperty()~ and ~Object.defineProperties()~ throw =TypeError= if
 the attempt to create or modify a property is not allowed.  This happens if you
-attempt to add a new property to a [[*extensible Attribute][nonextensible object]].
+attempt to add a new property to a nonextensible attribute.
 
 The other reasons that these methods might throw =TypeError= have to do with
 the attributes themselves.
@@ -11520,7 +11538,7 @@ In addition to the basic ~toString()~ method, objects all have a
 representation of the object.
 
 ***** toJSON() Method
-#+cindex:Code{toJSON()} method
+#+cindex:@code{toJSON()} method
 =Object.prototype= does not actually define a ~toJSON()~ method, but the
 ~JSON.stringify()~ method looks for a ~toJSON()~ method on any object it is
 asked to serialize.  If this method exists on the object to be serialized, it

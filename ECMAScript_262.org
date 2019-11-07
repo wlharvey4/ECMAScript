@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-06 07:06
-#+macro:version 0.5.59
+#+Date:2019-11-06 19:16
+#+macro:version 0.5.60
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -12116,12 +12116,15 @@ object an object is).  As JavaScript continued to evolve, a new pattern
 emerged.
 
 **** The Constructor Pattern
+#+cindex:constructors
+#+cindex:native constructors
 #+cindex:constructor pattern
 Constructors are simply functions that create objects.  Constructors in
 ECMAScript are used to create specific types of objects.  There are native
 constructors, such as =Object= and =Array=, which are available automatically
 in the execution environment at runtime.
 
+#+cindex:custom constructors
 It is also possible to define custom constructors that define properties and
 methods for your own type of object.  The previous example can be rewritten
 using the constructor pattern as the following:
@@ -12149,7 +12152,7 @@ In this example, the ~Person()~ function takes the place of the factory
 - There is no ~return~ statement.
 
 - By convention, constructor functions always begin with an uppercase letter,
-  whereas nonconstructor functions begin with a lowercase letter.
+  whereas non-constructor functions begin with a lowercase letter.
 
 
 #+cindex:@code{new} operator
@@ -12164,14 +12167,18 @@ taken:
 
 3. Execute the code inside the constructor (adds properties to the new object).
 
+   #+cindex:constructor property
 4. Return the new object.  Each of these new objects has a =constructor=
    property that points back to the constructor function.
 
+   : var new_object = new New_Object_Constructor_Function
    : new_object.constructor == New_Object_Constructor_Function
 
 
 #+cindex:constructor property
 #+cindex:@code{instanceof} operator
+#+cindex:object type
+#+cindex:type, object
 The constructor property was originally intended for use in identifying the
 object type.  However, the ~instanceof~ operator is considered to be a safer way
 of determining type.
@@ -12183,14 +12190,200 @@ Defining your own constructors ensures that instances can be identified as a
 particular type later on, which is a great advantage over the factory pattern.
 
 ***** Constructors as Functions
+#+cindex:constructor as function
 The only difference between constructor functions and other functions is the
 way in which they are called.  Any function that is called with the ~new~
 operator acts as a constructor, whereas any function called without it acts
 just as you would expect a normal function call to act.
 
 ***** Problems with Constructors
+The major downside to constructors is that methods are created once for each
+instance.  It doesn’t make sense to have two instances of Function that do the
+same thing, especially when the this object makes it possible to avoid binding
+functions to particular objects until runtime.
 
 **** The Prototype Pattern
+#+cindex:prototype property
+#+cindex:reference type
+#+cindex:type
+Each function is created with a prototype property, which is an object
+containing properties and methods that should be available to instances of a
+particular reference type.  This object is literally a prototype for the object
+to be created once the constructor is called.  The benefit of using the
+prototype is that all of its properties and methods are shared among object
+instances.  Instead of assigning object information in the constructor, they
+can be assigned directly to the prototype.
+
+#+BEGIN_SRC js -n
+function Person(){ }
+Person.prototype.name = “Nicholas”;
+Person.prototype.age = 29;
+Person.prototype.job = “Software Engineer”;
+Person.prototype.sayName = function(){
+    console.log(this.name);
+}
+
+var person1 = new Person();
+person1.sayName(); //”Nicholas”
+
+var person2 = new Person();
+person2.sayName(); //”Nicholas”
+
+alert(person1.sayName == person2.sayName); //true
+#+END_SRC
+
+Here, the properties and the ~sayName()~ method are added directly to the
+prototype property of =Person=, leaving the constructor empty.  However, it’s
+still possible to call the constructor to create a new object and have the
+properties and methods present. Unlike the constructor pattern, the properties
+and methods are all shared among instances, so person1 and person2 are both
+accessing the same set of properties and the same ~sayName()~ function.
+
+***** How Prototypes Work
+#+cindex:prototypes
+#+cindex:prototype property
+Whenever a function is created, its =prototype= property is also created
+according to a specific set of rules.
+
+{{{heading(Constructor Property)}}}
+
+#+cindex:constructor property
+By default, all prototypes automatically get a property called =constructor=
+that points back to the function on which it is a property.  In the previous
+example, for instance, =Person.prototype.constructor= points to =Person=.
+
+When defining a custom constructor, the prototype gets the =constructor=
+property only by default; all other methods are inherited from =Object=.
+
+{{{heading(Prototype Attribute)}}}
+
+Each time the constructor is called to create a new instance, that instance has
+an internal pointer to the constructor’s prototype.  In ECMA-262 fifth edition,
+this is called =[ [Prototype] ]=.  There is no standard way to access =[
+[Prototype] ]= from script.
+
+The important thing to understand is that a direct link exists between the
+instance and the constructor’s prototype but not between the instance and the
+constructor.
+
+#+caption:Constructor Function Prototype
+#+name:constructor-function-prototype
+[[./figs/constructor-function-prototype.png]]
+
+#+cindex:lookup procedure
+Note that =Person.prototype= points to the prototype object but
+=Person.prototype.constructor= points back to =Person=.  The prototype contains
+the =constructor= property and the other properties that were added.  Each
+instance of =Person= has an internal property ( =[ [Prototype] ]= ) that points
+to =Person.prototype=.  There is no direct relationship with the constructor.
+Also note that even though neither of these instances have properties or
+methods, ~person1.sayName()~ works.  This is due to the lookup procedure for
+object properties.
+
+{{{heading(isPrototypeOf Method)}}}
+
+#+cindex:@code{isPrototypeOf()} method
+Even though =[ [Prototype] ]= is not accessible in all implementations, the
+~isPrototypeOf()~ method can be used to determine if this relationship exists
+between objects.  The ~isPrototypeOf()~ method checks if an object exists in
+another object's prototype chain.
+
+: Person.prototype.isPrototypeOf(person1) // true
+
+{{{heading(Object.getPrototypeOf Method)}}}
+
+#+cindex:@code{Object.getPrototypeOf()} method
+ECMAScript 5 adds a new method called ~Object.getPrototypeOf()~, which returns
+the value of =[ [Prototype] ]= in all supporting implementations.  Using
+~Object.getPrototypeOf()~, you are able to retrieve an object’s prototype
+easily, which becomes important once you want to implement inheritance using
+the prototype.
+
+{{{heading(Prototype Lookup Procedure)}}}
+
+#+cindex:lookup procedure
+Whenever a property is accessed for reading on an object, a search is started
+to find a property with that name. The search begins on the object instance
+itself. If a property with the given name is found on the instance, then that
+value is returned; if the property is not found, then the search continues up
+the pointer to the prototype, and the prototype is searched for a property with
+the same name. If the property is found on the prototype, then that value is
+returned.  This is how prototypes are used to share properties and methods
+among multiple object instances.
+
+Although it’s possible to read values on the prototype from object instances,
+it is not possible to overwrite them.  If you add a property to an instance
+that has the same name as a property on the prototype, you create the property
+on the instance, which then masks the property on the prototype.  The only way
+to regain access to the prototype property is to delete the instance property.
+
+{{{heading(hasOwnProperty Method)}}}
+
+#+cindex:@code{hasOwnProperty()} method
+The ~hasOwnProperty()~ method determines if a property exists on the instance
+or on the prototype.  This method, which is inherited from =Object=, returns
+=true= only if a property of the given name exists on the object instance.
+
+***** Prototypes and the ~in~ Operator
+#+cindex:@code{in} operator
+#+cindex:@code{for-in} loop
+#+cindex:enumerable properties
+There are two ways to use the ~in~ operator:
+
+- on its own :: When used on its own, the ~in~ operator returns =true= when a
+                property of the given name is accessible by the object, which
+                is to say that the property may exist on the instance or on the
+                prototype.
+
+- as a =for-in= loop :: When using a =for-in= loop, all properties that are
+     accessible by the object and can be enumerated will be returned, which
+     includes properties both on the instance and on the prototype.
+
+
+{{{heading(Object.keys Method)}}}
+
+#+cindex:@code{Object.keys()} method
+To retrieve a list of all enumerable instance properties on an object, you can
+use the ECMAScript 5 ~Object.keys()~ method, which accepts an object as its
+argument and returns an array of strings containing the names of all enumerable
+properties.
+
+{{{heading(Object.getOwnPropertyNames Method)}}}
+
+#+cindex:@code{Object.getOwnPropertyNames()} method
+If you’d like a list of all instance properties, whether enumerable or not, you
+can use ~Object.getOwnPropertyNames()~ in the same way.
+
+***** Dynamic Nature of Prototypes
+Since the process of looking up values on a prototype is a search, changes made
+to the prototype at any point are immediately reflected on instances, even the
+instances that existed before the change was made.  Although properties and
+methods may be added to the prototype at any time, and they are reflected
+instantly by all object instances, you cannot overwrite the entire prototype
+and expect the same behavior.  The =[ [Prototype] ]= pointer is assigned when
+the constructor is called, so changing the prototype to a different object
+severs the tie between the constructor and the original prototype.
+
+***** Native Object Prototypes
+The prototype pattern is important not just for defining custom types but also
+because it is the pattern used to implement all of the native reference types.
+Each of these (including =Object=, =Array=, =String=, and so on) has its
+methods defined on the constructor’s prototype.
+
+Through native object prototypes, it’s possible to get references to all of the
+default methods and to define new methods.  Native object prototypes can be
+modified just like custom object prototypes, so methods can be added at any
+time.
+
+***** Problems with Prototypes
+It negates the ability to pass initialization arguments into the constructor,
+meaning that all instances get the same property values by default.
+
+The main problem comes with their shared nature.  All properties on the
+prototype are shared among instances, which is ideal for functions.  Properties
+that contain primitive values also tend to work well.
+
+The real problem occurs when a property contains a reference value.
 
 **** Combination Constructor-Prototype Pattern
 

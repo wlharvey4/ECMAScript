@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-06 19:16
-#+macro:version 0.5.60
+#+Date:2019-11-07 09:23
+#+macro:version 0.5.61
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -2814,6 +2814,167 @@ call-stack), because it’s the only thing that matters for ~this~ binding.  If
 you’re trying to diagnose ~this~ binding, use the developer tools to get the
 call-stack, then find the second item from the top, and that will show you the
 real call-site.
+
+*** Call Site Rules
+How does the call site determine what the ~this~ value will be?  There are
+essentially four rules that may apply.  After looking at the four rules
+independently, we must determine which one will be followed, that is, what the
+precedence of the four rules are.
+
+**** Default Binding
+#+cindex:default binding
+#+cindex:standalone function invocation
+Default binding occurs when a function is invoked in the global context:
+standalone function invocation.  This rule is the default, catch-all rule when
+no other rule applies.  When default binding applies, the ~this~ value is
+assigned either a reference to the global object or =undefined= if =strict
+mode= is in effect.
+
+#+caption:Default Binding Rule
+#+name:default-binding-rule
+#+begin_src js -n
+function foo() {
+    // "use strict";
+    console.log(this.a);
+}
+
+var a = 2;
+
+foo(); // 2 or TypeError if foo is in strict mode
+#+end_src
+
+Variables declared in the global scope (as is ~a~) are synonymous with
+global-object properties of the same name.  They are the same thing.  Thus, ~a~
+=== ~global.a~, for example.
+
+When ~foo~ is invoked, ~this.a~ resolves to ~global.a~.  This occurs because
+the default binding rule applies.  How can it be determined that the default
+binding rule applies?  The call site of the function invocation is inspected
+and seen to be at the global level.  The function is being invoked as a simple
+function.
+
+If ~strict~ mode is in effect, then the ~this~ value is assigned the
+=undefined= value, not the global object.  If strict mode were in effect for
+the invocation of the above function, then the function invocation would throw
+a =TypeError= exception, since =undefined= cannot resolve a reference.  Note
+that the mode of the call site is irrelevant; what matters is the mode of the
+function being invoked.
+
+**** Implicit Binding
+#+cindex:implicit binding
+#+cindex:context object
+The implicit binding rule applies when the call site has a /context object/.
+
+#+caption:Implicit Binding Rule
+#+name:implicit-binding-rule
+#+begin_src js -n
+  function foo() {
+      console.log(this.a);
+  }
+
+  var obj = {
+      a: 2,
+      foo: foo;
+  }
+
+  obj.foo() // 2
+#+end_src
+
+Here, ~foo~ (the function) is declared and implemented exactly as in the
+previous example, at the global level.  A reference to it is then made from
+within the object ~obj~.  The function is not really owned nor contained by the
+object, but merely referenced from it.
+
+However, the object ~obj~ is invoking the function, and thus the context of the
+call is the ~obj~ object, and the function's ~this~ value is bound to that
+context.
+
+When there is a context object for a function reference, the implicit binding
+rule says that it’s that object that should be used for the function call’s
+~this~ binding.  Therefore, because ~obj~ is the ~this~ for the ~foo()~ call,
+~this.a~ is synonymous with ~obj.a~.
+
+Only the final method call matters to the call site.  Thus, some call such as:
+
+: obj1.obj2.obj3.foo()
+
+the context of the call to ~foo()~ is ~obj3~ only.
+
+***** Implicitly Losing Context
+One of the most common frustrations that ~this~ binding creates is when an
+implicitly bound function loses that binding, which usually means it falls back
+to the default binding of either the global object or =undefined=, depending on
+strict mode.
+
+#+caption:Losing Implicit Context
+#+name:losing-implicit-context
+#+begin_src js -n
+  function foo() {
+      console.log( this.a );
+  }
+
+  var obj ={
+      a: 2,
+      foo: foo
+  };
+
+  var bar = obj.foo; // function reference/alias!
+
+  var a = "oops, global"; // `a` also property on global object
+
+  bar(); // "oops, global"
+#+end_src
+
+The important thing to note here is that ~var bar = obj.foo~ resolves to ~var
+bar = foo~, that is, a reference to the function itself, and the object ~obj~
+is completely ignored.  When ~bar~ is invoked, it invokes ~foo~ from the global
+scope as a plain function call, and thus the default binding rule applies.
+
+The more subtle, more common, and more unexpected way this occurs is when we
+consider passing a callback function:
+
+#+caption:Losing Implicit Context via a Callback
+#+name:losing-implicit-context-via-callback
+#+begin_src js -n
+  function foo() {
+      console.log( this.a );
+  }
+
+  function doFoo(fn) {
+      // `fn` is just another reference to `foo`
+      fn(); // <-- call-site!
+  }
+
+  var obj = {
+      a: 2,
+      foo: foo
+  };
+
+  var a = "oops, global"; // `a` also property on global object
+
+  doFoo( obj.foo ); // "oops, global"
+#+end_src
+
+Parameter passing is just an implicit assignment, and since we’re passing a
+function, it’s an implicit reference assignment, so the end result is the same
+as the previous snippet.
+
+It’s quite common that our function callbacks lose their ~this~ binding, as
+we’ve just seen.  But another way that this can surprise us is when the
+function we’ve passed our callback to intentionally changes the this for the
+call.  Event handlers in popular JavaScript libraries are quite fond of forcing
+your callback to have a this that points to, for instance, the DOM element that
+triggered the event.  While that may sometimes be useful, other times it can be
+downright infuriating. Unfortunately, these tools rarely let you choose.
+
+**** Explicit Binding
+#+cindex:explicit binding
+
+**** new Binding
+#+cindex:@code{new} binding
+
+**** Precedence of Call Site Rules
+#+cindex:precedence of binding rules
 
 *** this as Object Reference of Activation Object
 #+cindex:activation object

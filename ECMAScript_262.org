@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-08 02:02
-#+macro:version 0.5.62
+#+Date:2019-11-08 08:05
+#+macro:version 0.5.63
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -3005,6 +3005,7 @@ issue mentioned previously, of a function “losing” its intended ~this~ bindi
 or just having it paved over by a framework, etc.
 
 ***** Hard Binding
+#+cindex:hard binding
 But a variation pattern around explicit binding actually does the trick.
 
 #+caption:Hard Binding
@@ -3034,8 +3035,10 @@ thereby forcibly invoking ~foo~ with ~obj~ binding for ~this~.  No matter how
 you later invoke the function ~bar~, it will always manually invoke ~foo~ with
 ~obj~.
 
+#+cindex:hard binding
 This binding is both explicit and strong, so we call it /hard/ binding.
 
+#+cindex:hard binding with pass-through
 The most typical way to wrap a function with a hard binding creates a
 pass-through of any arguments passed and any return value received:
 
@@ -3059,8 +3062,104 @@ pass-through of any arguments passed and any return value received:
   console.log(b); // 5
 #+end_src
 
+#+cindex:@code{bind} helper
+Another way to express this pattern is to create a reusable helper:
+
+#+caption:Hard Binding with Reusable Helper
+#+name:hard-binding-reusable-helper
+#+begin_src js -n
+  function foo(something) {
+      console.log( this.a, something );
+      return this.a + something;
+  }
+
+  var obj = {
+      a:2
+  };
+
+  //simple bind helper
+  function bind(fn, obj) {
+      return function() {
+          return fn.apply(obj, arguments);
+      };
+  }
+
+  var bar = bind(foo, obj);
+  var b = bar(3); // 2 3
+  console.log(b); // 5
+#+end_src
+
+#+cindex:@code{Function.prototype.bind} method
+#+cindex:ECMAScript 5
+Since hard binding is such a common pattern, it’s provided with a built-in
+utility as of ES5, ~Function.prototype.bind~, and it’s used like this:
+
+#+caption:Function Prototoype Bind
+#+name:function-prototype-bind
+#+begin_src js -n
+  function foo(something) {
+      console.log( this.a, something );
+      return this.a + something;
+  }
+
+  var obj = {
+      a:2
+  };
+
+  var bar = foo.bind(obj);
+  var b = bar(3); // 2 3
+  console.log(b); // 5
+#+end_src
+
+~bind(..)~ returns a new function that is hardcoded to call the original
+function with the ~this~ context set as you specified.
+
 **** new Binding
 #+cindex:@code{new} binding
+In JS, constructors are just functions that happen to be called with the ~new~
+operator in front of them.  They are not attached to classes, nor are they
+instantiating a class.  They are not even special types of functions.  They’re
+just regular functions that are, in essence, hijacked by the use of ~new~ in
+their invocation.
+
+Any function, including the built-in object functions like ~Number(..)~ can be
+called with ~new~ in front of it, and that makes that function call a
+constructor call.  There’s really no such thing as “constructor functions,”
+but rather construction calls of functions.
+
+***** Constructor Calls with ~new~
+
+#+cindex:constructor call
+When a function is invoked with ~new~ in front of it, otherwise known as a
+/constructor call/, the following things are done automatically:
+
+1. A brand new object is created (aka constructed) out of thin air.
+
+2. The newly constructed object is =[ [Prototype] ]= -linked.
+
+3. The newly constructed object is set as the ~this~ binding for that function
+   call.
+
+4. Unless the function returns its own alternate object, the ~new~-invoked
+   function call will automatically return the newly constructed object.
+
+
+#+caption:new Binding
+#+name:new-binding
+#+begin_src js -n
+  function foo(a) {
+      this.a = a;
+  }
+
+  var bar = new foo(2);
+  console.log(bar); // 2
+#+end_src
+
+#+cindex:new binding
+By calling ~foo(..)~ with ~new~ in front of it, we’ve constructed a new object
+and set that new object as the ~this~ for the call of ~foo(..)~.  So ~new~ is
+the final way that a function call’s ~this~ can be bound.  We’ll call this
+/new/ binding.
 
 **** Precedence of Call Site Rules
 #+cindex:precedence of binding rules

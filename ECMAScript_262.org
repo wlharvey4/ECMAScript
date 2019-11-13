@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-12 11:52
-#+macro:version 0.5.64
+#+Date:2019-11-12 23:42
+#+macro:version 0.5.65
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -833,6 +833,10 @@ Application Protocol Forum.
    16262:2011.
 
 ** Edition 6 --- ECMAScript 2015 (ES 6) (ES2015)
+
+{{{heading(Official Title)}}}
+
+ECMA-262, 6th Edition, ECMAScript 2015 Language Specification
 
    June 2015.  [[http://www.ecma-international.org/ecma-262/6.0/index.html#Title][ECMAScript 2015 (ES2015)]]
 
@@ -2531,7 +2535,7 @@ lower case letters, math symbols, and punctuation.
           \b.)
 
           #+cindex:word boundary
-- \b :: Matches a word boundary.
+- =\b= :: Matches a word boundary.
 
         A word boundary matches the position between a word character followed
         by a non-word character, or between a non-word character followed by a
@@ -2551,7 +2555,7 @@ lower case letters, math symbols, and punctuation.
         #+end_quote
 
         #+cindex:non-word boundary
-- \B :: Matches a non-word boundary.  This matches the following cases:
+- =\B= :: Matches a non-word boundary.  This matches the following cases:
 
   - Before the first character of the string
 
@@ -2564,77 +2568,77 @@ lower case letters, math symbols, and punctuation.
   - The empty string
 
     #+cindex:control character
-- \cX :: Where X is a character ranging from A to Z. Matches a control
+- =\cX= :: Where X is a character ranging from A to Z. Matches a control
          character in a string, i.e., =/\cM/= matches control-M (U+00D).
 
          #+cindex:digit
-- \d :: Matches a digit character. Equivalent to [0-9].
+- =\d= :: Matches a digit character. Equivalent to [0-9].
 
         #+cindex:non-digit
-- \D :: Matches a non-digit character. Equivalent to [^0-9].
+- =\D= :: Matches a non-digit character. Equivalent to [^0-9].
 
         #+cindex:form feed
         #+cindex:@code{\f}
-- \f :: Matches a form feed (U+000C).
+- =\f= :: Matches a form feed (U+000C).
 
         #+cindex:line feed
         #+cindex:new line
         #+cindex:@code{\n}
-- \n :: Matches a line feed (U+000A).
+- =\n= :: Matches a line feed (U+000A).
 
         #+cindex:carriage return
         #+cindex:@code{\r}
-- \r :: Matches a carriage return (U+000D).
+- =\r= :: Matches a carriage return (U+000D).
 
         #+cindex:white space
         #+cindex:@code{\s}
-- \s :: Matches a white space character, including space, tab, form feed, line
+- =\s= :: Matches a white space character, including space, tab, form feed, line
         feed.
 
         : [\f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]
 
         #+cindex:non-white spacde
         #+cindex:@code{\S}
-- \S :: Matches a character other than white space.
+- =\S= :: Matches a character other than white space.
 
         #+cindex:tab
         #+cindex:@code{\t}
-- \t :: Matches a tab (U+0009).
+- =\t= :: Matches a tab (U+0009).
 
         #+cindex:vertical tab
         #+cindex:@code{\v}
-- \v :: Matches a vertical tab (U+000B).
+- =\v= :: Matches a vertical tab (U+000B).
 
         #+cindex:word character
         #+cindex:@code{\w}
-- \w :: Matches any alphanumeric character including the underscore.  Equivalent
+- =\w= :: Matches any alphanumeric character including the underscore.  Equivalent
         to [A-Za-z0-9_].
 
         #+cindex:non-word character
         #+cindex:@code{\W}
-- \W :: Matches any non-word character. Equivalent to [^A-Za-z0-9_].
+- =\W= :: Matches any non-word character. Equivalent to [^A-Za-z0-9_].
 
         #+cindex:back reference
-- \n :: Where n is a positive integer, a back reference to the last substring
+- =\n= :: Where n is a positive integer, a back reference to the last substring
         matching the n parenthetical in the regular expression (counting left
         parentheses).
 
         #+cindex:@code{NULL} character
-- \0 :: Matches a =NULL= (U+0000) character.  Do not follow this with another
+- =\0= :: Matches a =NULL= (U+0000) character.  Do not follow this with another
         digit, because \0<digits> is an octal escape sequence.  Instead use
         =\x00=.
 
         #+cindex:hex
-- \xhh :: Matches the character with the code =hh= (two hexadecimal digits)
+- =\xhh= :: Matches the character with the code =hh= (two hexadecimal digits)
 
           #+cindex:hex
-- \uhhhh :: Matches the character with the code =hhhh= (four hexadecimal
+- =\uhhhh= :: Matches the character with the code =hhhh= (four hexadecimal
             digits).
 
             #+cindex:u flag
             #+cindex:Unicode value
-- \u{hhhh} :: (only when u flag is set) Matches the character with the Unicode
-              value =hhhh= (hexadecimal digits).
+- =\u{hhhh}= :: (only when u flag is set) Matches the character with the Unicode
+               value =hhhh= (hexadecimal digits).
 
 **** Working with Regular Expressions
 
@@ -5098,6 +5102,148 @@ All ECMAScript 2015 (ES6) features are split into three groups for:
 The website [[https://node.green/][node.green]] provides an excellent overview over supported ECMAScript
 features in various versions of Node.js, based on [[https://kangax.github.io/compat-table/es6/][kangax's compat-table]].
 
+** node.green Categories
+
+*** Optimisation
+
+**** Tail Call Optimization
+
+*** Syntax
+
+**** Default Function Parameters
+
+**** Rest Parameters
+
+**** Spread Syntax for Iterable Objects
+
+**** Object Literal Extensions
+
+**** For..Of Loops
+
+**** Octal and Binary Literals
+
+**** Template Literals
+
+**** RegExp “y” and “u” Flags
+
+**** Destructuring---Declarations
+
+**** Destructuring---Assignment
+
+**** Destructuring---Parameters
+
+**** Unicode Code Point Escapes
+
+**** new Target
+
+*** Bindings
+
+**** const
+
+**** let
+
+*** Functions
+
+**** Arrow Functions
+
+**** Class
+
+**** Super
+
+**** Generators
+
+*** Built-Ins
+
+**** Typed Arrays Built-In
+
+**** Map Built-In
+
+**** Set Built-In
+
+**** WeakMap Built-In
+
+**** WeakSet Built-In
+
+**** Proxy Built-In
+
+**** Reflect Built-In
+
+**** Promise Built-In
+
+**** Symbol Built-In
+
+**** Well-Known Symbols Built-In
+
+*** Built-In Extensions
+
+**** Object Static Methods
+
+**** Function “name” Property
+
+**** String Static Methods
+
+**** String Prototype Methods
+
+**** RegExp Prototype Methods
+
+**** Array Static Methods
+
+**** Array Prototype Methods
+
+**** Number Properties
+
+**** Math Methods
+
+*** Subclassing
+
+**** Array is Subclassable
+
+**** RegExp is Subclassable
+
+**** Function is Subclassable
+
+**** Promise is Subclassable
+
+**** Miscellaneous Subclassables
+
+*** Miscellaneous
+
+**** Prototype of Bound Functions
+
+**** Proxy---Internal “get” Calls
+
+**** Proxy---Internal “set” Calls
+
+**** Proxy---Internal “defineProperty” Calls
+
+**** Proxy---Internal “deleteProperty” Calls
+
+**** Proxy---Internal “getOwnPropertyDescriptor” Calls
+
+**** Proxy---Internal “ownKeys” Calls
+
+**** Object Static Methods Accept Primitives
+
+**** Own Property Order
+
+**** Updated Identifier Syntax
+
+**** Miscellaneous
+
+*** Annex B
+
+**** Non-Strict Function Semantics
+
+**** --proto__ In Object Literals
+
+**** Object.prototype.__proto__
+
+**** String.prototype HTML Methods
+
+**** RegExp.prototype.compile
+
+**** RegExp Syntax Extensions
+
 ** Three Categories of New ES 2015 Features
 
 #+cindex:ES2015 better syntax
@@ -5884,7 +6030,154 @@ Create a new =ArrayBuffer= object of size {{{var(length)}}}.
 =ArrayBuffer= instances whose =[ [ArrayBufferData] ]= is =null= are considered to
 be detached and all operators to access or modify data contained in the
 =ArrayBuffer= instance will fail.
-**** DataView
+**** DataView Objects
+**** TypedArray Objects
+#+cindex:@code{TypedArray} object
+A =TypedArray= object describes an array-like view of an underlying binary data
+buffer (=ArrayBuffer=).
+
+When creating an instance of a =TypedArray= (e.g. =Int8Array=), an array buffer
+is created internally in memory or, if an =ArrayBuffer= object is given as
+constructor argument, then this is used instead.  The buffer address is saved
+as an internal property of the instance and all the methods of
+=%TypedArray%.prototype=, i.e. ~set~ value and ~get~ value etc., operate on
+that array buffer address.
+
+There are a number of different global properties, whose values are typed array
+constructors for specific element types.
+
+A =TypedArray= can be one of:
+
+- Int8Array();
+- Uint8Array();
+- Uint8ClampedArray();
+- Int16Array();
+- Uint16Array();
+- Int32Array();
+- Uint32Array();
+- Float32Array();
+- Float64Array();
+- BigInt64Array();
+- BigUint64Array();
+
+
+{{{heading(TypedArray Syntax)}}}
+
+#+begin_src js
+new TypedArray(); // new in ES2017
+new TypedArray(length);
+new TypedArray(typedArray);
+new TypedArray(object);
+new TypedArray(buffer [, byteOffset [, length]]);
+#+end_src
+
+- length :: an internal array buffer is created in memory, of size length
+            multiplied by BYTES_PER_ELEMENT bytes, containing zeros.
+
+- typedArray :: When called with a =typedArray= argument, which can be an
+                object of any of the typed array types (such as =Int32Array=),
+                the =typedArray= gets copied into a new typed array.  Each
+                value in =typedArray= is converted to the corresponding type of
+                the constructor before being copied into the new array.  The
+                length of the new typed array will be same as the length of the
+                =typedArray= argument.
+
+- object :: When called with an object argument, a new typed array is created
+            as if by the ~TypedArray.from()~ method.
+
+- buffer, byteOffset, length :: When called with a buffer, and optionally a
+     byteOffset and a length argument, a new typed array view is created that
+     views the specified =ArrayBuffer=.
+
+#+begin_src js -n
+const typedArray1 = new Int8Array(8);
+typedArray1[0] = 32;
+
+const typedArray2 = new Int8Array(typedArray1);
+typedArray2[1] = 42;console.log(typedArray1);
+// expected output: Int8Array [32, 0, 0, 0, 0, 0, 0, 0]
+
+console.log(typedArray2);
+// expected output: Int8Array [32, 42, 0, 0, 0, 0, 0, 0]
+#+end_src
+
+**** TypedArray Properties
+- TypedArray.BYTES_PER_ELEMENT
+- TypedArray.length
+- TypedArray.length
+- get TypedArray[@@species]
+- TypedArray.prototype
+
+**** TypedArray Methods
+- TypedArray.from()
+- TypedArray.of()
+
+**** TypedArray Prototype
+***** TypedArray Prototype Properties
+- TypedArray.prototype.constructor
+- TypedArray.prototype.buffer
+- TypedArray.prototype.byteLength
+- TypedArray.prototype.byteOffset
+- TypedArray.prototype.length
+
+***** TypedArray Prototype Methods
+- copyWithin()
+- entries()
+- every()
+- fill()
+- filter()
+- find()
+- findIndex()
+- forEach()
+- includes()
+- indexOf()
+- join()
+- keys()
+- lastIndexof()
+- map()
+- reduce()
+- reduceRight()
+- reverse()
+- set()
+- slice()
+- some()
+- sort()
+- subarray()
+- values()
+- toLocaleString()
+- toString()
+- [@@iterator]()
+
+**** About TypedArrays
+JavaScript typed arrays are array-like objects that provide a mechanism for
+reading and writing raw binary data in memory buffers.
+
+As web applications become more and more powerful, adding features such as
+audio and video manipulation, access to raw data using WebSockets, and so
+forth, it has become clear that there are times when it would be helpful for
+JavaScript code to be able to quickly and easily manipulate raw binary data.
+
+Each entry in a JavaScript typed array is a raw binary value in one of a number
+of supported formats, from 8-bit integers to 64-bit floating-point numbers.
+
+{{{heading(Buffers and Views)}}}
+
+To achieve maximum flexibility and efficiency, JavaScript typed arrays split
+the implementation into buffers and views.
+
+{{{subheading(Buffers)}}}
+
+A buffer (implemented by the ArrayBuffer object) is an object representing a
+chunk of data; it has no format to speak of and offers no mechanism for
+accessing its contents. In order to access the memory contained in a buffer,
+you need to use a view.
+
+{{{subheading(Views)}}}
+
+A view provides a context --- that is, a data type, starting offset, and the
+number of elements --- that turns the data into a typed array.
+
+[[./figs/typed_arrays,png]]
 
 *** From CommonJS Modules to ES2015 Modules
 
@@ -6287,6 +6580,15 @@ console.log(receiver.name);     // "file.js"
 ** Destructuring Assignment
 
 ** Modules
+ES6 modules are a good example.  Other languages have module systems.  Racket
+has a great one.  Python too. When the standard committee decided to add
+modules to ES6, why didn’t they just copy an existing system?
+
+JS is different, because it runs in web browsers.  I/O can take a long time.
+Therefore JS needs a module system that can support loading code
+asynchronously.  It can’t afford to serially search for modules in multiple
+directories, either.  Copying existing systems was no good.  The ES6 module
+system would need to do some new things.
 
 ** Classes
 

@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-12 23:42
-#+macro:version 0.5.65
+#+Date:2019-11-13 20:19
+#+macro:version 0.5.66
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -2746,7 +2746,6 @@ Contrast ~str.match(re)~ versus ~re.exec(str)~.)  The 'g' flag is used with the
 **** Atomics
 
 **** DataView
-
 **** JSON
 
 *** Control Abstraction Objects
@@ -6031,6 +6030,13 @@ Create a new =ArrayBuffer= object of size {{{var(length)}}}.
 be detached and all operators to access or modify data contained in the
 =ArrayBuffer= instance will fail.
 **** DataView Objects
+#+cindex:@code{DataView}
+#+cindex:endianness
+The =DataView= view provides a low-level interface for reading and writing
+multiple number types in a binary =ArrayBuffer=, without having to care about
+the platform's endianness.  =DataView= accessors provide explicit control of
+how data is accessed, regardless of the executing computer's endianness.
+
 **** TypedArray Objects
 #+cindex:@code{TypedArray} object
 A =TypedArray= object describes an array-like view of an underlying binary data

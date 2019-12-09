@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-11-13 20:19
-#+macro:version 0.5.66
+#+Date:2019-12-09 08:28
+#+macro:version 0.6.0
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -14095,6 +14095,115 @@ a modern view that is as consistent as possible.
 - Covers all essential features of JavaScript, up to and including ES2019.
 - Optional advanced sections let you dig deeper.
 
+* Learning JavaScript Resources for 2019
+:PROPERTIES:
+:author:   Andy Shora
+:date:     January 02, 2019
+:url:      https://www.andyshora.com/learning-javascript-resources-2019
+:END:
+
+** Interactive Learning
+- [[https://www.codecademy.com/learn/javascript][Codeacademy]] :: Fundamentals of JavaScript.
+- [[https://www.udacity.com/course/javascript-basics--ud804][Udacity JavaScript Basics]] :: They also offer more advanced courses.
+- [[https://www.codewars.com/][Code Wars]] :: Improve your skills by training with others on real code
+     challenges.
+- [[https://www.codeschool.com/learn/javascript][Code School]] :: From Basics to Best Practices. Different courses related to
+     JavaScript.
+- [[https://exercism.io/][Exercism]] :: Code practice and mentorship for everyone.
+- [[https://hackr.io/][hackr.io]] :: Find the Best Programming Courses & Tutorials.
+
+** Web Development Playgrounds
+- [[http://jsbin.com/][JSBin]] :: One of the most popular web development playgrounds.
+- [[https://jsfiddle.net/][JSFiddle]] :: JSFiddle is a lightweight cloud JS editor designed for developers
+     who want to tweak and test blocks of JS, CSS and HTML code.
+- [[http://codiad.com/][Codiad]] :: Codiad is a web-based IDE framework with a small footprint and
+     minimal requirements.
+- [[http://plnkr.co/][Plunker]] :: Plunker is an online community for creating, collaborating on and
+     sharing your web development ideas.
+- [[https://codepen.io/][Codepen]] :: a playground for the more creative people.  Pens often include
+     inspirational CSS, Canvas and WebGL examples.
+
+** Free EBooks
+- [[https://leanpub.com/understandinges6/read/][Understanding ECMAScript 6]] :: Provides a great understanding of ECMAScript 6
+     features.
+- [[http://exploringjs.com/es2016-es2017.html][Exploring ES2016 and ES2017]] :: This book covers the latest versions of
+     JavaScript as they are created.
+- [[http://exploringjs.com/es6/][Exploring ES6]] :: An in-depth book on ECMAScript 6, for JavaScript
+     programmers.
+- [[https://goalkicker.com/JavaScriptBook/][JavaScript® Notes for Professionals]] :: Compiled from Stack Overflow
+     Documentation, the content is written by the beautiful people at Stack
+     Overflow.
+- [[https://github.com/bpesquet/thejsway][The JavaScript Way book]] :: A modern introduction to an essential language.
+- [[https://ponyfoo.com/books/practical-modern-javascript][Practical Modern JavaScript]] :: A practical book which shows you how to build
+     small, interconnected ES6 JavaScript modules that emphasise reusability.
+- [[https://gitbookio.gitbooks.io/javascript/content/][Learn Javascript]] :: This book will teach you the basics of programming and
+     Javascript, with lovely embedded interactivity.
+- [[http://eloquentjavascript.net/][Eloquent JavaScript]] :: Covering the language and runtime specifics.
+- [[https://github.com/getify/You-Dont-Know-JS][You Don’t Know JS]] (book series) :: Series of books diving deep into language.
+- [[http://speakingjs.com/][Speaking JavaScript]] :: In-depth guide beginning with the basics.
+- [[http://addyosmani.com/resources/essentialjsdesignpatterns/book/][JavaScript Design Patterns]] :: Classical and JavaScript specific design
+     patterns.
+- [[https://mostly-adequate.gitbooks.io/mostly-adequate-guide/][Mostly Adequate Guide to Functional Programming]] :: Excellent primer to
+     functional programming using JavaScript.
+
+** Videos
+- [[https://www.youtube.com/channel/UCO1cgjhGzsSYb1rsB4bFe4Q][FunFunFunction]] :: Educational plus entertaining YouTube show covering
+     language features as well as architectural topics amongst others.
+- [[http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%253D][What the heck is the event loop anyway?]] :: Awesome talk about the way
+     JavaScript works, and a tool for exploring the callstack.
+- [[https://www.youtube.com/watch?v=4mf_yNLlgic][Become a Javascript Console Power-User]] :: Introduction to the browsers
+     JavaScript console.
+- [[https://www.youtube.com/watch?v=HF1luRD4Qmk][Debugging The Web]] :: Learn state of the art in debugging using Chrome dev
+     tools.
+- [[https://www.youtube.com/watch?v=qGyqzN0bjhc][== ? === ??? …#@^%]] :: Basic talk about type coercion and strict type
+     comparison.
+- [[https://vimeo.com/181328943][Promises Are So Passé]] :: Talk that shows where async goes next, why it
+     matters, and what you need to do to put it into practice today.
+- [[https://www.youtube.com/watch?v=e-5obm1G_FY][Learning Functional Programming with JavaScript]] :: Talk containing the best
+     explanation of map/reduce.
+- [[https://egghead.io/courses/understand-javascript-s-this-keyword-in-depth][Understand JavaScript’s this Keyword in Depth]] :: 18 minutes divided into 8
+     short videos to wrap you head around this.
+
+** ES6 and Above
+- [[https://devhints.io/es6][ES2015+ cheatsheet]] :: A quick overview of new JavaScript features in ES2015,
+     ES2016, ES2017, ES2018 and beyond.
+- [[https://github.com/DrkSephy/es6-cheatsheet][ES2015 {ES6} cheatsheet containing tips, tricks, best practices and code snippets]] :: Another
+     excellent cheatsheet, also partnered with with slides.
+- [[http://exploringjs.com/setting-up-es6.html][Setting up ES6]] :: Explains how to set up ES6 projects that are transpiled to
+     ES5.
+- [[https://ponyfoo.com/articles/es6][ES6 Overview]] :: Bullet point overview including in-depth articles.
+- [[http://es6katas.org/][ES6 Katas]] :: Learn ES6 by solving unit test online.
+- [[https://github.com/mjavascript/practical-es6][Practical ES6]] :: eBook with practical examples and advices.
+- [[https://github.com/Chalarangelo/30-seconds-of-code][30 seconds of code]] :: Useful ES6 snippets that you can understand in 30
+     seconds or less.
+
+** DOM Stuff
+- [[http://domenlightenment.com/][DOM Enlightenment]] :: A whole book about how to access an manipulate the DOM
+     without a library.
+- [[http://youmightnotneedjquery.com/][You Might Not Need jQuery]] :: Get plain JavaScript code snippets (and see
+     their jQuery equivalents).
+- [[https://zellwk.com/blog/dom-traversals/][Traversing the DOM with JavaScript]] :: A tutorial featuring native methods to
+     traverse the DOM.
+
+** JavaScript References
+- [[https://developer.mozilla.org/docs/Web/JavaScript/Reference][MDN]] :: Simply the best language reference.
+- [[http://devdocs.io/javascript][DevDocs]] :: Search MDN comfortably. Even offline.
+- [[http://jargon.js.org/][Simplified JavaScript Jargon]] :: Glossary which explains all the buzzwords
+     from the JavaScript eco system.
+- [[https://functional.works-hub.com/blog/Functional-Programming-Jargon][Functional Programming Jargon]] :: Explains terms used in functional
+     programming in the JavaScript context.
+- [[https://github.com/mbeaudru/modern-js-cheatsheet][Modern JavaScript Cheatsheet]] :: Helps developers with basic knowledge to get
+     familiar with modern codebases.
+- [[http://ecma-international.org/publications/standards/Ecma-262.htm][ECMAScript® Language Specification]] :: The standard JavaScript is based
+     on. Only for very advanced learners.
+
+** Node.js
+- [[https://github.com/maxogden/art-of-node#readme][The Art of Node]] :: Introductory tutorial covering the basics.
+- [[https://nodeschool.io/][NodeSchool]] :: Interactive self guided workshops you can also do on your own.
+- [[http://nodepatternsbooks.com/][Node Patterns]] :: Short books about code and networking patterns related to
+     Node.js.
+- [[https://learnnode.com/][Learn Node]] :: A premium training course to learn to build apps with Node.js,
+     Express, MongoDB.
 * Exploring ReasonML and Functional Programming
 - http://reasonmlhub.com/exploring-reasonml/
 

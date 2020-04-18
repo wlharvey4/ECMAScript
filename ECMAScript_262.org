@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2019-12-09 08:28
-#+macro:version 0.6.0
+#+Date:2020-04-18 05:26
+#+macro:version 0.6.1
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -155,28 +155,29 @@ relaxed to enable it to serve as an easy-to-use scripting language.
 
 ** Version Numbers
 
-   | Year | JavaScript |      ECMA      | Browser            |
-   |      |    <c>     |      <c>       |                    |
+   | Year | JavaScript | ECMA           | Browser            |
+   |      | <c>        | <c>            |                    |
    |------+------------+----------------+--------------------|
-   | 1996 |    1.0     |                | Netscape 2         |
-   | 1997 |            |      ES1       | IE 4               |
-   | 1998 |    1.3     |                | Netscape 4         |
-   | 1999 |            |      ES2       | IE 5               |
-   | 2000 |            |      ES3       | IE 5.5             |
-   | 2000 |    1.5     |                | Firefox 1          |
-   | 2009 |            |      ES5       |                    |
-   | 2011 |            |      ES5.1     | IE 9[fn:1]         |
-   | 2011 |   1.8.5    |                | Firefox 4[fn:2]    |
+   | 1996 | 1.0        |                | Netscape 2         |
+   | 1997 |            | ES1            | IE 4               |
+   | 1998 | 1.3        |                | Netscape 4         |
+   | 1999 |            | ES2            | IE 5               |
+   | 2000 |            | ES3            | IE 5.5             |
+   | 2000 | 1.5        |                | Firefox 1          |
+   | 2009 |            | ES5            |                    |
+   | 2011 |            | ES5.1          | IE 9[fn:1]         |
+   | 2011 | 1.8.5      |                | Firefox 4[fn:2]    |
    | 2012 |            |                | IE 10              |
    | 2012 |            |                | Chrome 23          |
    | 2012 |            |                | Safari 6           |
    | 2013 |            |                | Firefox 21         |
    | 2013 |            |                | Opera 15           |
-   | 2015 |            |     ES2015     | All browsers[fn:3] |
+   | 2015 |            | ES2015         | All browsers[fn:3] |
    |      |            | (formerly ES6) |                    |
-   | 2016 |            |     ES2016     |                    |
-   | 2017 |            |     ES2017     |                    |
-   | 2018 |            |     ES2018     |                    |
+   | 2016 |            | ES2016         | TC39               |
+   | 2017 |            | ES2017         |                    |
+   | 2018 |            | ES2018         |                    |
+   | 2019 |            | ES2019         |                    |
    |------+------------+----------------+--------------------|
 
 ** ECMAScript History
@@ -416,7 +417,15 @@ relaxed to enable it to serve as an easy-to-use scripting language.
 
    - 2016 ::
      - *ECMAScript 2016* (7th Edition)
-     - exponentiation operator; ~Array.prototype.includes()~
+     - first ECMAScript edition released under Ecma TC39's new yearly release
+       cadence and open development process
+     - new exponentiation operator
+     - adds a new method to ~Array.prototype~ called ~includes~
+     - Additionally, numerous software tools were developed to aid in this
+       effort including
+       - Ecmarkup
+       - Ecmarkdown
+       - Grammarkdown
 
    - 2017 ::
      - *ECMAScript 2017* (8th Edition)
@@ -424,8 +433,38 @@ relaxed to enable it to serve as an easy-to-use scripting language.
 
    - 2018 ::
      - *ECMAScript 2018* (9th Edition)
-     - asynchronous iteration and generators; new RegExp features; rest/spread
-       parameters
+     - asynchronous iteration (via the =AsyncIterator= protocol) and async
+       generators
+     - four new RegExp features
+       - the =dotAll= flag
+       - named capture groups
+       - Unicode property escapes
+       - look-behind assertions
+     - rest/spread parameters
+
+   - 2019 ::
+     - *ECMAScript 2019* (10th Edition)
+     - introduces a few new built-in functions:
+       - ~flat~
+       - ~flatMap~
+       - ~Array.prototype~ for flattening arrays
+       - ~Object.fromEntries~ for directly turning the return value of
+         ~Object.entries~ into a new Object
+       - ~String.prototype~
+         - ~trimStart~
+         - ~trimEnd~
+         - to replace
+           - ~String.prototype.trimLeft~ and ~trimRight~ built-ins.
+       - a few minor updates to syntax and semantics
+         - optional catch binding parameters
+         - allowing U+2028 (LINE SEPARATOR) and U+2029 (PARAGRAPH SEPARATOR) in
+           string literals to align with JSON
+       - requiring that ~Array.prototype.sort~ be a stable sort
+       - requiring that ~JSON.stringify~ return well-formed UTF-8 regardless of
+         input
+       - clarifying ~Function.prototype.toString~ by requiring that it either
+         return the corresponding original source text or a standard
+         placeholder.
 
 ** CommonJS
 
@@ -921,12 +960,66 @@ ECMA-262, 6th Edition, ECMAScript 2015 Language Specification
    - new regular expression features
    - rest/spread parameters
 
-** Edition 10 --- ES2020 (Draft)
+** Edition 10 --- ES2019
 
-   March 2019.  [[https://tc39.github.io/ecma262/][ECMAScript 2020 (Draft)]]
+   June 2019.  [[http://www.ecma-international.org/publications/standards/Ecma-262.htm][ECMAScript 2019]]
+
+   This Standard defines the ECMAScript 2019 general-purpose programming
+   language.
+
+   - [[http://www.ecma-international.org/ecma-262/10.0/index.html#Title][Browsable HTML]]
+   - [[http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf][PDF File]]
+
+** Edition 11 -- ES2020
+
+[[https://tc39.es/ecma262/2020/][ECMAScript 2020]]
+
+- GitHub Repo :: https://github.com/tc39/ecma262
+
+- Introduction ::
+
+                  This Ecma Standard defines the ECMAScript 2020 Language.  It
+                  is the eleventh edition of the ECMAScript Language
+                  Specification.  Since publication of the first edition in
+                  1997, ECMAScript has grown to be one of the world's most
+                  widely used general-purpose programming languages.  It is
+                  best known as the language embedded in web browsers but has
+                  also been widely adopted for server and embedded
+                  applications.
+
+** Edition 12 -- ES2021 (Draft)
+[[https://tc39.es/ecma262/][ECMAScript® 2021 Language Specification]]
+
+April 15, 2020
+
+- GitHub Repository :: https://github.com/tc39/ecma262
+
+- Discourse :: https://es.discourse.group/
+
+- About ::
+
+           This document at https://tc39.es/ecma262/ is the most accurate and
+           up-to-date ECMAScript specification. It contains the content of the
+           most recent yearly snapshot plus any finished proposals (those that
+           have reached Stage 4 in the proposal process and thus are
+           implemented in several implementations and will be in the next
+           practical revision) since that snapshot was taken.
+
+- Introduction ::
+
+                  This Ecma Standard defines the ECMAScript 2021 Language.  It
+                  is the twelfth edition of the ECMAScript Language
+                  Specification.  Since publication of the first edition in
+                  1997, ECMAScript has grown to be one of the world's most
+                  widely used general-purpose programming languages.  It is
+                  best known as the language embedded in web browsers but has
+                  also been widely adopted for server and embedded
+                  applications.
 
 ** TC39 JavaScript Specification Group
 - https://tc39.es
+
+- [[https://github.com/tc39/ecma262/][on GitHub]] and [[https://github.com/tc39][here]]
 
 #+cindex:specification, TC39 group
 #+cindex:Ecma International
@@ -945,7 +1038,7 @@ TC39 welcomes contributions.  You can help by giving feedback on proposals,
 improving documentation, writing tests or implementations, or suggesting
 language feature ideas.  See our [[https://github.com/tc39/ecma262/blob/master/CONTRIBUTING.md][contributor guide]] for details.
 
-*** Stage 3 Proposals
+*** Stage 3 Proposals (old)
 - [[https://github.com/tc39/proposal-global][globalThis]]
 - [[https://github.com/tc39/proposal-dynamic-import][import()]]
 - [[https://github.com/tc39/proposal-bigint][BigInt]]
@@ -954,6 +1047,23 @@ language feature ideas.  See our [[https://github.com/tc39/ecma262/blob/master/C
 - [[https://github.com/tc39/proposal-static-class-features][Static class fields and private static methods]]
 - [[https://github.com/tc39/proposal-promise-allSettled][Promise.allSettled]]
 - [[https://github.com/tc39/proposal-hashbang][Hashbang Grammar]]
+
+*** Stage 3 Proposals (current as of 2020-04-18)
+- [[https://github.com/tc39/proposal-regexp-legacy-features][Legacy RegExp features in JavaScript]]
+- [[https://github.com/tc39/proposal-import-meta][import.meta]]
+- [[https://github.com/tc39/proposal-private-methods][Private instance methods and accessors]]
+- Class Public Instance Fields & Private Instance Fields
+- Static class fields and private static methods
+- Numeric Separators
+- Hashbang Grammar
+- Top level await
+- WeakRefs
+- Nullish Coalescing for JavaScript
+- RegExp Match array offsets
+- Optional Chaining
+- for-in mechanics
+- String.prototype.replaceAll
+- Atomics.waitAsync
 
 ** Console Living Standard
 - https://console.spec.whatwg.org/

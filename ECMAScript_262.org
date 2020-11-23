@@ -1,7 +1,155 @@
 # -*- mode: org; -*-
 #+Title:ECMAScript 262
-#+Date:2020-04-18 05:26
-#+macro:version 0.6.1
+#+Date:2020-11-23 10:14
+#+macro:version 0.7.1
+
+* JavaScript Implementations
+
+JavaScript is more than just what is defined in ECMA-262. A complete JavaScript
+implementation is made up of the following three distinct parts:
+
+- The Core (ECMAScript)
+- The Document Object Model (DOM)
+- The Browser Object Model (BOM)
+
+** ECMAScript
+#+cindex:ECMAScript
+#+cindex:ECMA-262
+EMCAScript  is  the language  defined  in  ECMA-262, and  is  not  tied to  web
+browsers. The language has no methods  for input or output whatsoever. ECMA-262
+defines the language  as a base upon which more  robust scripting languages may
+be built. Web  browsers are just one /host environment/  in which an ECMAScript
+implementation may exist.
+
+#+cindex:host environment
+#+cindex:extensions
+A  host  environment  provides  the   base  implementation  of  ECMAScript  and
+implementation extensions designed to to interface with the environment itself.
+
+#+cindex:DOM
+#+cindex:Document Object Model (DOM)
+Extensions,  such as  the Document  Object Model  (DOM), use  ECMAScript's core
+types and syntax  to provide additional functionality that is  more specific to
+the  environment.  Other  host   environments  invlude  NodeJS,  a  server-side
+JavaScript platform, and the obsolete Adobe Flash.
+
+#+cindex:ECMA-262 specification
+#+cindex:specification
+EMCAScript is simply  a description of a language implementation  of all of the
+facets  described  in  the  specification.  On a  very  basic  level,  ECMA-262
+describes the following parts of the language:
+
+- Syntax
+- Types
+- Statements
+- Keywords
+- Reserved words
+- Operators
+- Global objects
+
+JavaScript implements ECMAScript, but so does Adobe ActionScript.
+
+** ECMAScript Editions
+#+cindex:editions of ECMAScript
+The different  versions of EMCAScript  are defined as /editions/,  referring to
+the edition of  ECMA-262 in which that particular  implementation is described.
+The first edition of ECMA-262 was essentially the same as Netscape's JavaScript
+1.1 but  with all references to  browser-specific code removed and  a few minor
+changes. It also required support for  the Unicode standard to support multiple
+languages and that objects be  platform-independent. JavaScript 1.1 and 1.2 did
+/not/ conform to the ECMA-262 standard.
+
+The second edition of ECMA-262 was  largely editorial. The standard was updated
+to  conform with  ISO/IEC-16262  and  featured no  new  additions, changes,  or
+omissions.
+
+The third edition of ECMA-262 was the first real update to the standard.  It
+provided updates to:
+- string handling
+- the definition of errors
+- numeric outputs
+- added support for regular expressions
+- new controls statements
+- ~try-catch~ exception handling
+- small changes to better prepare the standard for internationalization
+
+ECMAScript had arrived as a true programming language.
+
+Ecma  TC39  convened to  decide  the  future  of  the language.  The  resulting
+specification  defined an  almost completely  new language  based on  the third
+edition.  As an  alternate proposal,  a specification  call ECMAScript  3.1 was
+developed as a smaller evolution of the  language by a subcommittee of TC39 who
+believed that the  fourth edition was too  big of a jump for  the language. The
+result was a  small proposal with incremental changes to  ECMAScript that could
+be implemented  on top of existing  JavaScript engines.
+
+The fourth  edition was  abandoned in  favor of  ECMAScript 3.1.,  which became
+ECMA-262 fifth edition, and was published on December 3, 2009.  This edition
+sought to clarify perceived ambiguitities of the third and edition and
+introduced additional functionality, which included:
+
+- a native JSON object for parsing and serializing JSON data
+- methods for inheritance and advanced property definition
+- the inclusion of a new strict mode that slightly augments how ECMAScript
+  engines interpret and execute code
+
+A  maintenance edition  was  published in  2011 that  made  corrections in  the
+specification but introduced no new language or library features.
+
+The sixth  edition of ECMA-262, published  in 2015, is referred  to by multiple
+names:
+- ES6
+- ES2015
+- ES Harmony
+
+This edition adds formal support for:
+- classes
+- modules
+- iterators
+- generators
+- arrow functions
+- promises
+- reflection
+- proxies
+- new data types
+
+The seventh edition of ECMA-262, named:
+- ES7
+- ES2016
+
+was published in June 2016.  It included some syntactical additions such as:
+- Array.prototype.includes
+- exponentiation operator
+
+The eigth edition of ECMA-26, called
+- ES8
+- ES2017
+
+was finalized in January 2017, and included:
+- asynchronous iteration
+- rest and spread parameters
+- new regular expression features
+- Promise finally() catchall handler
+- template literal revisions.
+
+
+** ECMAScript Conformance
+ECMA-262 defines ECMAScript conformance as an implementation that:
+- supports all "types, values, objects, properties, functions, and program
+  syntax and semantics" as they are described in ECMA-262;
+- support the Unicode character standard
+
+A conforming implementation may do the following:
+- Add "additional types, values, objects, properties, and functions" that are
+  not specified in ECMA-262.
+- Support "program and regular expression syntax" that isnot defined in
+  ECMA-262.
+
+** ECMAScript Support in Web Browsers
+
+** The Document Object Model
+
+** The Browser Object Model
 
 * JavaScript Versions
 ** JavaScript 1.0
@@ -13281,6 +13429,12 @@ The real problem occurs when a property contains a reference value.
 **** Parasitic Combination Inheritance
 
 *** Summary of OO Programming
+
+* Professional JavaScript for Web Developers
+- by Matt Frisbie
+- 4th Edition 2020
+
+** Objects---Classes---Object-Oriented Programming
 * Secrets of the JavaScript Ninja
 :PROPERTIES:
 :Author:   John Resig
